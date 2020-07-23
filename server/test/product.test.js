@@ -26,7 +26,7 @@ describe('Track', () => {
           .send({ url })
           .end((err, response) => {
             if (err) return done(err)
-            else {                            
+            else {
               const { Item } = response.body
               expect(response.status).toBe(201)
               expect(Item).toHaveProperty('_id', expect.any(String))
@@ -66,7 +66,7 @@ describe('Track', () => {
           .send({ url, targetPrice, email })
           .end((err, response) => {
             if (err) return done(err)
-            else {                           
+            else {
               const { Item } = response.body
               expect(response.status).toBe(201)
               expect(Item).toHaveProperty('_id', expect.any(String))
@@ -79,7 +79,7 @@ describe('Track', () => {
         })
       })
     })
-      
+
   })
 
   describe('Failed Tracking', () => {
@@ -130,7 +130,7 @@ describe('Track', () => {
           .send({ url, targetPrice, email: invalidEmail })
           .end((err, response) => {
             if (err) return done(err)
-            else {                            
+            else {
               expect(response.status).toBe(400)
               expect(response.body).toHaveProperty('type', "Bad Request")
               expect(response.body).toHaveProperty('message', "Invalid email address format")

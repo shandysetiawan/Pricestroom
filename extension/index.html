@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./assets/bootstrap.min.css">
+    <style>
+      body {height: 40rem; width: 24rem; margin: 1rem;}
+      table {width: 100%; margin: auto;}
+      #submit {margin-left: 5rem; margin-bottom: 3rem;}
+    </style>
+    <title>hello</title>
+  </head>
+  <body>
+    <section id="MainPage" class="container">
+      <p class="lead text-center">Hello Extensions</p>
+      <form>
+        <div class="row form-group">
+          <label for="product">Name:</label>
+          <input name="product" id="name" />
+        </div>
+        <input
+          type="submit" id="submit" title="save"
+          value="Track Product"
+          class="btn btn-success"
+        />
+      </form>
+      <table id="table" class="table">
+        <thead class="small">
+          <tr>
+            <th >Product Name</th>
+            <th class="text-right">Target</th>
+            <th class="text-right">Current</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>iPhone X</td>
+            <td class="text-right">1000</td>
+            <td class="text-right">1200</td>
+          </tr>
+          <tr>
+            <td>iMac Pro</td>
+            <td class="text-right">2500</td>
+            <td class="text-right">2900</td>
+          </tr>
+          <tr>
+            <td>iPhone X</td>
+            <td class="text-right">1000</td>
+            <td class="text-right">1200</td>
+          </tr>
+          <tr>
+            <td>iMac Pro</td>
+            <td class="text-right">2500</td>
+            <td class="text-right">2900</td>
+          </tr>
+          <tr>
+            <td>iMac Pro</td>
+            <td class="text-right">2500</td>
+            <td class="text-right">2900</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- <script src="assets/jquery-3.5.1.min.js"></script> -->
+    <script src="./assets/jquery-3.5.1.dev.js"></script>
+    <script src="./assets/hello.js"></script>
+  </body>
+</html>
