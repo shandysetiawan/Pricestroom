@@ -1,0 +1,9 @@
+Error: 
+  The module '/home/akmal/node_modules/canvas/build/Release/canvas.node'
+    was compiled against a different Node.js version using
+    NODE_MODULE_VERSION 79. This version of Node.js requires
+    NODE_MODULE_VERSION 83. Please try re-compiling or re-installing
+    the module (for instance, using `npm rebuild` or `npm install`).
+Solution:
+$ rm -rf node_modules/canvas
+$ npm install
