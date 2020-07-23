@@ -1,22 +1,22 @@
 const app = require('../app.js');
 const request = require('supertest');
-const Item = require('../models/item.js');
+const Item = require('../models/track');
 
 let url = "https://www.tokopedia.com/snackneng/chiki-ball-balls-keju-ayam-coklat-free-bubble-wrap-ayam";
 let targetPrice = "50000";
 
 describe('Track', () => {
-  beforeAll((done) => {
-    Item.deleteMany({ })
-      .then(_=> { done() })
-      .catch(err => { done(err) })
-  })
+  // beforeAll((done) => {
+  //   Item.deleteMany({ })
+  //     .then(_=> { done() })
+  //     .catch(err => { done(err) })
+  // })
 
-  afterAll(done => {
-    Item.deleteMany({ })
-      .then( _=> done())
-      .catch(err => done(err))
-  })
+  // afterAll(done => {
+  //   Item.deleteMany({ })
+  //     .then( _=> done())
+  //     .catch(err => done(err))
+  // })
 
   describe('Successful Tracking', () => {
     describe('Add Item Tracking', () => {
@@ -26,7 +26,7 @@ describe('Track', () => {
           .send({ url })
           .end((err, response) => {
             if (err) return done(err)
-            else {                            
+            else {
               const { Item } = response.body
               expect(response.status).toBe(201)
               expect(Item).toHaveProperty('_id', expect.any(String))
@@ -34,7 +34,7 @@ describe('Track', () => {
               expect(response.body).toHaveProperty('message', 'Item has been successfully tracked!')
               return done()
             }
-        })
+          })
       })
     })
 
@@ -45,7 +45,7 @@ describe('Track', () => {
           .send({ url, targetPrice })
           .end((err, response) => {
             if (err) return done(err)
-            else {                           
+            else {
               const { Item } = response.body
               expect(response.status).toBe(201)
               expect(Item).toHaveProperty('_id', expect.any(String))
@@ -54,7 +54,7 @@ describe('Track', () => {
               expect(response.body).toHaveProperty('message', 'Item has been successfully tracked!')
               return done()
             }
-        })
+          })
       })
     })
 
@@ -66,7 +66,7 @@ describe('Track', () => {
           .send({ url, targetPrice, email })
           .end((err, response) => {
             if (err) return done(err)
-            else {                           
+            else {
               const { Item } = response.body
               expect(response.status).toBe(201)
               expect(Item).toHaveProperty('_id', expect.any(String))
@@ -76,10 +76,10 @@ describe('Track', () => {
               expect(response.body).toHaveProperty('message', 'Item has been successfully tracked!')
               return done()
             }
-        })
+          })
       })
     })
-      
+
   })
 
   describe('Failed Tracking', () => {
@@ -92,13 +92,13 @@ describe('Track', () => {
           .send({ url: invalidUrl })
           .end((err, response) => {
             if (err) return done(err)
-            else {                            
+            else {
               expect(response.status).toBe(400)
               expect(response.body).toHaveProperty('type', "Bad Request")
               expect(response.body).toHaveProperty('message', "Invalid email address format")
               return done()
             }
-        })
+          })
       })
     })
 
@@ -130,13 +130,13 @@ describe('Track', () => {
           .send({ url, targetPrice, email: invalidEmail })
           .end((err, response) => {
             if (err) return done(err)
-            else {                            
+            else {
               expect(response.status).toBe(400)
               expect(response.body).toHaveProperty('type', "Bad Request")
               expect(response.body).toHaveProperty('message', "Invalid email address format")
               return done()
             }
-        })
+          })
       })
     })
 

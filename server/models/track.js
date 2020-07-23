@@ -18,10 +18,10 @@ module.exports = class ItemModel {
   }
 
   static updateById(id, data) {
-    return Item.findOneAndUpdate({ _id: ObjectId(id)}, { $set: data }, { returnOriginal: false })
+    return Item.findOneAndUpdate({ _id: ObjectId(id) }, { $set: data }, { returnOriginal: false })
   }
 
   static deleteById(id) {
-    return Item.deleteOne({ _id: ObjectId(id)})
+    return Item.deleteOne({ _id: ObjectId(id) })
   }
 };
