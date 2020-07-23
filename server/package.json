@@ -1,0 +1,26 @@
+{
+  "name": "pricestroom",
+  "version": "1.0.0",
+  "description": "price tracker for bukalapak n tokopedia",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "jest --detectOpenHandles --runInBand --forceExit --verbose"
+  },
+  "keywords": [
+    "tokopedia",
+    "bukalapak"
+  ],
+  "author": "pricestroom",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jest": "^26.1.0",
+    "mongodb": "^3.5.9",
+    "supertest": "^4.0.2"
+  }
+}
