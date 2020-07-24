@@ -33,7 +33,7 @@ function bukalapakScraper (url) {
             }
             return data
         })
-        // .catch(console.log)
+        // .catch(console.log) //Catch dihandle saat penggunaan bukalapakScraper
 }
 
 //Test
