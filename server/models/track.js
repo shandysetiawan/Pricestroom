@@ -21,6 +21,10 @@ module.exports = class ItemModel {
     return Item.find().toArray()
   }
 
+  // static updateHistory() {
+
+  // }
+
   static create(newItem) {
     return Item.insertOne(newItem);
   }

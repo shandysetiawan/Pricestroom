@@ -29,8 +29,9 @@ class TrackController {
         if (isUrl(req.body.url)) {
             if (req.body.url.search("tokopedia") !== -1 || req.body.url.search("bukalapak") !== -1) {
                 //nambahin buat ngecek number
+                let newItem
                 if (typeof price === "number") {
-                    const newItem = {
+                    newItem = {
                         url,
                         imageUrl,
                         storeName,
@@ -38,10 +39,11 @@ class TrackController {
                         currentPrice: req.body.price,
                         history: [{ time: new Date(), price: req.body.price, stock }],
                         targetPrice: null,
-                        email: null
+                        email: null,
+                        createdAt: new Date()
                     }
                 } else {
-                    const newItem = {
+                    newItem = {
                         url,
                         imageUrl,
                         storeName,
@@ -49,7 +51,8 @@ class TrackController {
                         currentPrice: Number(price.match(/\d+/g).join("")),
                         history: [{ time: new Date(), price: Number(price.match(/\d+/g).join("")), stock }],
                         targetPrice: null,
-                        email: null
+                        email: null,
+                        createdAt: new Date()
                     }
                 }
                 // console.log(newItem)
