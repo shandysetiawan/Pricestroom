@@ -1,5 +1,4 @@
-const { watcherTokopedia, watcherBukalapak } = require("./watcher");
+const { priceWatcher } = require("./watcher");
 module.exports = {
-  watcherTokopedia,
-  watcherBukalapak,
+  priceWatcher,
 };
