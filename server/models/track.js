@@ -34,4 +34,8 @@ module.exports = class ItemModel {
   static deleteById(id) {
     return Item.deleteOne({ _id: ObjectId(id) })
   }
+
+  static deleteMany() {
+    return Item.remove({})
+  }
 };

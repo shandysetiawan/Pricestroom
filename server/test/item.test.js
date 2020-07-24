@@ -2,19 +2,28 @@ const app = require('../app.js');
 const request = require('supertest');
 const Item = require('../models/track');
 
-let url = "https://www.tokopedia.com/snackneng/chiki-ball-balls-keju-ayam-coklat-free-bubble-wrap-ayam";
-let targetPrice = "50000";
+const newItem = {
+  url: "https://www.tokopedia.com/snackneng/chiki-ball-balls-keju-ayam-coklat-free-bubble-wrap-ayam",
+  imageUrl: "https://ecs7.tokopedia.net/img/cache/700/VqbcmM/2020/7/14/386d6f73-3821-46a5-b386-338f6856d403.jpg",
+  storeName: "Toko Awan",
+  stock: ">4121",
+  time: new Date(),
+  price: "Rp405.000",
+  targetPrice: null,
+  email: null
+}
+let currentItemId
 
 describe('Track', () => {
   // beforeAll((done) => {
-  //   Item.deleteMany({ })
-  //     .then(_=> { done() })
+  //   Item.deleteMany({})
+  //     .then(_ => { done() })
   //     .catch(err => { done(err) })
   // })
 
   // afterAll(done => {
-  //   Item.deleteMany({ })
-  //     .then( _=> done())
+  //   Item.deleteMany({})
+  //     .then(_ => done())
   //     .catch(err => done(err))
   // })
 
@@ -23,62 +32,25 @@ describe('Track', () => {
       test('Response code 201 with object item data and string message', (done) => {
         request(app)
           .post('/tracks')
-          .send({ url })
+          .send(newItem)
           .end((err, response) => {
             if (err) return done(err)
             else {
-              const { Item } = response.body
-              expect(response.status).toBe(201)
-              expect(Item).toHaveProperty('_id', expect.any(String))
-              expect(Item).toHaveProperty('url', url)
-              expect(response.body).toHaveProperty('message', 'Item has been successfully tracked!')
+              // const { Item } = response.body
+              const { body, status, error } = response
+              console.log(error)
+              expect(status).toBe(201)
+              expect(body.data).toHaveProperty('_id', expect.any(String))
+              currentItemId = body.data._id
+              console.log('>>>>>>>>', currentItemId)
+              expect(body.data).toHaveProperty('url', newItem.url)
+              expect(body.message).toHaveProperty('message', 'Item has been successfully tracked!')
               return done()
             }
           })
       })
     })
 
-    describe('Add Item and Target Price', () => {
-      test('Response code 201 with object item data and string message', (done) => {
-        request(app)
-          .post('/tracks')
-          .send({ url, targetPrice })
-          .end((err, response) => {
-            if (err) return done(err)
-            else {
-              const { Item } = response.body
-              expect(response.status).toBe(201)
-              expect(Item).toHaveProperty('_id', expect.any(String))
-              expect(Item).toHaveProperty('url', url)
-              expect(Item).toHaveProperty('targetPrice', targetPrice)
-              expect(response.body).toHaveProperty('message', 'Item has been successfully tracked!')
-              return done()
-            }
-          })
-      })
-    })
-
-    describe('Add Item and Target Price with Email', () => {
-      test('Response code 201 with object item data and string message', (done) => {
-        let email = "admin@hareuga.com"
-        request(app)
-          .post('/tracks')
-          .send({ url, targetPrice, email })
-          .end((err, response) => {
-            if (err) return done(err)
-            else {
-              const { Item } = response.body
-              expect(response.status).toBe(201)
-              expect(Item).toHaveProperty('_id', expect.any(String))
-              expect(Item).toHaveProperty('url', url)
-              expect(Item).toHaveProperty('targetPrice', targetPrice)
-              expect(Item).toHaveProperty('email', email)
-              expect(response.body).toHaveProperty('message', 'Item has been successfully tracked!')
-              return done()
-            }
-          })
-      })
-    })
 
   })
 
@@ -87,134 +59,102 @@ describe('Track', () => {
       // Invalid email address format
       test('Response code 400 bad request', (done) => {
         let invalidUrl = "invalidUrl"
+        newItem.url = invalidUrl
         request(app)
-          .post('/track')
-          .send({ url: invalidUrl })
+          .post('/tracks')
+          .send(newItem)
           .end((err, response) => {
             if (err) return done(err)
             else {
-              expect(response.status).toBe(400)
-              expect(response.body).toHaveProperty('type', "Bad Request")
-              expect(response.body).toHaveProperty('message', "Invalid url format!")
+              const { body, status, error } = response
+              console.log(body)
+              expect(status).toBe(400)
+              // expect(response.body).toHaveProperty('type', "Bad Request")
+              expect(body).toHaveProperty('message', "Invalid url format!")
               return done()
             }
           })
       })
     })
-
-    describe("Invalid targetPrice format", () => {
-      // targetPrice cannot be converted into integer by Number(targetPrice)
-      test('Response code 400 bad request', (done) => {
-        let invalidTargetPrice = "Rp.30000"
-        request(app)
-          .post('/track')
-          .send({ url, targetPrice: invalidTargetPrice })
-          .end((err, response) => {
-            if (err) return done(err)
-            else {
-              expect(response.status).toBe(400)
-              expect(response.body).toHaveProperty('type', "Bad Request")
-              expect(response.body).toHaveProperty('message', "Invalid target price format")
-              return done()
-            }
-          })
-      })
-    })
-
-    describe('Invalid email address', () => {
-      // Invalid email address format
-      test('Response code 400 bad request', (done) => {
-        let invalidEmail = "budimail.ru"
-        request(app)
-          .post('/track')
-          .send({ url, targetPrice, email: invalidEmail })
-          .end((err, response) => {
-            if (err) return done(err)
-            else {
-              expect(response.status).toBe(400)
-              expect(response.body).toHaveProperty('type', "Bad Request")
-              expect(response.body).toHaveProperty('message', "Invalid email address format")
-              return done()
-            }
-          })
-      })
-    })
-
   })
 
-})
-
-describe('GET /tracks', function () {
-  it('responds 200 and receive array of object', function (done) {
-    request(app)
-      .get('/tracks')
-      .then(response => {
-        // console.log(response)
-        const { body, status } = response
-
-        expect(status).toBe(200)
-        expect(body).toEqual(expect.any(Array))
-
-        done()
+  describe('Failed Tracking', () => {
+    describe('Unsupported url', () => {
+      // Invalid email address format
+      test('Response code 400 bad request', (done) => {
+        let unsupportedUrl = "https://shopee.co.id/"
+        newItem.url = unsupportedUrl
+        request(app)
+          .post('/tracks')
+          .send({ url: unsupportedUrl })
+          .end((err, response) => {
+            if (err) return done(err)
+            else {
+              const { body, status, error } = response
+              expect(status).toBe(400)
+              // expect(response.body).toHaveProperty('type', "Bad Request")
+              expect(body).toHaveProperty('message', "This website is not supported with our app")
+              return done()
+            }
+          })
       })
-  });
-});
+    })
+  })
 
-describe('GET /tracks/:id', function () {
-  it('responds 200 and receive array of object', function (done) {
-    request(app)
-      .get(`/tracks/${currentProductId}`)
-      .then(response => {
-        // console.log(response)
-        const { body, status } = response
+  describe('GET /tracks', function () {
+    it('responds 200 and receive array of object', function (done) {
+      request(app)
+        .get('/tracks')
+        .then(response => {
+          // console.log(response)
+          const { body, status } = response
 
-        expect(status).toBe(200)
-        expect(body).toHaveProperty('name', 'boneka')
-        expect(body).toHaveProperty('image_url', "jncjkbcja")
-        expect(body).toHaveProperty('price', 1000)
-        expect(body).toHaveProperty('stock', 5)
+          expect(status).toBe(200)
+          expect(body).toEqual(expect.any(Array))
 
-        done()
-      })
-  });
-});
-
-describe('PUT /tracks/:id', function () {
-  it('responds 200 in put and receive an object', function (done) {
-    request(app)
-      .put(`/products/${currentProductId}`)
-      .send({ name: 'boneko', image_url: "jncjkbcja", price: 3000, stock: 5 })
-      .then(response => {
-        const { body, status } = response
-        expect(status).toBe(200)
-        expect(body).toHaveProperty('name', 'boneko')
-        expect(body).toHaveProperty('image_url', "jncjkbcja")
-        expect(body).toHaveProperty('price', 3000)
-        expect(body).toHaveProperty('stock', 5)
-        done()
-      })
-  });
-  it('responds 400 in put and receive message Stock must not minus', function (done) {
-    request(app)
-      .put(`/tracks/${itemId}`)
-      .send({ name: 'boneka', image_url: "jncjkbcja", price: 4000, stock: -4 })
-      .set('access_token', tokens)
-      .then(response => {
-        const { status, body } = response
-        // console.log(error)
-        expect(status).toBe(400)
-        expect(body).toEqual({ error: "SequelizeValidationError", message: expect.arrayContaining(["Stock must not minus"]) })
-        done()
-      });
+          done()
+        })
+    });
   });
 
+  describe('GET /tracks/:id', function () {
+    it('responds 200 and receive an object', function (done) {
+      request(app)
+        .get(`/tracks/${currentItemId}`)
+        .then(response => {
+          // console.log(response)
+          const { body, status } = response
 
+          expect(status).toBe(200)
+          expect(body).toHaveProperty('_id', expect.any(String))
+          expect(body).toHaveProperty('url')
+          expect(body).toHaveProperty('storeName', newItem.storeName)
+          expect(body).toHaveProperty('currentPrice', newItem.currentPrice)
+          done()
+        })
+    });
+  });
+
+  describe('PUT /tracks/:id', function () {
+    it('responds 200 in put and receive an object', function (done) {
+      request(app)
+        .put(`/tracks/${currentItemId}`)
+        .send()
+        .then(response => {
+          const { body, status } = response
+          expect(status).toBe(200)
+          expect(body).toHaveProperty('message', 'Item history has been successfully updated!')
+          done()
+        })
+    });
+
+  })
 
 
   describe('DELETE /tracks/:id', function () {
     it('responds 200 and receive message successfuly delete', function (done) {
       request(app)
-        .delete(`/tracks/${itemId}`)
+        .delete(`/tracks/${currentItemId}`)
         .then(response => {
           const { body, status, error } = response
 
@@ -226,16 +166,20 @@ describe('PUT /tracks/:id', function () {
     });
     it('responds 400,failed to acquired params', function (done) {
       request(app)
-        .delete(`/tracks/:${itemIdd}`)
+        .delete(`/tracks/:id`)
         .then(response => {
           const { body, status, error } = response
 
           expect(status).toBe(400)
-          expect(error).toHaveProperty('message')
+          expect(body.message).toHaveProperty('message', "No input id")
 
           done()
         })
     });
 
   });
+
+
+
 })
+
