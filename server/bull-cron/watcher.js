@@ -59,3 +59,8 @@ module.exports = {
   watcherTokopedia,
   watcherBukalapak,
 };
+
+// manggil database, compare data dari database sama yg baru didapat.
+// dicompare kalau datanya sama, gak ngapa2in.
+// kalau datanya beda update history, jika ada target price dan ada email, compare dengan harga yg baru didapat, jika sama lalu kirim email.
+// kalau ga ada target price dan email, maka kirim notifikasi popup
