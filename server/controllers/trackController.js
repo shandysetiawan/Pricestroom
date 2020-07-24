@@ -27,16 +27,29 @@ class TrackController {
 
         if (isUrl(req.body.url)) {
             if (req.body.url.search("tokopedia") !== -1 || req.body.url.search("bukalapak") !== -1) {
-
-                const newItem = {
-                    url,
-                    imageUrl,
-                    storeName,
-                    initialPrice: Number(price.match(/\d+/g).join("")),
-                    currentPrice: Number(price.match(/\d+/g).join("")),
-                    history: [{ time: new Date(), price: Number(price.match(/\d+/g).join("")), stock }],
-                    targetPrice: null,
-                    email: null
+                //nambahin buat ngecek number
+                if (typeof price === "number") {
+                    const newItem = {
+                        url,
+                        imageUrl,
+                        storeName,
+                        initialPrice: req.body.price,
+                        currentPrice: req.body.price,
+                        history: [{ time: new Date(), price: req.body.price, stock }],
+                        targetPrice: null,
+                        email: null
+                    }
+                } else {
+                    const newItem = {
+                        url,
+                        imageUrl,
+                        storeName,
+                        initialPrice: Number(price.match(/\d+/g).join("")),
+                        currentPrice: Number(price.match(/\d+/g).join("")),
+                        history: [{ time: new Date(), price: Number(price.match(/\d+/g).join("")), stock }],
+                        targetPrice: null,
+                        email: null
+                    }
                 }
                 // console.log(newItem)
                 // console.log('priceeeeeee', newItem.initialPrice)
