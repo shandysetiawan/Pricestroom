@@ -2,14 +2,12 @@
 function searcDOM() {
   console.log('Tab script:', document.body);
   let currentUrl, imageUrl, storeName, price, stock, name;
-  let imageElement, storeElement, priceElement, stockElement, nameElement
 
   // We can play with DOM or validate URL here
   currentUrl = document.URL;
 
   if (currentUrl.search("tokopedia.com") > 0 || currentUrl.search("bukalapak.com") > 0) {
     if (currentUrl.indexOf("?") > 0) currentUrl = currentUrl.substring(0, currentUrl.indexOf("?"))
-    console.log('currentUrl', currentUrl)
 
     // DOM cannot be passed to extension directly
     let imgDOMs = document.getElementsByTagName("img")
@@ -17,6 +15,8 @@ function searcDOM() {
     /* -----TOKOPEDIA----- */
     if (currentUrl.search("tokopedia.com") > 0) {
       imageUrl = String(imgDOMs[1].src)
+      
+      let imageElement, storeNameElement, priceElement, stockElement, nameElement;
       imageElement = "[data-testid='PDPImageMain']";
       priceElement = "[data-testid='lblPDPDetailProductPrice']"; // lblPDPFooterTotalHargaProduk
       nameElement = "[data-testid='lblPDPDetailProductName']";
@@ -51,6 +51,7 @@ function searcDOM() {
       stock = offerCount
     }
 
+    console.log('currentUrl', currentUrl)
     console.log('imageUrl', imageUrl)    
     console.log('name', name)
     console.log('price', price)
