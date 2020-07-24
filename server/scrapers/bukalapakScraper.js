@@ -1,15 +1,17 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-function bukalapakScraper(url) {
-  const bukalapak = url.replace(/www/g, "m");
-  return axios
-    .get(bukalapak, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-    })
-    .then((resp) => {
-      const html = resp.data;
-      const $ = cheerio.load(html);
+function bukalapakScraper (url) {
+    const bukalapak = url.replace(/www.bukalapak/g, 'm.bukalapak')
+    return axios.get(
+        bukalapak, 
+        {
+            headers: { "User-Agent": "Mozilla/5.0" },
+        }
+    )
+        .then((resp) => {
+            const html = resp.data
+            const $ = cheerio.load(html)
 
       const stock = $(`div.qa-pd-stock`).text();
 

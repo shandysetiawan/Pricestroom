@@ -144,4 +144,4 @@ class TrackController {
   }
 }
 
-module.exports = TrackController;
+module.exports = TrackController
