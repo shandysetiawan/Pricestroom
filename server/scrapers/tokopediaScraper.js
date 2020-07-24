@@ -1,25 +1,25 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
+const axios = require("axios")
+const cheerio = require("cheerio")
 
 function tokopediaScraper (url) {
     return axios.get(url)
         .then((resp) => {
-            const html = resp.data;
-            const $ = cheerio.load(html);
-            const priceClassElement = "DetailProductPrice";
-            const nameClassElement = "DetailProductName";
-            const stockClassElement = "DetailProductStock";
-            const storeNameClassElement = "FooterShopName";
+            const html = resp.data
+            const $ = cheerio.load(html)
+            const priceClassElement = "DetailProductPrice"
+            const nameClassElement = "DetailProductName"
+            const stockClassElement = "DetailProductStock"
+            const storeClassElement = "FooterShopName"
 
-            const price = $(`h3[data-testid*="${priceClassElement}"]`).text();
+            const price = $(`h3[data-testid*="${priceClassElement}"]`).text()
             const name = $(`h1[data-testid*="${nameClassElement}"]`).text()
             const stock = $(`p[data-testid*="${stockClassElement}"]`).text()
-            const storeName = $(`a[data-testid*="${storeNameClassElement}"]`).text()
+            const store = $(`a[data-testid*="${storeClassElement}"]`).text()
             const data = {
                 name,
                 price: Number(price.match(/\d+/g).join("")),
-                storeName,
-                stock,
+                store,
+                stock: stock.split(",")[0],
                 date: new Date()
             }
             return data
@@ -27,10 +27,10 @@ function tokopediaScraper (url) {
 }
 
 // Testing
-// const url = "https://www.tokopedia.com/applewatchstuff/apple-watch-series-3-gps-42mm-silver-aluminium-with-white-sport-band-full-price"
+const url = "https://www.tokopedia.com/applewatchstuff/apple-watch-series-3-gps-42mm-silver-aluminium-with-white-sport-band-full-price"
 
-// tokopediaScraper(url)
-//     .then(data => console.log(data))
-//     .catch(({response}) => console.log(`Error(${response.status}): ${response.statusText}`))
+tokopediaScraper(url)
+    .then(data => console.log(data))
+    .catch(({response}) => console.log(`Error(${response.status}): ${response.statusText}`))
 
 module.exports = tokopediaScraper
