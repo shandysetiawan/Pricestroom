@@ -17,7 +17,7 @@ function tokopediaScraper (url) {
             const storeName = $(`a[data-testid*="${storeNameClassElement}"]`).text()
             const data = {
                 name,
-                price: Number((price.split("Rp")[1]).split(".").join("")),
+                price: Number(price.match(/\d+/g).join("")),
                 storeName,
                 stock,
                 date: new Date()
