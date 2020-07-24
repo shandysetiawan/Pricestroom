@@ -5,8 +5,16 @@ const Item = db.collection(ItemCollection);
 const { ObjectId } = require('mongodb');
 
 module.exports = class ItemModel {
-  static find() {
-    return Item.find().toArray()
+  static find(data) {
+
+    let dataItem = []
+
+    for (let i = 0; i < data.length; i++) {
+      dataItem.push(new ObjectId(data[i]))
+    }
+
+    return Item.find({ "_id": { "$in": dataItem } }).toArray()
+
   }
 
   static create(newItem) {

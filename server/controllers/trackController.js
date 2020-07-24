@@ -5,9 +5,8 @@ class TrackController {
 
     static fetchItems(req, res, next) {
 
-        Item.find()
+        Item.find(dataItem)
             .then((data) => {
-                console.log('hit')
                 res.status(200).json(data)
             })
             .catch((err) => {
@@ -98,10 +97,10 @@ class TrackController {
 
         Item.deleteById(id)
             .then((data) => {
-                res.status(201).json(data)
+                res.status(201).json({ message: "Success to delete item!" })
             })
             .catch((err) => {
-                res.status(500).json(err)
+                res.status(500).json({ message: err })
             })
     }
 

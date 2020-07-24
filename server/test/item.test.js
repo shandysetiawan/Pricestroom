@@ -143,3 +143,101 @@ describe('Track', () => {
   })
 
 })
+
+describe('GET /tracks', function () {
+  it('responds 200 and receive array of object', function (done) {
+    request(app)
+      .get('/tracks')
+      .then(response => {
+        // console.log(response)
+        const { body, status } = response
+
+        expect(status).toBe(200)
+        expect(body).toEqual(expect.any(Array))
+
+        done()
+      })
+  });
+});
+
+describe('GET /tracks/:id', function () {
+  it('responds 200 and receive array of object', function (done) {
+    request(app)
+      .get(`/tracks/${currentProductId}`)
+      .set('access_token', tokens)
+      .then(response => {
+        // console.log(response)
+        const { body, status } = response
+
+        expect(status).toBe(200)
+        expect(body).toHaveProperty('name', 'boneka')
+        expect(body).toHaveProperty('image_url', "jncjkbcja")
+        expect(body).toHaveProperty('price', 1000)
+        expect(body).toHaveProperty('stock', 5)
+
+        done()
+      })
+  });
+});
+
+describe('PUT /tracks/:id', function () {
+  it('responds 200 in put and receive an object', function (done) {
+    request(app)
+      .put(`/products/${currentProductId}`)
+      .set('access_token', tokens)
+      .send({ name: 'boneko', image_url: "jncjkbcja", price: 3000, stock: 5 })
+      .then(response => {
+        const { body, status } = response
+        expect(status).toBe(200)
+        expect(body).toHaveProperty('name', 'boneko')
+        expect(body).toHaveProperty('image_url', "jncjkbcja")
+        expect(body).toHaveProperty('price', 3000)
+        expect(body).toHaveProperty('stock', 5)
+        done()
+      })
+  });
+  it('responds 400 in put and receive message Stock must not minus', function (done) {
+    request(app)
+      .put(`/tracks/${itemId}`)
+      .send({ name: 'boneka', image_url: "jncjkbcja", price: 4000, stock: -4 })
+      .set('access_token', tokens)
+      .then(response => {
+        const { status, body } = response
+        // console.log(error)
+        expect(status).toBe(400)
+        expect(body).toEqual({ error: "SequelizeValidationError", message: expect.arrayContaining(["Stock must not minus"]) })
+        done()
+      });
+  });
+
+
+
+
+  describe('DELETE /tracks/:id', function () {
+    it('responds 200 and receive message successfuly delete', function (done) {
+      request(app)
+        .delete(`/tracks/${itemId}`)
+        .then(response => {
+          const { body, status, error } = response
+
+          expect(status).toBe(200)
+          expect(body).toHaveProperty('message', "Success to delete item!")
+
+          done()
+        })
+    });
+    it('responds 400,failed to acquired params', function (done) {
+      request(app)
+        .delete(`/tracks/:${itemIdd}`)
+        .then(response => {
+          const { body, status, error } = response
+
+          expect(status).toBe(400)
+          expect(error).toHaveProperty('message')
+
+          done()
+        })
+    });
+
+  });
+})
