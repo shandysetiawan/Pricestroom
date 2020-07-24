@@ -2,7 +2,7 @@ const axios = require("axios")
 const cheerio = require("cheerio")
 
 function bukalapakScraper (url) {
-    const bukalapak = url.replace(/www/g, 'm')
+    const bukalapak = url.replace(/www.bukalapak/g, 'm.bukalapak')
     return axios.get(
         bukalapak, 
         {

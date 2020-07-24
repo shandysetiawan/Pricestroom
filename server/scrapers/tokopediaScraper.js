@@ -2,7 +2,8 @@ const axios = require("axios")
 const cheerio = require("cheerio")
 
 function tokopediaScraper (url) {
-    return axios.get(url)
+    const tokopedia = url.replace(/m.tokopedia/g, 'www.tokopedia')
+    return axios.get(tokopedia)
         .then((resp) => {
             const html = resp.data
             const $ = cheerio.load(html)
@@ -27,10 +28,10 @@ function tokopediaScraper (url) {
 }
 
 // Testing
-const url = "https://www.tokopedia.com/applewatchstuff/apple-watch-series-3-gps-42mm-silver-aluminium-with-white-sport-band-full-price"
+// const url = "https://m.tokopedia.com/applewatchstuff/apple-watch-series-3-gps-42mm-silver-aluminium-with-white-sport-band-full-price"
 
-tokopediaScraper(url)
-    .then(data => console.log(data))
-    .catch(({response}) => console.log(`Error(${response.status}): ${response.statusText}`))
+// tokopediaScraper(url)
+//     .then(data => console.log(data))
+//     .catch(({response}) => console.log(`Error(${response.status}): ${response.statusText}`))
 
 module.exports = tokopediaScraper
