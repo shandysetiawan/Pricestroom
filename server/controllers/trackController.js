@@ -23,6 +23,7 @@ class TrackController {
             return regexp.test(s);
         }
         const { url, imageUrl, storeName, price, stock } = req.body
+        console.log(req.body)
 
         if (isUrl(req.body.url)) {
             if (req.body.url.search("tokopedia") !== -1 || req.body.url.search("bukalapak") !== -1) {

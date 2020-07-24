@@ -1,25 +1,63 @@
 // This function will have access to browser DOM
 function searcDOM() {
-  console.log('Tab script:');
-  let currentUrl, imageUrl, storeName, price, stock;
+  console.log('Tab script:', document.body);
+  let currentUrl, imageUrl, storeName, price, stock, name;
+  let imageElement, storeElement, priceElement, stockElement, nameElement
 
   // We can play with DOM or validate URL here
   currentUrl = document.URL;
 
-  if (currentUrl.search("tokopedia") > 0 || currentUrl.search("bukalapak") > 0) {
+  if (currentUrl.search("tokopedia.com") > 0 || currentUrl.search("bukalapak.com") > 0) {
     if (currentUrl.indexOf("?") > 0) currentUrl = currentUrl.substring(0, currentUrl.indexOf("?"))
-    console.log('currentUrl', currentUrl)          
+    console.log('currentUrl', currentUrl)
 
     // DOM cannot be passed to extension directly
     let imgDOMs = document.getElementsByTagName("img")
-    if (currentUrl.search("tokopedia") > 0) imageUrl = String(imgDOMs[1].src)
-    else if (currentUrl.search("bukalapak") > 0) imageUrl = String(imgDOMs[4].src)
-    console.log('imageUrl', imageUrl)
 
-    price = "Rp99.230",
-    storeName = "Nama Toko"
+    /* -----TOKOPEDIA----- */
+    if (currentUrl.search("tokopedia.com") > 0) {
+      imageUrl = String(imgDOMs[1].src)
+      imageElement = "[data-testid='PDPImageMain']";
+      priceElement = "[data-testid='lblPDPDetailProductPrice']"; // lblPDPFooterTotalHargaProduk
+      nameElement = "[data-testid='lblPDPDetailProductName']";
+      stockElement = "[data-testid='lblPDPDetailProductStock']";
+      storeNameElement = "[data-testid='llbPDPFooterShopName']";
 
-    return { url: currentUrl, imageUrl, price, storeName, stock };
+      price = document.querySelectorAll(priceElement)[0].textContent
+      name = document.querySelectorAll(nameElement)[0].textContent
+      stock = document.querySelectorAll(stockElement)[0].textContent
+      storeName = document.querySelectorAll(storeNameElement)[0].textContent
+
+      // let nameDOMs = document.getElementsByTagName("h1")
+      // name = nameDOMs[0].textContent;
+
+      // let DOMS = document.getElementsByTagName("h3")
+      // price = DOMS[0].textContent;
+
+    /* -----BUKALAPAK----- */
+    } else if (currentUrl.search("bukalapak.com") > 0) {
+      imageUrl = String(imgDOMs[4].src);
+      scriptElement = 'script[type="application/ld+json"]';
+      // let siteDataStr = $(`${scriptElement}`)[1].children[0].data;
+      let scripts = document.querySelectorAll(scriptElement)
+      let scriptObject = JSON.parse(scripts[2].innerText)
+      let { image, url, offers } = scriptObject
+      let { lowPrice, seller, offerCount } = offers
+      imageUrl = image
+      currentUrl = url
+      name = scriptObject.name
+      price = lowPrice
+      storeName = seller.name
+      stock = offerCount
+    }
+
+    console.log('imageUrl', imageUrl)    
+    console.log('name', name)
+    console.log('price', price)
+    console.log('stock', stock)
+    console.log('storeName', storeName)
+
+    return { url: currentUrl, imageUrl, price, storeName, stock, name };
   } else {
     return false;
   }
@@ -35,8 +73,8 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
     $('#previewImage').attr("src", "");
     $('#notFound').empty();
     if (!response[0]) {
-    $('#TrackProduct').attr("disabled", true);
-    $('#notFound').append("Sorry, currently our service is not available for this site.");
+      $('#TrackProduct').attr("disabled", true);
+      $('#notFound').append("Sorry, currently our service is not available for this site.");
     } else {
       $('#TrackProduct').attr("disabled", false);
       $('#previewImage').attr("src", response[0].imageUrl);
@@ -47,11 +85,11 @@ $("#TrackProduct").click(function() {
   chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
   (response) => {
     console.log('Popup script:');
-
     $('#previewImage').attr("src", "");
     $('#notFound').empty();
+    
     if (!response[0]) {
-    $('#notFound').append("Sorry, currently our service is not available for this site.");
+      $('#notFound').append("Sorry, currently our service is not available for this site.");
     } else {
       const data = response[0]
       console.log('actionScript', data);
