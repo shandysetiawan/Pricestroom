@@ -1,2 +1,2 @@
 # PriceStroom
-Price tracking chrome extension for tokopedia and bukalapak
+Price tracking chrome extension for Tokopedia and JD.id

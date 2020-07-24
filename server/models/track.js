@@ -5,8 +5,18 @@ const Item = db.collection(ItemCollection);
 const { ObjectId } = require('mongodb');
 
 module.exports = class ItemModel {
-  static find() {
+  static find(data) {
+
+    let dataItem = []
+
+    // for (let i = 0; i < data.length; i++) {
+    //   dataItem.push(new ObjectId(data[i]))
+    // }
+
+    // { "_id": { "$in": dataItem } }
+
     return Item.find().toArray()
+
   }
 
   static create(newItem) {
@@ -18,10 +28,10 @@ module.exports = class ItemModel {
   }
 
   static updateById(id, data) {
-    return Item.findOneAndUpdate({ _id: ObjectId(id)}, { $set: data }, { returnOriginal: false })
+    return Item.findOneAndUpdate({ _id: ObjectId(id) }, { $set: data }, { returnOriginal: false })
   }
 
   static deleteById(id) {
-    return Item.deleteOne({ _id: ObjectId(id)})
+    return Item.deleteOne({ _id: ObjectId(id) })
   }
 };
