@@ -2,7 +2,7 @@ let url = 'http://localhost:3001/tracks';
 
 $(function() {
   $("#TrackProduct").click(function() {
-    console.log(data);
+    // console.log(data);
 
     // get current tab
     chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
