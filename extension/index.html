@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./assets/bootstrap.min.css">
+    <style>
+      body {height: 40rem; width: 24rem; margin: 1rem;}
+      table {width: 100%; margin: auto;}
+      #TrackProduct {margin-left: 5rem; margin-bottom: 1rem; font-weight: bold;}
+      #ProductPreview { height: 13rem; }
+      #previewImage { height: 12rem; }
+    </style>
+    <title>hello</title>
+  </head>
+  <body>
+    <section id="MainPage" class="container">
+      <p class="lead text-center">Hello Extensions</p>
+      <div class="newProduct">
+        <div class="row">
+          <div id="ProductPreview" class="justify-content-center text-center">
+            <!-- Will be filled with product name when the right page is detected -->
+            <img src="" alt="" id="previewImage">
+            <p id="notFound"></p>
+          </div>
+        </div>
+        <!-- Will be run with jQuery function from trackProduct.js -->
+        <button
+          id="TrackProduct"
+          class="btn btn-success"
+        >Track Product</button>
+      </div>
+      
+      <table id="table" class="table">
+        <thead class="small">
+          <tr>
+            <th>Product Name</th>
+            <th class="text-right">Target</th>
+            <th class="text-right">Current</th>
+          </tr>
+        </thead>
+        <tbody id="MainTable">
+          <tr>
+            <td>iPhone X</td>
+            <td class="text-right">1000</td>
+            <td class="text-right">1200</td>
+          </tr>
+          <tr>
+            <td>iMac Pro</td>
+            <td class="text-right">2500</td>
+            <td class="text-right">2900</td>
+          </tr>
+          <tr>
+            <td>iPhone X</td>
+            <td class="text-right">1000</td>
+            <td class="text-right">1200</td>
+          </tr>
+          <tr>
+            <td>iMac Pro</td>
+            <td class="text-right">2500</td>
+            <td class="text-right">2900</td>
+          </tr>
+          <tr>
+            <td>iMac Pro</td>
+            <td class="text-right">2500</td>
+            <td class="text-right">2900</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- <script src="assets/jquery-3.5.1.min.js"></script> -->
+    <script src="./assets/jquery-3.5.1.dev.js"></script>
+    <script type="text/javascript" src="./assets/zData.json"></script>
+    <script src="./assets/actionScript.js"></script>
+    <script src="./assets/trackProduct.js"></script>
+    <script src="./assets/background.js"></script>
+  </body>
+</html>

@@ -1,0 +1,21 @@
+.App {
+  text-align: center;
+}
+
+.Header {
+  background-color: #282c34;
+  min-height: 5vh;
+  justify-content: space-between;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+#Chart {
+  justify-content: center;
+  align-self: center;
+}
+
+a {
+  color: #61dafb;
+}
