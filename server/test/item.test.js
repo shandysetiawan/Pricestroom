@@ -38,11 +38,11 @@ describe('Track', () => {
             else {
               // const { Item } = response.body
               const { body, status, error } = response
-              console.log(error)
+              // console.log(error)
               expect(status).toBe(201)
               expect(body.data).toHaveProperty('_id', expect.any(String))
               currentItemId = body.data._id
-              console.log('>>>>>>>>', currentItemId)
+              // console.log('>>>>>>>>', currentItemId)
               expect(body.data).toHaveProperty('url', newItem.url)
               expect(body.message).toHaveProperty('message', 'Item has been successfully tracked!')
               return done()
@@ -67,7 +67,7 @@ describe('Track', () => {
             if (err) return done(err)
             else {
               const { body, status, error } = response
-              console.log(body)
+              // console.log(body)
               expect(status).toBe(400)
               // expect(response.body).toHaveProperty('type', "Bad Request")
               expect(body).toHaveProperty('message', "Invalid url format!")
@@ -124,12 +124,12 @@ describe('Track', () => {
         .then(response => {
           // console.log(response)
           const { body, status } = response
-
+          // console.log(body)
           expect(status).toBe(200)
           expect(body).toHaveProperty('_id', expect.any(String))
-          expect(body).toHaveProperty('url')
+          expect(body).toHaveProperty('url', "https://www.tokopedia.com/snackneng/chiki-ball-balls-keju-ayam-coklat-free-bubble-wrap-ayam")
           expect(body).toHaveProperty('storeName', newItem.storeName)
-          expect(body).toHaveProperty('currentPrice', newItem.currentPrice)
+          expect(body).toHaveProperty('currentPrice', 405000)
           done()
         })
     });
@@ -139,11 +139,22 @@ describe('Track', () => {
     it('responds 200 in put and receive an object', function (done) {
       request(app)
         .put(`/tracks/${currentItemId}`)
-        .send()
+        .send({ email: "lala@mail.com" })
         .then(response => {
           const { body, status } = response
           expect(status).toBe(200)
-          expect(body).toHaveProperty('message', 'Item history has been successfully updated!')
+          expect(body).toHaveProperty('message', 'Item email or target price has been successfully updated!')
+          done()
+        })
+    });
+    it('responds 200 in put and receive an object', function (done) {
+      request(app)
+        .put(`/tracks/${currentItemId}`)
+        .send({ targetPrice: 454000 })
+        .then(response => {
+          const { body, status } = response
+          expect(status).toBe(200)
+          expect(body).toHaveProperty('message', 'Item email or target price has been successfully updated!')
           done()
         })
     });
@@ -164,14 +175,14 @@ describe('Track', () => {
           done()
         })
     });
-    it('responds 400,failed to acquired params', function (done) {
+    it('responds 500,failed to acquired params', function (done) {
       request(app)
-        .delete(`/tracks/:id`)
+        .delete(`/tracks/:${currentItemId}`)
         .then(response => {
           const { body, status, error } = response
-
-          expect(status).toBe(400)
-          expect(body.message).toHaveProperty('message', "No input id")
+          console.log(body)
+          expect(status).toBe(500)
+          expect(body).toHaveProperty('message', "Internal Server Error")
 
           done()
         })

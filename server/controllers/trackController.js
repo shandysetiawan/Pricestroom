@@ -38,13 +38,13 @@ class TrackController {
                     targetPrice: null,
                     email: null
                 }
-                console.log(newItem)
-                console.log('priceeeeeee', newItem.initialPrice)
+                // console.log(newItem)
+                // console.log('priceeeeeee', newItem.initialPrice)
 
                 Item.create(newItem)
                     .then((data) => {
                         const message = { message: "Item has been successfully tracked!" }
-                        console.log('masuk create')
+                        // console.log('masuk create')
                         res.status(201).json({ data: data.ops[0], message })
                     })
                     .catch((err) => {
@@ -76,46 +76,24 @@ class TrackController {
 
     static updateItem(req, res, next) {
 
-        // if (req.body.email === ) {
-
-        // } else {
-
-
-        // }
-
-
         const { id } = req.params
+        let editItem
 
-        Item.findById(id)
+        if (!req.body.targetPrice && req.body.email) {
+            editItem = { email: req.body.email }
+        } else if (req.body.targetPrice && !req.body.email) {
+            editItem = { targetPrice: req.body.targetPrice }
+        } else {
+            editItem = {
+                targetPrice: Number(req.body.targetPrice),
+                email: req.body.email
+            }
+        }
+
+
+        Item.updateById(id, editItem)
             .then((data) => {
-
-                let dataHistory = data.history
-                let history = { time: req.body.time, price: req.body.current_price, stock: req.body.stock }
-                let pushHistory = [...dataHistory, history]
-
-                // const editItem = {
-                //     url: String(req.body.url),
-                //     image_url: String(req.body.image_url),
-                //     store_name: String(req.body.store_name),
-                //     initial_price: Number(req.body.initial_price),
-                //     current_price: Number(req.body.current_price),
-                //     history: pushHistory,
-                //     targetPrice: req.body.targetPrice,
-                //     email: req.body.email
-                // }
-
-                const editItem = {
-                    current_price: req.body.current_price,
-                    history: pushHistory,
-                    targetPrice: req.body.targetPrice,
-                    email: req.body.email
-                }
-
-                Item.updateById(id, editItem)
-
-            })
-            .then((data) => {
-                res.status(200).json({ message: 'Item history has been successfully updated!' })
+                res.status(200).json({ message: 'Item email or target price has been successfully updated!' })
             })
             .catch((err) => {
                 res.status(500).json(err)
@@ -127,22 +105,23 @@ class TrackController {
 
         const { id } = req.params
 
-        if (id === null || undefined) {
-            res.status(400).json({ message: "No input id" })
-        }
+        // console.log('>>>>>>', id)
+
+        // if (id === null || id === undefined) {
+        //     console.log('ada yang kesini ga')
+        //     return res.status(400).json({ message: "No input id" })
+        // }
 
         Item.deleteById(id)
             .then((data) => {
                 res.status(200).json({ message: "Success to delete item!" })
             })
             .catch((err) => {
-                res.status(500).json({ message: "Internal Server Error" })
+                console.log('errrorrr', err)
+                res.status(500).json({ message: "Internal Server Error", error: err })
             })
     }
 
 }
 
 module.exports = TrackController
-
-
-

@@ -19,6 +19,10 @@ module.exports = class ItemModel {
 
   }
 
+  static findAll() {
+    return Item.find().toArray()
+  }
+
   static create(newItem) {
     return Item.insertOne(newItem)
   }
