@@ -8,7 +8,7 @@
     "32": "icons/icon_32.png",
     "48": "icons/icon_48.png"
   },
-  "permissions": ["tabs", "storage", "alarms"],
+  "permissions": ["tabs", "storage", "alarms", "activeTab", "*://*.tokopedia.com/*","*://*.bukalapak.com/*"],
   "background": {
     "scripts": ["assets/jquery-3.5.1.dev.js", "assets/background.js"]
   },
@@ -24,5 +24,9 @@
       },
       "description": "Opens index.html"
     }
-  }
+  },
+  "content_scripts": [{
+    "matches": ["*://*.stackoverflow.com/*", "*://*.tokopedia.com/*", "*://*.bukalapak.com/*"],
+    "js": ["assets/content.js"]
+  }]
 }

@@ -9,8 +9,8 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
 });
 
 chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
-    console.log(tabs[0].url);
-    $('#name').append(tabs[0].url);
+  console.log(tabs[0].url);
+  $('#name').append(tabs[0].url);
 });
 
 // url from trackProduct.js
@@ -25,3 +25,5 @@ $.ajax({
         url: baseUrl
 }).done(data => console.log('done', data))
   .fail(err => console.log('err', err))
+
+
