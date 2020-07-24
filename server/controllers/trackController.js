@@ -22,18 +22,19 @@ class TrackController {
             var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
             return regexp.test(s);
         }
-        const url = req.body.url
+        const { url, imageUrl, storeName, price, stock } = req.body
+        console.log(req.body)
 
         if (isUrl(req.body.url)) {
             if (req.body.url.search("tokopedia") !== -1 || req.body.url.search("bukalapak") !== -1) {
 
                 const newItem = {
-                    url: url,
-                    imageUrl: req.body.imageUrl,
-                    storeName: req.body.storeName,
-                    initialPrice: Number(req.body.price.match(/\d+/g).join("")),
-                    currentPrice: Number(req.body.price.match(/\d+/g).join("")),
-                    history: [{ time: new Date(), price: Number(req.body.price.match(/\d+/g).join("")), stock: req.body.stock }],
+                    url,
+                    imageUrl,
+                    storeName,
+                    initialPrice: Number(price.match(/\d+/g).join("")),
+                    currentPrice: Number(price.match(/\d+/g).join("")),
+                    history: [{ time: new Date(), price: Number(price.match(/\d+/g).join("")), stock }],
                     targetPrice: null,
                     email: null
                 }
