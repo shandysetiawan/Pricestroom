@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest --detectOpenHandles --runInBand --forceExit --verbose"
+    "dev": "NODE_ENV=development nodemon app.js",
+    "test": "jest --detectOpenHandles --runInBand --forceExit --verbose",
+    "start": "node app.js"
   },
   "keywords": [
     "tokopedia",
