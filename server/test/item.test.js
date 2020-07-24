@@ -22,7 +22,7 @@ describe('Track', () => {
     describe('Add Item Tracking', () => {
       test('Response code 201 with object item data and string message', (done) => {
         request(app)
-          .post('/track')
+          .post('/tracks')
           .send({ url })
           .end((err, response) => {
             if (err) return done(err)
@@ -41,7 +41,7 @@ describe('Track', () => {
     describe('Add Item and Target Price', () => {
       test('Response code 201 with object item data and string message', (done) => {
         request(app)
-          .post('/track')
+          .post('/tracks')
           .send({ url, targetPrice })
           .end((err, response) => {
             if (err) return done(err)
@@ -62,7 +62,7 @@ describe('Track', () => {
       test('Response code 201 with object item data and string message', (done) => {
         let email = "admin@hareuga.com"
         request(app)
-          .post('/track')
+          .post('/tracks')
           .send({ url, targetPrice, email })
           .end((err, response) => {
             if (err) return done(err)
@@ -95,7 +95,7 @@ describe('Track', () => {
             else {
               expect(response.status).toBe(400)
               expect(response.body).toHaveProperty('type', "Bad Request")
-              expect(response.body).toHaveProperty('message', "Invalid email address format")
+              expect(response.body).toHaveProperty('message', "Invalid url format!")
               return done()
             }
           })
@@ -164,7 +164,6 @@ describe('GET /tracks/:id', function () {
   it('responds 200 and receive array of object', function (done) {
     request(app)
       .get(`/tracks/${currentProductId}`)
-      .set('access_token', tokens)
       .then(response => {
         // console.log(response)
         const { body, status } = response
@@ -184,7 +183,6 @@ describe('PUT /tracks/:id', function () {
   it('responds 200 in put and receive an object', function (done) {
     request(app)
       .put(`/products/${currentProductId}`)
-      .set('access_token', tokens)
       .send({ name: 'boneko', image_url: "jncjkbcja", price: 3000, stock: 5 })
       .then(response => {
         const { body, status } = response

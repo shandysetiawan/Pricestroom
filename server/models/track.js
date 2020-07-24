@@ -9,11 +9,13 @@ module.exports = class ItemModel {
 
     let dataItem = []
 
-    for (let i = 0; i < data.length; i++) {
-      dataItem.push(new ObjectId(data[i]))
-    }
+    // for (let i = 0; i < data.length; i++) {
+    //   dataItem.push(new ObjectId(data[i]))
+    // }
 
-    return Item.find({ "_id": { "$in": dataItem } }).toArray()
+    // { "_id": { "$in": dataItem } }
+
+    return Item.find().toArray()
 
   }
 
