@@ -6,33 +6,34 @@
     <style>
       body {height: 40rem; width: 24rem; margin: 1rem;}
       table {width: 100%; margin: auto;}
-      #submit {margin-left: 5rem; margin-bottom: 3rem;}
+      #TrackProduct {margin-left: 5rem; margin-bottom: 3rem;}
     </style>
     <title>hello</title>
   </head>
   <body>
     <section id="MainPage" class="container">
       <p class="lead text-center">Hello Extensions</p>
-      <form>
-        <div class="row form-group">
-          <label for="product">Name:</label>
-          <input name="product" id="name" />
+      <div class="newProduct">
+        <div class="row">
+          <p id="name">
+            <!-- Will be filled with product name when the right page is detected -->
+          </p>
         </div>
-        <input
-          type="submit" id="submit" title="save"
-          value="Track Product"
+        <!-- Will be run with jQuery function from trackProduct.js -->
+        <button
+          id="TrackProduct"
           class="btn btn-success"
-        />
-      </form>
+        >Track Product</button>
+      </div>
       <table id="table" class="table">
         <thead class="small">
           <tr>
-            <th >Product Name</th>
+            <th>Product Name</th>
             <th class="text-right">Target</th>
             <th class="text-right">Current</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody id="MainTable">
           <tr>
             <td>iPhone X</td>
             <td class="text-right">1000</td>
@@ -64,6 +65,8 @@
 
     <!-- <script src="assets/jquery-3.5.1.min.js"></script> -->
     <script src="./assets/jquery-3.5.1.dev.js"></script>
-    <script src="./assets/hello.js"></script>
+    <script type="text/javascript" src="./assets/zData.json"></script>
+    <script src="./assets/trackProduct.js"></script>
+    <script src="./assets/background.js"></script>
   </body>
 </html>
