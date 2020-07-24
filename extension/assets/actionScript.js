@@ -1,7 +1,7 @@
 // This function will have access to browser DOM
 function searcDOM() {
   console.log('Tab script:');
-  let currentUrl, imageUrl, price, storeName;
+  let currentUrl, imageUrl, storeName, price, stock;
 
   // We can play with DOM or validate URL here
   currentUrl = document.URL;
@@ -16,7 +16,10 @@ function searcDOM() {
     else if (currentUrl.search("bukalapak") > 0) imageUrl = String(imgDOMs[4].src)
     console.log('imageUrl', imageUrl)
 
-    return { url: currentUrl, imageUrl, price, storeName };
+    price = "Rp99.230",
+    storeName = "Nama Toko"
+
+    return { url: currentUrl, imageUrl, price, storeName, stock };
   } else {
     return false;
   }
@@ -50,8 +53,16 @@ $("#TrackProduct").click(function() {
     if (!response[0]) {
     $('#notFound').append("Sorry, currently our service is not available for this site.");
     } else {
-      console.log('response', response[0]);
-      $('#previewImage').attr("src", response[0].imageUrl);
+      const data = response[0]
+      console.log('actionScript', data);
+      $.ajax({
+        method: 'post',
+        url,
+        data
+      })
+        .done(data => console.log('POST done', data))
+        .fail(err => console.log('POST err', err))
+      $('#previewImage').attr("src", data.imageUrl);
     }
   });
 

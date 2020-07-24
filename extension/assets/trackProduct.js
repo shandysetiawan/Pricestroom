@@ -1,4 +1,4 @@
-let url = 'https://jsonplaceholder.typicode.com/posts/1';
+let url = 'http://localhost:3001/tracks';
 
 $(function() {
   $("#TrackProduct").click(function() {
