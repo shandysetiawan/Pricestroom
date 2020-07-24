@@ -47,7 +47,7 @@ const jobs = [
 
 queue1.add(jobs, {
   repeat: {
-    cron: "*/5 * * * * *",
+    cron: "*/10 * * * * *",
     // every: 3000
   },
 });
