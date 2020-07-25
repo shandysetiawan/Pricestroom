@@ -6,7 +6,7 @@ function searcDOM() {
   // We can play with DOM or validate URL here
   currentUrl = document.URL;
 
-  if (currentUrl.search("tokopedia.com") > 0 || currentUrl.search("bukalapak.com") > 0) {
+  if (currentUrl.search("www.tokopedia.com") > 0 || currentUrl.search("bukalapak.com") > 0) {
     if (currentUrl.indexOf("?") > 0) currentUrl = currentUrl.substring(0, currentUrl.indexOf("?"))
 
     // DOM cannot be passed to extension directly
@@ -67,6 +67,14 @@ function searcDOM() {
   }
 };
 
+const appendNotProductPage = `
+<p>Wait for the page to fully load</p>
+<p class='small'>
+  Note: currently our service is 
+  <br> only available on specific product site
+  <br> of tokopedia.com or bukalapak.com
+</p>`;
+
 // The following function will have access to extension
 // We have permission to access the activeTab, so we can call chrome.tabs.executeScript:
 // argument here is a string but function.toString() returns function's code
@@ -76,11 +84,10 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
 
     $('#previewImage').attr("src", "");
     $('#notFound').empty();
-    if (!response[0]) {
+    if (!response || !response[0]) {
       $('#TrackProduct').attr("disabled", true);
       $('#notFound').append(
-        `<p class='small'>Sorry, currently our service is not available for this page.</p>
-        <p>Try visiting specific product site on tokopedia.com or bukalapak.com</p>`
+        appendNotProductPage
       );
     } else {
       $('#TrackProduct').attr("disabled", false);
@@ -89,17 +96,15 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
 });
 
 $("#TrackProduct").click(function() {
-  chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
-  (response) => {
+  chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' }, (response) => {
     console.log('Popup script:');
     $('#previewImage').attr("src", "");
     $('#MainTableBody').empty();
     $('#notFound').empty();
     
-    if (!response[0]) {
+    if (!response || !response[0]) {
       $('#notFound').append(
-        `<p class='small'>Sorry, currently our service is not available for this page.</p>
-        <p>Try visiting specific product site on tokopedia.com or bukalapak.com</p>`
+        appendNotProductPage
       );
     } else {
       const data = response[0]
@@ -138,7 +143,7 @@ function appendTable() {
   chrome.storage.sync.get(['newData', 'data'], function(result) {
     const { data, newData } = result;
     console.log('data', data)
-    data.map(item => {
+    if (data) data.map(item => {
       let { name, currentPrice, initialPrice } = item
       name = "default"
       $('#MainTableBody').append(
