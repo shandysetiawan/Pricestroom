@@ -20,7 +20,7 @@ class TrackController {
       return regexp.test(s);
     }
     const { url, imageUrl, storeName, price, stock } = req.body;
-    console.log("line 23", req.body);
+    // console.log("line 23", req.body);
 
     if (isUrl(req.body.url)) {
       if (
@@ -37,8 +37,8 @@ class TrackController {
             initialPrice: req.body.price,
             currentPrice: req.body.price,
             history: [{ time: new Date(), price: req.body.price, stock }],
-            targetPrice: null,
-            email: null,
+            targetPrice: req.body.targetPrice,
+            email: req.body.email,
             createdAt: new Date(),
           };
         } else {
@@ -55,8 +55,8 @@ class TrackController {
                 stock,
               },
             ],
-            targetPrice: null,
-            email: null,
+            targetPrice: req.body.targetPrice,
+            email: req.body.email,
             createdAt: new Date(),
           };
         }
@@ -69,11 +69,11 @@ class TrackController {
             // console.log('masuk create')
             const { url, _id } = data.ops[0];
             priceWatcher(url, _id);
-            console.log("success watch")
+            console.log("success watch");
             res.status(201).json({ data: data.ops[0], message });
           })
           .catch((err) => {
-            res.status(500).json(err);
+            res.status(500).json({message: "this create" + err});
           });
       } else {
         res
