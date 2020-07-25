@@ -1,10 +1,11 @@
 const Bull = require("bull");
 const { tokopediaScraper, bukalapakScraper } = require("../scrapers");
 const Item = require("../models/track");
+watchers = [];
 
-function priceWatcher(url) {
-  const watcher = new Bull("watcher");
-  watcher.empty();
+function priceWatcher(url, id) {
+  const watcher = new Bull(`watcher ${id}`);
+  // watcher.empty();
   const jobs = [
     {
       job: "Updating",
@@ -33,7 +34,7 @@ function priceWatcher(url) {
                 };
                 let pushHistory = [...dataHistory, history];
                 const editItem = {
-                  current_price: result.price,
+                  currentPrice: result.price,
                   history: pushHistory,
                 };
                 Item.updateMany(data.url, editItem)
@@ -73,7 +74,7 @@ function priceWatcher(url) {
                 };
                 let pushHistory = [...dataHistory, history];
                 const editItem = {
-                  current_price: result.price,
+                  currentPrice: result.price,
                   history: pushHistory,
                 };
                 Item.updateMany(data.url, editItem)
@@ -97,6 +98,8 @@ function priceWatcher(url) {
       done(null, `${job.data}`);
     });
   }
+  watchers = [...watchers, watcher];
+  console.log(watchers);
 }
 module.exports = {
   priceWatcher,
