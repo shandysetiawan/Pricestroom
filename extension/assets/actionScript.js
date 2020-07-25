@@ -6,16 +6,16 @@ function searcDOM() {
   // We can play with DOM or validate URL here
   currentUrl = document.URL;
 
-  if (currentUrl.search("tokopedia.com") > 0 || currentUrl.search("bukalapak.com") > 0) {
+  if (currentUrl.search("www.tokopedia.com") > 0 || currentUrl.search("bukalapak.com") > 0) {
     if (currentUrl.indexOf("?") > 0) currentUrl = currentUrl.substring(0, currentUrl.indexOf("?"))
 
     // DOM cannot be passed to extension directly
     let imgDOMs = document.getElementsByTagName("img")
 
     /* -----TOKOPEDIA----- */
-    if (currentUrl.search("tokopedia.com") > 0) {
+    if (currentUrl.search("www.tokopedia.com") > 0) {
       imageUrl = String(imgDOMs[1].src)
-      
+
       let imageElement, storeNameElement, priceElement, stockElement, nameElement;
       imageElement = "[data-testid='PDPImageMain']";
       priceElement = "[data-testid='lblPDPDetailProductPrice']"; // lblPDPFooterTotalHargaProduk
@@ -34,7 +34,7 @@ function searcDOM() {
       // let DOMS = document.getElementsByTagName("h3")
       // price = DOMS[0].textContent;
 
-    /* -----BUKALAPAK----- */
+      /* -----BUKALAPAK----- */
     } else if (currentUrl.search("bukalapak.com") > 0) {
       imageUrl = String(imgDOMs[4].src);
       let scriptElement = 'script[type="application/ld+json"]';
@@ -50,10 +50,12 @@ function searcDOM() {
       price = lowPrice
       storeName = seller.name
       stock = offerCount
+    } else {
+      return false
     }
 
     console.log('currentUrl', currentUrl)
-    console.log('imageUrl', imageUrl)    
+    console.log('imageUrl', imageUrl)
     console.log('name', name)
     console.log('price', price)
     console.log('stock', stock)
@@ -65,27 +67,34 @@ function searcDOM() {
   }
 };
 
+const appendNotProductPage = `
+<p>Wait for the page to fully load</p>
+<p class='small'>
+  Note: currently our service is 
+  <br> only available on specific product site
+  <br> of tokopedia.com or bukalapak.com
+</p>`;
+
 // The following function will have access to extension
 // We have permission to access the activeTab, so we can call chrome.tabs.executeScript:
 // argument here is a string but function.toString() returns function's code
 chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
   (response) => {
-    console.log('Popup script:');
+  console.log('Popup script:');
 
-    $('#previewImage').attr("src", "");
-    $('#notFound').empty();
-    if (!response[0]) {
-      $('#TrackProduct').attr("disabled", true);
-      $('#notFound').append(
-        "Sorry, currently our service is not available for this page. <br> Try going to specific product site on tokopedia.com or bukalapak.com"
-      );
-    } else {
-      $('#TrackProduct').attr("disabled", false);
-      $('#previewImage').attr("src", response[0].imageUrl);
-    }
+  $('#previewImage').attr("src", "");
+  $('#notFound').empty();
+  if (!response || !response[0]) {
+    $('#TrackProduct').attr("disabled", true);
+    $('#notFound').append(
+      appendNotProductPage
+    );
+  } else {
+    $('#TrackProduct').attr("disabled", false);
+    $('#previewImage').attr("src", response[0].imageUrl);
+  }
 });
 
-$("#TrackProduct").click(function() {
   // chrome.storage.sync.set({ data }, function() {
   //   console.log('Data is set to ' + data);
   // });
@@ -93,15 +102,17 @@ $("#TrackProduct").click(function() {
   //   console.log('Data is set to ' + data);
   // });
 
-  chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
-  (response) => {
+$("#TrackProduct").click(function() {
+  chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' }, (response) => {
     console.log('Popup script:');
     $('#previewImage').attr("src", "");
     $('#MainTableBody').empty();
     $('#notFound').empty();
     
-    if (!response[0]) {
-      $('#notFound').append("Sorry, currently our service is not available for this site.");
+    if (!response || !response[0]) {
+      $('#notFound').append(
+        appendNotProductPage
+      );
     } else {
       const data = response[0]
       console.log('actionScript', data);
@@ -114,34 +125,36 @@ $("#TrackProduct").click(function() {
         .fail(err => console.log('POST err', err))
       $('#previewImage').attr("src", data.imageUrl);
 
-      chrome.storage.sync.get(['newData', 'data'], function(result) {
-        const { data, newData } = result;
-        console.log('data', data)
-        data.map(item => {
-          let { poduct_name, current_price, target_price } = item
-          $('#MainTableBody').append(
-            `<tr>
-              <td>${ poduct_name }</td>
-              <td class="text-right">${ current_price }</td>
-              <td class="text-right">${ target_price }</td>
-            </tr>`
-          );
+      if (!response[0]) {
+        $('#notFound').append("Sorry, currently our service is not available for this site.");
+      } else {
+        const data = response[0]
+        console.log('actionScript', data);
+        $.ajax({
+          method: 'post',
+          url,
+          data
         })
-        console.log('newData', newData);
-      });
+          .done(data => console.log('POST done', data))
+          .fail(err => console.log('POST err', err))
+        $('#previewImage').attr("src", data.imageUrl);
+
+        chrome.storage.sync.get(['newData', 'data'], function (result) {
+          const { data, newData } = result;
+          console.log('data', data)
+          data.map(item => {
+            let { poduct_name, current_price, target_price } = item
+            $('#MainTableBody').append(
+              `<tr>
+              <td>${ poduct_name}</td>
+              <td class="text-right">${ current_price}</td>
+              <td class="text-right">${ target_price}</td>
+            </tr>`
+            );
+          })
+          console.log('newData', newData);
+        });
+      }
     }
   });
-
-});
-
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-  for (var key in changes) {
-    var storageChange = changes[key];
-    console.log('Storage key "%s" in namespace "%s" changed. ' +
-                'Old value was "%s", new value is "%s".',
-                key,
-                namespace,
-                storageChange.oldValue,
-                storageChange.newValue);
-  }
 });

@@ -5,15 +5,22 @@
   "manifest_version": 2,
   "icons": {
     "16": "icons/icon_16.png",
-    "32": "icons/icon_32.png",
-    "48": "icons/icon_48.png"
+    "32": "icons/icon_32.png"
   },
-  "permissions": ["tabs", "storage", "alarms", "activeTab", "*://*.tokopedia.com/*","*://*.bukalapak.com/*"],
+  "permissions": [
+    "tabs",
+    "storage",
+    "alarms",
+    "activeTab",
+    "*://*.tokopedia.com/*",
+    "*://*.bukalapak.com/*"
+  ],
   "background": {
-    "scripts": ["assets/jquery-3.5.1.dev.js", "assets/background.js"]
+    "scripts": ["assets/jquery-3.5.1.dev.js", "assets/background.js"],
+    "persistent": false
   },
   "browser_action": {
-    "default_popup": "index.html",
+    "default_popup": "option.html",
     "default_title": "PriceStroom"
   },
   "commands": {
@@ -25,8 +32,15 @@
       "description": "Opens index.html"
     }
   },
-  "content_scripts": [{
-    "matches": ["*://*.stackoverflow.com/*", "*://*.tokopedia.com/*", "*://*.bukalapak.com/*"],
-    "js": ["assets/content.js"]
-  }]
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.tokopedia.com/*",
+        "*://*.bukalapak.com/*"
+      ],
+      "js": [
+        "assets/content.js"
+      ]
+    }
+  ]
 }
