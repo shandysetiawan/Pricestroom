@@ -18,7 +18,7 @@ module.exports = class ItemModel {
   }
 
   static findAll() {
-    return Item.find().toArray()
+    return Item.find().toArray();
   }
 
   // static updateHistory() {
@@ -43,6 +43,10 @@ module.exports = class ItemModel {
       { $set: data },
       { returnOriginal: false }
     );
+  }
+
+  static updateMany(url, data) {
+    return Item.updateMany({ url }, { $set: data });
   }
 
   static deleteById(id) {
