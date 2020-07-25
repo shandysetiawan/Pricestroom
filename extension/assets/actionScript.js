@@ -13,7 +13,7 @@ function searcDOM() {
     let imgDOMs = document.getElementsByTagName("img")
 
     /* -----TOKOPEDIA----- */
-    if (currentUrl.search("tokopedia.com") > 0) {
+    if (currentUrl.search("www.tokopedia.com") > 0) {
       imageUrl = String(imgDOMs[1].src)
       
       let imageElement, storeNameElement, priceElement, stockElement, nameElement;
@@ -50,6 +50,8 @@ function searcDOM() {
       price = lowPrice
       storeName = seller.name
       stock = offerCount
+    } else {
+      return false
     }
 
     console.log('currentUrl', currentUrl)
@@ -77,7 +79,8 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
     if (!response[0]) {
       $('#TrackProduct').attr("disabled", true);
       $('#notFound').append(
-        "Sorry, currently our service is not available for this page. <br> Try going to specific product site on tokopedia.com or bukalapak.com"
+        `<p class='small'>Sorry, currently our service is not available for this page.</p>
+        <p>Try visiting specific product site on tokopedia.com or bukalapak.com</p>`
       );
     } else {
       $('#TrackProduct').attr("disabled", false);
@@ -86,13 +89,6 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
 });
 
 $("#TrackProduct").click(function() {
-  // chrome.storage.sync.set({ data }, function() {
-  //   console.log('Data is set to ' + data);
-  // });
-  // chrome.storage.sync.set({ newData: 'newData' }, function() {
-  //   console.log('Data is set to ' + data);
-  // });
-
   chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
   (response) => {
     console.log('Popup script:');
@@ -101,7 +97,10 @@ $("#TrackProduct").click(function() {
     $('#notFound').empty();
     
     if (!response[0]) {
-      $('#notFound').append("Sorry, currently our service is not available for this site.");
+      $('#notFound').append(
+        `<p class='small'>Sorry, currently our service is not available for this page.</p>
+        <p>Try visiting specific product site on tokopedia.com or bukalapak.com</p>`
+      );
     } else {
       const data = response[0]
       console.log('actionScript', data);
@@ -114,26 +113,12 @@ $("#TrackProduct").click(function() {
         .fail(err => console.log('POST err', err))
       $('#previewImage').attr("src", data.imageUrl);
 
-      chrome.storage.sync.get(['newData', 'data'], function(result) {
-        const { data, newData } = result;
-        console.log('data', data)
-        data.map(item => {
-          let { poduct_name, current_price, target_price } = item
-          $('#MainTableBody').append(
-            `<tr>
-              <td>${ poduct_name }</td>
-              <td class="text-right">${ current_price }</td>
-              <td class="text-right">${ target_price }</td>
-            </tr>`
-          );
-        })
-        console.log('newData', newData);
-      });
     }
   });
 
 });
 
+// Watch changes in chrome.storage
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (var key in changes) {
     var storageChange = changes[key];
@@ -145,3 +130,94 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
                 storageChange.newValue);
   }
 });
+
+// Append table everytime extension started
+appendTable();
+function appendTable() {
+  $('#MainTableBody').empty()
+  chrome.storage.sync.get(['newData', 'data'], function(result) {
+    const { data, newData } = result;
+    console.log('data', data)
+    data.map(item => {
+      let { name, currentPrice, initialPrice } = item
+      name = "default"
+      $('#MainTableBody').append(
+        `<tr>
+          <td>${ name }</td>
+          <td class="text-right">${ initialPrice }</td>
+          <td class="text-right">${ currentPrice }</td>
+        </tr>`
+      );
+    })
+    console.log('newData', newData);
+  });  
+};
+
+$("#ClearButton").click(function() {
+  chrome.storage.sync.clear(function(response) {
+    let { lastError } = chrome.runtime;
+    if (lastError) {
+        console.error(error);
+    } else console.log(response)
+  });
+})
+
+$("#SetButton").click(function() {
+  let data = [
+    {
+      "_id": "5f1aed5c361a46576fd582a3",
+      "url": "https://www.tokopedia.com/trugoods07/foldable-cup-premium-tru-goods-gelas-kopi-lipat-475-ml-green-hijau",
+      "imageUrl": "https://ecs7.tokopedia.net/img/cache/700/attachment/2020/7/24/32520341/32520341_b0963c22-502a-44af-ae68-735048c8d2d9.jpg.webp",
+      "storeName": "Tru_Goods",
+      "initialPrice": 86250,
+      "currentPrice": 86500,
+      "history": [
+        {
+          "time": "2020-07-24T14:17:00.158Z",
+          "price": 86250,
+          "stock": "Tersedia"
+        }
+      ],
+      "targetPrice": null,
+      "email": null
+    },
+    {
+      "_id": "5f1aee0a361a46576fd582a6",
+      "url": "https://www.tokopedia.com/jack-zhop/travel-bag-tas-kosmetik-3-lapis-organizer-tas-multi-fungsi-omg-japan",
+      "imageUrl": "https://ecs7.tokopedia.net/img/cache/700/attachment/2020/7/24/32520341/32520341_c0cfe360-b3b6-4aad-af93-0c86d12c11d7.jpg.webp",
+      "storeName": "Jack-Zhop",
+      "initialPrice": 26000,
+      "currentPrice": 24000,
+      "history": [
+        {
+          "time": "2020-07-24T14:19:54.121Z",
+          "price": 24000,
+          "stock": "Tersedia"
+        }
+      ],
+      "targetPrice": null,
+      "email": null
+    },
+    {
+      "_id": "5f1b0fb2c7979f58691b6431",
+      "url": "https://www.tokopedia.com/toleda/toleda-smartband-m4-smartbracelet-anti-air-support-android-dan-iphone-hitam",
+      "imageUrl": "https://ecs7.tokopedia.net/img/cache/700/product-1/2020/6/5/47811335/47811335_f775842f-3d64-4ccb-a1dc-c91a86286f42_700_700.webp",
+      "storeName": "Toleda Indonesia",
+      "initialPrice": 89000,
+      "currentPrice": 81000,
+      "history": [
+        {
+          "time": "2020-07-24T16:43:30.599Z",
+          "price": 89000,
+          "stock": ""
+        }
+      ],
+      "targetPrice": null,
+      "email": null
+    }
+  ]
+  
+  chrome.storage.sync.set({ data, newData: 'newData' }, function() {
+    appendTable();
+  });
+})
