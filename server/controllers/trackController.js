@@ -35,9 +35,9 @@ class TrackController {
                         url,
                         imageUrl,
                         storeName,
-                        initialPrice: req.body.price,
-                        currentPrice: req.body.price,
-                        history: [{ time: new Date(), price: req.body.price, stock }],
+                        initialPrice: price,
+                        currentPrice: price,
+                        history: [{ time: new Date(), price, stock }],
                         targetPrice: null,
                         email: null,
                         createdAt: new Date()
@@ -91,56 +91,36 @@ class TrackController {
     }
 
     static updateItem(req, res, next) {
-        // if (req.body.email === ) {
-
-        // } else {
-
-        // }
 
         const { id } = req.params;
 
-        Item.findById(id)
+        const { email, targetPrice } = req.body
+        let editItem
+
+        if (!email && targetPrice) {
+            editItem = {
+                targetPrice
+            }
+        } else if (!targetPrice && email) {
+            editItem = { email }
+        } else {
+            editItem = {
+                email, targetPrice
+            }
+        }
+
+        Item.updateById(id, editItem)
             .then((data) => {
-                let dataHistory = data.history;
-                let history = {
-                    time: req.body.time,
-                    price: req.body.current_price,
-                    stock: req.body.stock,
-                };
-                let pushHistory = [...dataHistory, history];
-
-                // const editItem = {
-                //     url: String(req.body.url),
-                //     image_url: String(req.body.image_url),
-                //     store_name: String(req.body.store_name),
-                //     initial_price: Number(req.body.initial_price),
-                //     current_price: Number(req.body.current_price),
-                //     history: pushHistory,
-                //     targetPrice: req.body.targetPrice,
-                //     email: req.body.email
-                // }
-
-                const editItem = {
-                    current_price: req.body.current_price,
-                    history: pushHistory,
-                    targetPrice: req.body.targetPrice,
-                    email: req.body.email,
-                };
-
-                Item.updateById(id, editItem)
-                    .then((data) => {
-                        res
-                            .status(200)
-                            .json({ message: "Item history has been successfully updated!" });
-                    })
-                    .catch((err) => {
-                        res.status(500).json(err);
-                    });
+                res
+                    .status(200)
+                    .json({ message: "Item history has been successfully updated!" });
             })
             .catch((err) => {
-                console.log(err);
+                res.status(500).json(err);
             });
+
     }
+
 
     static removeItem(req, res, next) {
         const { id } = req.params;

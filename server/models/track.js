@@ -21,8 +21,8 @@ module.exports = class ItemModel {
     return Item.find().toArray()
   }
 
-  // static updateHistory() {
-
+  // static updateHistory(url) {
+  //   return Item.updateMany({ url }, { $set: data })
   // }
 
   static create(newItem) {
