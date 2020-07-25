@@ -1,5 +1,5 @@
-// $("#optionSection").hide();
-editOptionsPage();
+$("#optionSection").hide();
+// editOptionsPage();
 
 function editOptionsPage() {
     $("#MainPage").hide()
@@ -9,10 +9,7 @@ function editOptionsPage() {
 };
 
 $("#ButtonSetting").click(function () {
-    $("#optionSection").show()
-    $("#MainPage").hide()
-    $("#emailNotification").hide()
-    $("#priceTargetOption").hide()
+    editOptionsPage()
 })
 
 $("#emailNotif").click(function () {
@@ -81,7 +78,7 @@ function turnOffNotification(object) {
 };
 
 $("#applySetting").click(function () {
-    let currentItemId = "5f1c582628d1cd0532379bc8"
+    let currentItemId = "5f1c7ac306968d4315dd400c"
     let data = {
         targetPrice: Number($("#targetPriceInput").val()),
         email: String($("#emailInput").val()),
