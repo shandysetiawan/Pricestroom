@@ -2,14 +2,12 @@
 function searcDOM() {
   console.log('Tab script:', document.body);
   let currentUrl, imageUrl, storeName, price, stock, name;
-  let imageElement, storeElement, priceElement, stockElement, nameElement
 
   // We can play with DOM or validate URL here
   currentUrl = document.URL;
 
   if (currentUrl.search("tokopedia.com") > 0 || currentUrl.search("bukalapak.com") > 0) {
     if (currentUrl.indexOf("?") > 0) currentUrl = currentUrl.substring(0, currentUrl.indexOf("?"))
-    console.log('currentUrl', currentUrl)
 
     // DOM cannot be passed to extension directly
     let imgDOMs = document.getElementsByTagName("img")
@@ -17,6 +15,8 @@ function searcDOM() {
     /* -----TOKOPEDIA----- */
     if (currentUrl.search("tokopedia.com") > 0) {
       imageUrl = String(imgDOMs[1].src)
+      
+      let imageElement, storeNameElement, priceElement, stockElement, nameElement;
       imageElement = "[data-testid='PDPImageMain']";
       priceElement = "[data-testid='lblPDPDetailProductPrice']"; // lblPDPFooterTotalHargaProduk
       nameElement = "[data-testid='lblPDPDetailProductName']";
@@ -37,10 +37,11 @@ function searcDOM() {
     /* -----BUKALAPAK----- */
     } else if (currentUrl.search("bukalapak.com") > 0) {
       imageUrl = String(imgDOMs[4].src);
-      scriptElement = 'script[type="application/ld+json"]';
-      // let siteDataStr = $(`${scriptElement}`)[1].children[0].data;
+      let scriptElement = 'script[type="application/ld+json"]';
+      // let scriptString = $(`${scriptElement}`)[1].children[0].data;
       let scripts = document.querySelectorAll(scriptElement)
       let scriptObject = JSON.parse(scripts[2].innerText)
+      if (currentUrl.search("m.bukalapak") > 0) scriptObject = JSON.parse(scripts[1].innerText)
       let { image, url, offers } = scriptObject
       let { lowPrice, seller, offerCount } = offers
       imageUrl = image
@@ -51,6 +52,7 @@ function searcDOM() {
       stock = offerCount
     }
 
+    console.log('currentUrl', currentUrl)
     console.log('imageUrl', imageUrl)    
     console.log('name', name)
     console.log('price', price)
@@ -74,7 +76,9 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
     $('#notFound').empty();
     if (!response[0]) {
       $('#TrackProduct').attr("disabled", true);
-      $('#notFound').append("Sorry, currently our service is not available for this site.");
+      $('#notFound').append(
+        "Sorry, currently our service is not available for this page. <br> Try going to specific product site on tokopedia.com or bukalapak.com"
+      );
     } else {
       $('#TrackProduct').attr("disabled", false);
       $('#previewImage').attr("src", response[0].imageUrl);
@@ -82,10 +86,18 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
 });
 
 $("#TrackProduct").click(function() {
+  // chrome.storage.sync.set({ data }, function() {
+  //   console.log('Data is set to ' + data);
+  // });
+  // chrome.storage.sync.set({ newData: 'newData' }, function() {
+  //   console.log('Data is set to ' + data);
+  // });
+
   chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
   (response) => {
     console.log('Popup script:');
     $('#previewImage').attr("src", "");
+    $('#MainTableBody').empty();
     $('#notFound').empty();
     
     if (!response[0]) {
@@ -101,7 +113,35 @@ $("#TrackProduct").click(function() {
         .done(data => console.log('POST done', data))
         .fail(err => console.log('POST err', err))
       $('#previewImage').attr("src", data.imageUrl);
+
+      chrome.storage.sync.get(['newData', 'data'], function(result) {
+        const { data, newData } = result;
+        console.log('data', data)
+        data.map(item => {
+          let { poduct_name, current_price, target_price } = item
+          $('#MainTableBody').append(
+            `<tr>
+              <td>${ poduct_name }</td>
+              <td class="text-right">${ current_price }</td>
+              <td class="text-right">${ target_price }</td>
+            </tr>`
+          );
+        })
+        console.log('newData', newData);
+      });
     }
   });
 
+});
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  for (var key in changes) {
+    var storageChange = changes[key];
+    console.log('Storage key "%s" in namespace "%s" changed. ' +
+                'Old value was "%s", new value is "%s".',
+                key,
+                namespace,
+                storageChange.oldValue,
+                storageChange.newValue);
+  }
 });

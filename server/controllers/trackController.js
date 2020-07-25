@@ -14,7 +14,6 @@ class TrackController {
             });
     }
 
-
     static addItem(req, res, next) {
 
         function isUrl(s) {
