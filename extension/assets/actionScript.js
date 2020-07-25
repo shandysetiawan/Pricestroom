@@ -37,10 +37,11 @@ function searcDOM() {
     /* -----BUKALAPAK----- */
     } else if (currentUrl.search("bukalapak.com") > 0) {
       imageUrl = String(imgDOMs[4].src);
-      scriptElement = 'script[type="application/ld+json"]';
-      // let siteDataStr = $(`${scriptElement}`)[1].children[0].data;
+      let scriptElement = 'script[type="application/ld+json"]';
+      // let scriptString = $(`${scriptElement}`)[1].children[0].data;
       let scripts = document.querySelectorAll(scriptElement)
       let scriptObject = JSON.parse(scripts[2].innerText)
+      if (currentUrl.search("m.bukalapak") > 0) scriptObject = JSON.parse(scripts[1].innerText)
       let { image, url, offers } = scriptObject
       let { lowPrice, seller, offerCount } = offers
       imageUrl = image
@@ -75,7 +76,9 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
     $('#notFound').empty();
     if (!response[0]) {
       $('#TrackProduct').attr("disabled", true);
-      $('#notFound').append("Sorry, currently our service is not available for this site.");
+      $('#notFound').append(
+        "Sorry, currently our service is not available for this page. <br> Try going to specific product site on tokopedia.com or bukalapak.com"
+      );
     } else {
       $('#TrackProduct').attr("disabled", false);
       $('#previewImage').attr("src", response[0].imageUrl);
