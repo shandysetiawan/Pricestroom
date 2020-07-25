@@ -41,6 +41,9 @@ class TrackController {
             targetPrice: null,
             email: null,
             createdAt: new Date(),
+            emailNotif: false,
+            pushNotif: true,
+            priceChangeNotif: true
           };
         } else {
           newItem = {
@@ -60,6 +63,9 @@ class TrackController {
             targetPrice: null,
             email: null,
             createdAt: new Date(),
+            emailNotif: false,
+            pushNotif: true,
+            priceChangeNotif: true
           };
         }
         // console.log(newItem)
