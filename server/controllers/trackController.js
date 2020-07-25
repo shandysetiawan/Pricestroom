@@ -20,7 +20,7 @@ class TrackController {
       return regexp.test(s);
     }
     const { url, imageUrl, storeName, price, stock } = req.body;
-    console.log(req.body);
+    console.log("line 23", req.body);
 
     if (isUrl(req.body.url)) {
       if (
@@ -67,7 +67,9 @@ class TrackController {
           .then((data) => {
             const message = { message: "Item has been successfully tracked!" };
             // console.log('masuk create')
-            priceWatcher(data.ops[0].url);
+            const { url, _id } = data.ops[0];
+            priceWatcher(url, _id);
+            console.log("success watch")
             res.status(201).json({ data: data.ops[0], message });
           })
           .catch((err) => {
