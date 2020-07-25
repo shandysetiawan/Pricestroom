@@ -83,11 +83,11 @@ function turnOffNotification(object) {
 $("#applySetting").click(function () {
     let currentItemId = "5f1c582628d1cd0532379bc8"
     let data = {
-        targetPrice: $("#targetPriceInput").val(),
-        email: $("#emailInput").val(),
-        emailNotif: $('#emailNotif').prop("checked"),
-        pushNotif: $('#pushNotif').prop("checked"),
-        priceChangeNotif: $('#priceChangeNotif').prop("checked")
+        targetPrice: Number($("#targetPriceInput").val()),
+        email: String($("#emailInput").val()),
+        emailNotif: Boolean($('#emailNotif').prop("checked")),
+        pushNotif: Boolean($('#pushNotif').prop("checked")),
+        priceChangeNotif: Boolean($('#priceChangeNotif').prop("checked"))
     }
     if (!data.emailNotif) data.email = null
     if (data.priceChangeNotif) data.targetPrice = null

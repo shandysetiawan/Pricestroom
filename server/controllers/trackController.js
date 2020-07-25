@@ -106,16 +106,17 @@ class TrackController {
   }
 
   static updateItem(req, res, next) {
+    // email validator to check email format and change emailNotif and/or pushNotif
 
     const { id } = req.params;
 
     const { email, pushNotif, priceChangeNotif, targetPrice } = req.body
 
     const editItem = {
-      pushNotif,
+      targetPrice: Number(targetPrice),
       email,
-      priceChangeNotif,
-      targetPrice
+      pushNotif: Boolean(pushNotif),
+      priceChangeNotif: Boolean(priceChangeNotif)
     };
 
     Item.updateById(id, editItem)
