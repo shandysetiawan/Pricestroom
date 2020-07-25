@@ -80,22 +80,21 @@ const appendNotProductPage = `
 // argument here is a string but function.toString() returns function's code
 chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
   (response) => {
-    console.log('Popup script:');
+  console.log('Popup script:');
 
-    $('#previewImage').attr("src", "");
-    $('#notFound').empty();
-    if (!response || !response[0]) {
-      $('#TrackProduct').attr("disabled", true);
-      $('#notFound').append(
-        appendNotProductPage
-      );
-    } else {
-      $('#TrackProduct').attr("disabled", false);
-      $('#previewImage').attr("src", response[0].imageUrl);
-    }
-  });
+  $('#previewImage').attr("src", "");
+  $('#notFound').empty();
+  if (!response || !response[0]) {
+    $('#TrackProduct').attr("disabled", true);
+    $('#notFound').append(
+      appendNotProductPage
+    );
+  } else {
+    $('#TrackProduct').attr("disabled", false);
+    $('#previewImage').attr("src", response[0].imageUrl);
+  }
+});
 
-$("#TrackProduct").click(function () {
   // chrome.storage.sync.set({ data }, function() {
   //   console.log('Data is set to ' + data);
   // });
@@ -156,6 +155,6 @@ $("#TrackProduct").click(function() {
           console.log('newData', newData);
         });
       }
-    });
-
+    }
+  });
 });

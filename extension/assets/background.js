@@ -28,7 +28,7 @@ chrome.tabs.onActivated.addListener(function({ tabId }) {
       console.log('onActivated null');
       return undefined;
     } else if(url.search("www.tokopedia.com") > 0 || url.search("bukalapak.com") > 0) {
-      chrome.browserAction.setPopup({ popup: '../index.html', tabId });
+      chrome.browserAction.setPopup({ popup: '../option.html', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
       console.log('onActivated matched');
     } else {
@@ -47,7 +47,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
     console.log('onUpdate null');
     return null;
   } else if (url.search("www.tokopedia.com") > 0 || url.search("bukalapak.com") > 0) {
-    chrome.browserAction.setPopup({ popup: '../index.html', tabId });
+    chrome.browserAction.setPopup({ popup: '../option.html', tabId });
     chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
     console.log('onUpdate true');
   } else {

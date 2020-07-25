@@ -22,12 +22,27 @@
             font-weight: bold;
         }
 
+        #applySetting {
+            margin-left: 3.5rem;
+        }
+
         #ProductPreview {
             height: 13rem;
         }
 
         #previewImage {
             height: 12rem;
+        }
+
+        #watcherSection {
+            height: 12rem;
+        }
+
+        #notifSection {
+            height: 16rem;
+        }
+        #emailInputDiv {
+            height: 2rem;
         }
     </style>
     <title>hello</title>
@@ -65,38 +80,43 @@
 
     <section class="container" id="optionSection">
         <div>
-            <p>Setting</p>
+            <h3 class="lead text-center">Setting</h3>
+            <form>
             <div class="container">
-                <p>Watcher Setting</p>
-                <div class="watchersetting">
-                    <label>Price Change</label>
-                    <input type="radio" id="priceChange" name="watcher">
-                    <label>Target Price</label>
-                    <input type="radio" id="targetPrice" name="watcher">
-                    <section class="container" id="priceTargetOption">
-                        <div>
-                            <label>Input target Price</label>
-                            <input type="number" min="1" id="targetPriceInput"><br><br>
-                        </div>
-                    </section>
-
+                <div id="watcherSection">
+                    <div class="small text-center">Watcher Setting</div>
+                    <div class="watcherSetting">
+                        <input type="radio" id="priceChangeNotif" name="watcher">
+                        <label>Price Change</label>
+                            <br>
+                        <input type="radio" id="targetPrice" name="watcher">
+                        <label>Target Price</label>
+                        <section class="container" id="priceTargetOption">
+                            <div>
+                                <input type="number" min="1" id="targetPriceInput" required><br>
+                            </div>
+                        </section>
+                    </div>
                 </div>
-                <p>Notification Setting</p>
-                <div class="notifsettting">
-                    <input type="radio" id="turnoffNotif" name="notif">
-                    <label class="">Turn Off All Notification</label><br>
-                    <input type="radio" id="pushNotif" name="notif">
-                    <label class="">Push Notification</label><br>
-                    <input type="radio" id="emailNotif" name="notif">
-                    <label class="">Email Notification</label>
-                    <section class="container" id="emailNotification">
-                        <div>
-                            <label>Input your Email</label>
-                            <input type="text" id="targetPrice" value="none">
-                        </div>
-                    </section>
 
+                <div id="notifSection">
+                    <div class="small text-center">Notification Setting</div>
+                    <div class="notifSetting">
+                        <input type="radio" id="pushNotif" name="notif">
+                        <label class="">Push Notification</label><br>
+                        <input type="radio" id="emailNotif" name="notif">
+                        <label class="">Email Notification</label>
+                        <div id="emailInputDiv">
+                            <section class="container" id="emailNotification">
+                                <input type="text" id="emailInput" placeholder="notification@mail.com" required>
+                            </section>
+                        </div><br>
+
+                        <input type="radio" id="turnOffNotif" name="notif">
+                        <label class="">Turn Off All Notification</label><br>
+                    </div>
                 </div>
+
                 <div>
                     <button type="button" id="applySetting" class="btn btn-primary">Apply Setting</button>
                 </div>
