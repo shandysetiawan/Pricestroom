@@ -19,7 +19,7 @@ class TrackController {
       var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
       return regexp.test(s);
     }
-    const { url, imageUrl, storeName, price, stock } = req.body;
+    const { url, imageUrl, storeName, price, stock, name } = req.body;
     console.log("line 23", req.body);
 
     if (isUrl(req.body.url)) {
@@ -32,18 +32,23 @@ class TrackController {
         if (typeof price === "number") {
           newItem = {
             url,
+            name,
             imageUrl,
             storeName,
-            initialPrice: req.body.price,
-            currentPrice: req.body.price,
+            initialPrice: price,
+            currentPrice: price,
             history: [{ time: new Date(), price: req.body.price, stock }],
             targetPrice: null,
             email: null,
             createdAt: new Date(),
+            emailNotif: false,
+            pushNotif: true,
+            priceChangeNotif: true
           };
         } else {
           newItem = {
             url,
+            name,
             imageUrl,
             storeName,
             initialPrice: Number(price.match(/\d+/g).join("")),
@@ -58,6 +63,9 @@ class TrackController {
             targetPrice: null,
             email: null,
             createdAt: new Date(),
+            emailNotif: false,
+            pushNotif: true,
+            priceChangeNotif: true
           };
         }
         // console.log(newItem)
