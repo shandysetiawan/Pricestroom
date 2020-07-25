@@ -139,7 +139,7 @@ describe('Track', () => {
     it('responds 200 in put and receive an object', function (done) {
       request(app)
         .put(`/tracks/${currentItemId}`)
-        .send({ email: "lala@mail.com" })
+        .send({ email: "lala@mail.com", targetPrice: 454000 })
         .then(response => {
           const { body, status } = response
           expect(status).toBe(200)
@@ -147,14 +147,26 @@ describe('Track', () => {
           done()
         })
     });
-    it('responds 200 in put and receive an object', function (done) {
+    it('responds 400 target price empty', function (done) {
       request(app)
         .put(`/tracks/${currentItemId}`)
-        .send({ targetPrice: 454000 })
+        .send({ email: "lala@mail.com" })
         .then(response => {
           const { body, status } = response
-          expect(status).toBe(200)
-          expect(body).toHaveProperty('message', 'Item email or target price has been successfully updated!')
+          expect(status).toBe(400)
+          expect(body).toHaveProperty('message', "Email and target price must not empty!")
+          done()
+        })
+    });
+    it('responds 400 id not found', function (done) {
+      let idNotFound = "5f1ab124d6e5ce33c52ea563"
+      request(app)
+        .put(`/tracks/${idNotFound}`)
+        .send({ targetPrice: 454000, email: "lala@mail.com" })
+        .then(response => {
+          const { body, status } = response
+          expect(status).toBe(400)
+          expect(body).toHaveProperty('message', "Id not found")
           done()
         })
     });
@@ -175,14 +187,15 @@ describe('Track', () => {
           done()
         })
     });
-    it('responds 500,failed to acquired params', function (done) {
+    it('responds 400,id not found', function (done) {
+      let noId = "dmancan42423"
       request(app)
-        .delete(`/tracks/:${currentItemId}`)
+        .delete(`/tracks/${noId}`)
         .then(response => {
           const { body, status, error } = response
           console.log(body)
-          expect(status).toBe(500)
-          expect(body).toHaveProperty('message', "Internal Server Error")
+          expect(status).toBe(400)
+          expect(body).toHaveProperty('message', "Id not found")
 
           done()
         })
