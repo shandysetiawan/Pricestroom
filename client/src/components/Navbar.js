@@ -1,11 +1,14 @@
 import React from "react"
 import { Link } from "react-router-dom"
+import logo from "../assets/logo.png"
 
 export default () => {
     return (
         <div>
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-                <Link className="navbar-brand ml-3" to="/">LOGO</Link>
+                <Link className="navbar-brand" to="/">
+                    <img src={logo} alt="LOGO" style={{width:"150px"}}></img>
+                </Link>
                 <button
                     className="navbar-toggler"
                     type="button" 

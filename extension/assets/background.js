@@ -1,4 +1,4 @@
-let baseUrl = 'https://jsonplaceholder.typicode.com/posts/1';
+let baseUrl = 'http://localhost:3001/tracks';
 
 chrome.alarms.create('getCurrentPrices', {
     periodInMinutes: 5
@@ -6,11 +6,11 @@ chrome.alarms.create('getCurrentPrices', {
 
 chrome.alarms.onAlarm.addListener((alarmInfo) => {
   console.log(alarmInfo)
-  // $.ajax({
-  //   method: 'get',
-  //   url: baseUrl
-  // }).done(data => console.log('alarm', alarmInfo, data))
-  //   .fail(err => console.log('err', err))
+  $.ajax({
+    method: 'get',
+    url: baseUrl
+  }).done(data => console.log('alarm', alarmInfo, data))
+    .fail(err => console.log('err', alarmInfo, err))
 });
 
 // chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {

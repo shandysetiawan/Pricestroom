@@ -1,3 +1,3 @@
-This wwebsite was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This website was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-`npm start`
+Run script: `npm start`

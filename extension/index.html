@@ -28,49 +28,30 @@
           id="TrackProduct"
           class="btn btn-success"
         >Track Product</button>
+        <button id="SetButton" class="btn btn-primary">Set Data</button>
+        <button id="ClearButton" class="btn btn-warning">Clear Data</button>
       </div>
+      <hr>
+
+      <h5 class="text-center">Currently Tracked Products</h5>
       
-      <table id="table" class="table">
+      <table id="MainTable" class="table table-hover">
         <thead class="small">
           <tr>
-            <th>Product Name</th>
-            <th class="text-right">Target</th>
+            <th>Product</th>
+            <th class="text-right">Initial</th>
             <th class="text-right">Current</th>
           </tr>
         </thead>
-        <tbody id="MainTable">
-          <tr>
-            <td>iPhone X</td>
-            <td class="text-right">1000</td>
-            <td class="text-right">1200</td>
-          </tr>
-          <tr>
-            <td>iMac Pro</td>
-            <td class="text-right">2500</td>
-            <td class="text-right">2900</td>
-          </tr>
-          <tr>
-            <td>iPhone X</td>
-            <td class="text-right">1000</td>
-            <td class="text-right">1200</td>
-          </tr>
-          <tr>
-            <td>iMac Pro</td>
-            <td class="text-right">2500</td>
-            <td class="text-right">2900</td>
-          </tr>
-          <tr>
-            <td>iMac Pro</td>
-            <td class="text-right">2500</td>
-            <td class="text-right">2900</td>
-          </tr>
+        <tbody id="MainTableBody">
+          <!-- append data here -->
         </tbody>
       </table>
     </section>
 
     <!-- <script src="assets/jquery-3.5.1.min.js"></script> -->
     <script src="./assets/jquery-3.5.1.dev.js"></script>
-    <script type="text/javascript" src="./assets/zData.json"></script>
+    <!-- <script type="text/javascript" src="./assets/zData.json"></script> -->
     <script src="./assets/actionScript.js"></script>
     <script src="./assets/trackProduct.js"></script>
     <script src="./assets/background.js"></script>

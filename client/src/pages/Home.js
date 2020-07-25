@@ -3,13 +3,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
+import axios from "axios"
 import dateformat from "dateformat"
 import ExampleData from "../ExampleData"
 
 export default () => {
 
-    const data = ExampleData
-    const [ newData ,setNewData ] = useState({})
+    let [data, setData ] = useState(ExampleData)
+    const [ newData ,setNewData ] = useState(data)
 
     const backgrounds = [
         "https://i.pinimg.com/564x/2f/33/71/2f337177bd046a050deabeb6defbe4b0.jpg",
@@ -42,7 +43,15 @@ export default () => {
     useEffect(() => {
         const interval = setInterval(() => {
           console.log('This will run every 20 second!');
-          //Do Fetching here
+            // axios({
+            //     method: "get",
+            //     url: "http://localhost:3001/data"
+            // })
+            //     .then(({data : data2}) => {
+            //         setData(data2)
+            //         console.log(data2)
+            //     })
+            //     .catch(console.log)
         }, 20000);
         return () => clearInterval(interval);
     }, []);
