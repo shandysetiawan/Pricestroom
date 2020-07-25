@@ -143,18 +143,7 @@ describe('Track', () => {
         .then(response => {
           const { body, status } = response
           expect(status).toBe(200)
-          expect(body).toHaveProperty('message', 'Item email or target price has been successfully updated!')
-          done()
-        })
-    });
-    it('responds 400 target price empty', function (done) {
-      request(app)
-        .put(`/tracks/${currentItemId}`)
-        .send({ email: "lala@mail.com" })
-        .then(response => {
-          const { body, status } = response
-          expect(status).toBe(400)
-          expect(body).toHaveProperty('message', "Email and target price must not empty!")
+          expect(body).toHaveProperty('message', 'Item has been successfully updated!')
           done()
         })
     });
