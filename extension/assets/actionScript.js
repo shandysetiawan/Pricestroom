@@ -13,7 +13,7 @@ function searcDOM() {
     let imgDOMs = document.getElementsByTagName("img")
 
     /* -----TOKOPEDIA----- */
-    if (currentUrl.search("tokopedia.com") > 0) {
+    if (currentUrl.search("www.tokopedia.com") > 0) {
       imageUrl = String(imgDOMs[1].src)
       
       let imageElement, storeNameElement, priceElement, stockElement, nameElement;
@@ -50,6 +50,8 @@ function searcDOM() {
       price = lowPrice
       storeName = seller.name
       stock = offerCount
+    } else {
+      return false
     }
 
     console.log('currentUrl', currentUrl)
@@ -77,7 +79,8 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
     if (!response[0]) {
       $('#TrackProduct').attr("disabled", true);
       $('#notFound').append(
-        "Sorry, currently our service is not available for this page. <br> Try going to specific product site on tokopedia.com or bukalapak.com"
+        `<p class='small'>Sorry, currently our service is not available for this page.</p>
+        <p>Try visiting specific product site on tokopedia.com or bukalapak.com</p>`
       );
     } else {
       $('#TrackProduct').attr("disabled", false);
@@ -114,26 +117,12 @@ $("#TrackProduct").click(function() {
         .fail(err => console.log('POST err', err))
       $('#previewImage').attr("src", data.imageUrl);
 
-      chrome.storage.sync.get(['newData', 'data'], function(result) {
-        const { data, newData } = result;
-        console.log('data', data)
-        data.map(item => {
-          let { poduct_name, current_price, target_price } = item
-          $('#MainTableBody').append(
-            `<tr>
-              <td>${ poduct_name }</td>
-              <td class="text-right">${ current_price }</td>
-              <td class="text-right">${ target_price }</td>
-            </tr>`
-          );
-        })
-        console.log('newData', newData);
-      });
     }
   });
 
 });
 
+// Watch changes in chrome.storage
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (var key in changes) {
     var storageChange = changes[key];
@@ -144,4 +133,21 @@ chrome.storage.onChanged.addListener(function(changes, namespace) {
                 storageChange.oldValue,
                 storageChange.newValue);
   }
+});
+
+// Append table everytime extension started
+chrome.storage.sync.get(['newData', 'data'], function(result) {
+  const { data, newData } = result;
+  console.log('data', data)
+  data.map(item => {
+    let { poduct_name, current_price, target_price } = item
+    $('#MainTableBody').append(
+      `<tr>
+        <td>${ poduct_name }</td>
+        <td class="text-right">${ current_price }</td>
+        <td class="text-right">${ target_price }</td>
+      </tr>`
+    );
+  })
+  console.log('newData', newData);
 });
