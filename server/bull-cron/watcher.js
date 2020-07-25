@@ -1,5 +1,6 @@
 const Bull = require("bull");
 const { tokopediaScraper, bukalapakScraper } = require("../scrapers");
+const Item = require("../models/track");
 
 function priceWatcher(url) {
   const watcher = new Bull("watcher");
@@ -11,14 +12,45 @@ function priceWatcher(url) {
   ];
   watcher.add(jobs, {
     repeat: {
-      cron: "*/10 * * * * *",
+      cron: "*/20 * * * * *",
       // every: 3000
     },
   });
   if (url.search("tokopedia") !== -1) {
     watcher.process((job, done) => {
       tokopediaScraper(url)
-        .then((data) => console.log(data))
+        .then((result) => {
+          console.log(result);
+          if (result) {
+            Item.findByUrl(url).then((data) => {
+              if (data) {
+                console.log(data);
+                let dataHistory = data.history;
+                let history = {
+                  time: result.date,
+                  price: result.price,
+                  stock: result.stock,
+                };
+                let pushHistory = [...dataHistory, history];
+                const editItem = {
+                  current_price: result.price,
+                  history: pushHistory,
+                };
+                Item.updateMany(data.url, editItem)
+                  .then((data1) => {
+                    console.log("Items history has been successfully updated!");
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              } else {
+                throw err;
+              }
+            });
+          } else {
+            throw err;
+          }
+        })
         .catch(({ response }) =>
           console.log(`Error(${response.status}): ${response.statusText}`)
         );
@@ -27,7 +59,38 @@ function priceWatcher(url) {
   } else if (url.search("bukalapak") !== -1) {
     watcher.process((job, done) => {
       bukalapakScraper(url)
-        .then((data) => console.log(data))
+        .then((result) => {
+          console.log(result);
+          if (result) {
+            Item.findByUrl(url).then((data) => {
+              if (data) {
+                console.log(data);
+                let dataHistory = data.history;
+                let history = {
+                  time: result.date,
+                  price: result.price,
+                  stock: result.stock,
+                };
+                let pushHistory = [...dataHistory, history];
+                const editItem = {
+                  current_price: result.price,
+                  history: pushHistory,
+                };
+                Item.updateMany(data.url, editItem)
+                  .then((data1) => {
+                    console.log("Items history has been successfully updated!");
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              } else {
+                throw err;
+              }
+            });
+          } else {
+            throw err;
+          }
+        })
         .catch(({ response }) =>
           console.log(`Error(${response.status}): ${response.statusText}`)
         );
@@ -38,6 +101,14 @@ function priceWatcher(url) {
 module.exports = {
   priceWatcher,
 };
+
+// {
+//   name: 'Apple Watch Series 3 GPS 42mm Silver Aluminium with White Sport Band - FULL PRICE',
+//   price: 3699000,
+//   store: 'applewatchstuff',
+//   stock: 'Stok tersisa <10',
+//   date: 2020-07-24T14:41:52.245Z
+// }
 
 // manggil database, compare data dari database sama yg baru didapat.
 // dicompare kalau datanya sama, gak ngapa2in.

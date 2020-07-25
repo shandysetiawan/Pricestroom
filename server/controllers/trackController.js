@@ -1,19 +1,17 @@
 const Item = require("../models/track");
-const { priceWatcher } = require('../bull-cron/watcher')
+const { priceWatcher } = require("../bull-cron");
 
 class TrackController {
-
     static fetchItems(req, res, next) {
-
         Item.find()
 
             // Item.find(dataItem)
             .then((data) => {
-                res.status(200).json(data)
+                res.status(200).json(data);
             })
             .catch((err) => {
-                res.status(500).json(err)
-            })
+                res.status(500).json({ message: "Internal Server Error", error: err });
+            });
     }
 
 
@@ -23,8 +21,8 @@ class TrackController {
             var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
             return regexp.test(s);
         }
-        const { url, imageUrl, storeName, price, stock } = req.body
-        console.log(req.body)
+        const { url, imageUrl, storeName, price, stock, name } = req.body
+        // console.log(req.body)
 
         if (isUrl(req.body.url)) {
             if (req.body.url.search("tokopedia") !== -1 || req.body.url.search("bukalapak") !== -1) {
@@ -66,14 +64,14 @@ class TrackController {
                         res.status(201).json({ data: data.ops[0], message })
                     })
                     .catch((err) => {
-                        res.status(500).json(err)
+                        res.status(500).json({ message: "Internal Server Error", error: err });
                     })
 
             } else {
                 res.status(400).json({ message: "This website is not supported with our app" })
             }
         } else {
-            res.status(400).json({ message: "Invalid url format!" })
+            res.status(400).json({ message: "Invalid url format!" });
         }
     }
 
@@ -86,7 +84,7 @@ class TrackController {
                 res.status(200).json(data);
             })
             .catch((err) => {
-                res.status(500).json(err);
+                res.status(500).json({ message: "Internal Server Error", error: err });
             });
     }
 
@@ -97,12 +95,8 @@ class TrackController {
         const { email, targetPrice } = req.body
         let editItem
 
-        if (!email && targetPrice) {
-            editItem = {
-                targetPrice
-            }
-        } else if (!targetPrice && email) {
-            editItem = { email }
+        if (!email || !targetPrice) {
+            return res.status(400).json({ message: "Email and target price must not empty!" });
         } else {
             editItem = {
                 email, targetPrice
@@ -111,32 +105,53 @@ class TrackController {
 
         Item.updateById(id, editItem)
             .then((data) => {
-                res
-                    .status(200)
-                    .json({ message: "Item history has been successfully updated!" });
+
+                if (data.lastErrorObject.updatedExisting === false) {
+                    return res.status(400).json({ message: "Id not found" });
+                } else {
+                    res
+                        .status(200)
+                        .json({ data, message: "Item email or target price has been successfully updated!" });
+                }
+
             })
             .catch((err) => {
-                res.status(500).json(err);
+                res.status(500).json({ message: "Internal Server Error", error: err });
             });
 
     }
+
+
+    static fetchItem(req, res, next) {
+        const { id } = req.params;
+
+        Item.findById(id)
+            .then((data) => {
+                res.status(200).json(data);
+            })
+            .catch((err) => {
+                res.status(500).json({ message: "Internal Server Error", error: err });
+            });
+    }
+
 
 
     static removeItem(req, res, next) {
         const { id } = req.params;
 
-        if (id === null || undefined) {
-            res.status(400).json({ message: "No input id" });
-        }
-
         Item.deleteById(id)
             .then((data) => {
-                res.status(200).json({ message: "Success to delete item!" });
+                // console.log(data)
+                if (data.deletedCount === 0) {
+                    return res.status(400).json({ data, message: "Id not found" });
+                } else {
+                    return res.status(200).json({ data, message: "Success to delete item!" });
+                }
             })
             .catch((err) => {
-                res.status(500).json({ message: "Internal Server Error" });
+                res.status(500).json({ message: "Internal Server Error", error: err });
             });
     }
 }
 
-module.exports = TrackController
+module.exports = TrackController;
