@@ -86,10 +86,18 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
 });
 
 $("#TrackProduct").click(function() {
+  // chrome.storage.sync.set({ data }, function() {
+  //   console.log('Data is set to ' + data);
+  // });
+  // chrome.storage.sync.set({ newData: 'newData' }, function() {
+  //   console.log('Data is set to ' + data);
+  // });
+
   chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
   (response) => {
     console.log('Popup script:');
     $('#previewImage').attr("src", "");
+    $('#MainTableBody').empty();
     $('#notFound').empty();
     
     if (!response[0]) {
@@ -105,7 +113,35 @@ $("#TrackProduct").click(function() {
         .done(data => console.log('POST done', data))
         .fail(err => console.log('POST err', err))
       $('#previewImage').attr("src", data.imageUrl);
+
+      chrome.storage.sync.get(['newData', 'data'], function(result) {
+        const { data, newData } = result;
+        console.log('data', data)
+        data.map(item => {
+          let { poduct_name, current_price, target_price } = item
+          $('#MainTableBody').append(
+            `<tr>
+              <td>${ poduct_name }</td>
+              <td class="text-right">${ current_price }</td>
+              <td class="text-right">${ target_price }</td>
+            </tr>`
+          );
+        })
+        console.log('newData', newData);
+      });
     }
   });
 
+});
+
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  for (var key in changes) {
+    var storageChange = changes[key];
+    console.log('Storage key "%s" in namespace "%s" changed. ' +
+                'Old value was "%s", new value is "%s".',
+                key,
+                namespace,
+                storageChange.oldValue,
+                storageChange.newValue);
+  }
 });
