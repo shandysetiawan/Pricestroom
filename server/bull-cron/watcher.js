@@ -5,7 +5,7 @@ const watchers = [];
 const { mailNotif, mailWatch } = require("../nodemailer/sendMail");
 
 function priceWatcher(url, id) {
-  console.log("MASUK PRICE WATCHER");
+  console.log("into priceWatcher");
   const watcher = new Bull(`watcher ${id}`);
   // watcher.empty();
   const jobs = [
@@ -47,7 +47,7 @@ function priceWatcher(url, id) {
                     console.log(err);
                   });
                 if (data.email && !data.targetPrice) {
-                  console.log("MASUK EMAIL && NULL TARGET PRICE");
+                  console.log("email && null targetPrice");
                   if (data.currentPrice !== result.price) {
                     const input = {
                       email: data.email,
@@ -55,19 +55,17 @@ function priceWatcher(url, id) {
                       priceBefore: data.currentPrice,
                       priceAfter: result.price,
                     };
-                    console.log("MASUK MAIL WATCH");
                     mailWatch(input);
                   }
                 }
                 if (data.email && data.targetPrice) {
-                  console.log("MASUK EMAIL && TARGET PRICE");
+                  console.log("email && targetPrice");
                   if (result.price == data.targetPrice) {
                     const input = {
                       email: data.email,
                       url: data.url,
                       targetPrice: data.targetPrice,
                     };
-                    console.log("MASUK MAIL NOTIF");
                     mailNotif(input);
                   }
                 }
@@ -118,7 +116,7 @@ function priceWatcher(url, id) {
                     console.log(err);
                   });
                 if (data.email && !data.targetPrice) {
-                  console.log("MASUK EMAIL && NULL TARGET PRICE");
+                  console.log("email && null targetPrice");
                   if (data.currentPrice !== result.price) {
                     const input = {
                       email: data.email,
@@ -126,19 +124,17 @@ function priceWatcher(url, id) {
                       priceBefore: data.currentPrice,
                       priceAfter: result.price,
                     };
-                    console.log("MASUK MAIL WATCH");
                     mailWatch(input);
                   }
                 }
                 if (data.email && data.targetPrice) {
-                  console.log("MASUK EMAIL && TARGET PRICE");
+                  console.log("email && targetPrice");
                   if (result.price == data.targetPrice) {
                     const input = {
                       email: data.email,
                       url: data.url,
                       targetPrice: data.targetPrice,
                     };
-                    console.log("MASUK MAIL NOTIF");
                     mailNotif(input);
                   }
                 }
@@ -206,25 +202,3 @@ module.exports = {
 // skenario 2: -target gada, email ada, cek info terakhir mengenai data terakhir scrapper dengan data terakhir history,
 // kalau ada perubahan, kirim info up and down
 // skenario 3: email gada, ga ngapa2inau ga ada target price dan email, maka kirim notifikasi popup
-
-// Item.findById(id)
-//     .then((data) => {
-
-//         let dataHistory = data.history
-//         let history = { time: ().time, price: ().price, stock: ().stock }
-//         let pushHistory = [...dataHistory, history]
-
-//         const editItem = {
-//             current_price: ()price,
-//             history: pushHistory,
-//         }
-
-//         Item.updateById(id, editItem)
-
-//     })
-//     .then((data) => {
-
-//     })
-//     .catch((err) => {
-
-//     })
