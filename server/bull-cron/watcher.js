@@ -1,7 +1,7 @@
 const Bull = require("bull");
 const { tokopediaScraper, bukalapakScraper } = require("../scrapers");
 const Item = require("../models/track");
-const watchers = [];
+let watchers = [];
 const { mailNotif, mailWatch } = require("../nodemailer/sendMail");
 
 function priceWatcher(url, id) {
