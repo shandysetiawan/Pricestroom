@@ -1,4 +1,4 @@
-let baseUrl = 'http://localhost:3001/tracks';
+let url = 'http://localhost:3001/tracks';
 
 chrome.alarms.create('getCurrentPrices', {
     periodInMinutes: 5
@@ -8,18 +8,18 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
   console.log(alarmInfo)
   $.ajax({
     method: 'get',
-    url: baseUrl
+    url,
   }).done(data => console.log('alarm', alarmInfo, data))
     .fail(err => console.log('err', alarmInfo, err))
 });
 
 // chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
 //   console.log(tabs[0].url);
-//   $('#name').append(tabs[0].url);
 // });
 
+// when new tab is open
 chrome.tabs.onActivated.addListener(function({ tabId }) {
-  chrome.tabs.get(tabId, function(change){
+  chrome.tabs.get(tabId, function(change) {
     const { url } = change
     console.log('onActivated', url)
     if(!url) {
@@ -39,6 +39,7 @@ chrome.tabs.onActivated.addListener(function({ tabId }) {
   });
 });
 
+// when the tab is updated (moving to different page)
 chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
   const { url } = tab
   console.log('onUpdate', url)
