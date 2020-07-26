@@ -1,4 +1,4 @@
-$("#optionSection").hide();
+// $("#optionSection").hide();
 // toOptionsPage();
 
 function toOptionsPage() {
@@ -78,7 +78,7 @@ function turnOffNotifications(object) {
 };
 
 $("#applySetting").click(function () {
-    let currentItemId = "5f1c80902676be4cc7e6a97a"
+    let currentItemId = "5f1d786de4895c5742ed91c5"
     let data = {
         targetPrice: Number($("#targetPriceInput").val()),
         email: String($("#emailInput").val()),

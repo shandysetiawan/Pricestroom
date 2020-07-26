@@ -19,7 +19,7 @@ chrome.alarms.onAlarm.addListener((alarmInfo) => {
 
 // when new tab is open
 chrome.tabs.onActivated.addListener(function({ tabId }) {
-  chrome.tabs.get(tabId, function(change){
+  chrome.tabs.get(tabId, function(change) {
     const { url } = change
     console.log('onActivated', url)
     if(!url) {
@@ -27,7 +27,7 @@ chrome.tabs.onActivated.addListener(function({ tabId }) {
       chrome.browserAction.setIcon({ path: '../icons/icon_32_disabled.png', tabId });
       console.log('onActivated null');
       return undefined;
-    } else if(url.search("tokopedia.com") > 0 || url.search("bukalapak.com") > 0) {
+    } else if(url.search("www.tokopedia.com") > 0 || url.search("bukalapak.com") > 0) {
       chrome.browserAction.setPopup({ popup: '../option.html', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
       console.log('onActivated matched');
@@ -47,7 +47,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
     chrome.browserAction.setPopup({ popup: '', tabId });
     console.log('onUpdate null');
     return null;
-  } else if (url.search("tokopedia.com") > 0 || url.search("bukalapak.com") > 0) {
+  } else if (url.search("www.tokopedia.com") > 0 || url.search("bukalapak.com") > 0) {
     chrome.browserAction.setPopup({ popup: '../option.html', tabId });
     chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
     console.log('onUpdate true');

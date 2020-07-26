@@ -8,7 +8,7 @@ function searcDOM() {
   currentUrl = document.URL;
   if (currentUrl.indexOf("?") > 0) currentUrl = currentUrl.substring(0, currentUrl.indexOf("?"));
 
-  if (currentUrl.search("tokopedia.com") > 0) {
+  if (currentUrl.search("www.tokopedia.com") > 0) {
     // DOM cannot be passed to extension directly
     let imgDOMs = document.getElementsByTagName("img");
     imageUrl = String(imgDOMs[1].src);
@@ -30,7 +30,7 @@ function searcDOM() {
       stockElement = "[data-testid='lblPDPDetailProductStock']";
       storeNameElement = "[data-testid='llbPDPFooterShopName']";
 
-    } else if (currentUrl.search("m.tokopedia.com") > 0) {
+    } /* else if (currentUrl.search("m.tokopedia.com") > 0) {
       
       imageElement = "[data-testid='pdpImage']";
       priceElement = "[data-testid='pdpProductPrice']";
@@ -38,21 +38,19 @@ function searcDOM() {
       stockElement = "[data-testid='pdpStockInfo']";
       storeNameElement = "[data-testid='pdpShopName']";
 
-    }
+    } */
 
-    priceDocument = document.querySelectorAll(priceElement)[0]
-    nameDocument = document.querySelectorAll(nameElement)[0]
-    stockDocument = document.querySelectorAll(stockElement)[0]
-    storeNameDocument = document.querySelectorAll(storeNameElement)[0]
+    price = document.querySelectorAll(priceElement)[0].textContent;
+    name = document.querySelectorAll(nameElement)[0].textContent;
+    stock = document.querySelectorAll(stockElement)[0].textContent;
+    storeName = document.querySelectorAll(storeNameElement)[0].textContent;
 
+    /*
     price = priceDocument.textContent || priceDocument.innerText;
     name = nameDocument.textContent || nameDocument.innerText;
     stock = stockDocument.textContent || stockDocument.innerText;
     storeName = storeNameDocument.textContent || storeNameDocument.innerText;
-    
-    // name = document.querySelectorAll(nameElement)[0].textContent;
-    // stock = document.querySelectorAll(stockElement)[0].textContent;
-    // storeName = document.querySelectorAll(storeNameElement)[0].textContent;
+    */
 
     console.log('currentUrl TP', currentUrl)
     console.log('imageUrl TP', imageUrl)
