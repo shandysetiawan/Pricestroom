@@ -1,5 +1,5 @@
-// $("#optionSection").hide();
-editOptionsPage();
+$("#optionSection").hide();
+// editOptionsPage();
 
 function editOptionsPage() {
     $("#MainPage").hide()

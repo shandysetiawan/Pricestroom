@@ -14,7 +14,7 @@ function searcDOM() {
 
     /* -----TOKOPEDIA----- */
     if (currentUrl.search("www.tokopedia.com") > 0) {
-      imageUrl = String(imgDOMs[1].src)
+      imageUrl = String(imgDOMs[3].src)
 
       let imageElement, storeNameElement, priceElement, stockElement, nameElement;
       imageElement = "[data-testid='PDPImageMain']";
