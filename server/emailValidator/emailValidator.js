@@ -1,25 +1,22 @@
-const mbv = require(`mailboxvalidator-nodejs`)
 const axios = require('axios');
 
-class VerificationEmailController {
+async function emailValidator(email) {
 
-    static emailVerification(req, res, next) {
-        const api = `045JCSD8J80QQZ22761H`
-        axios.get('https://api.mailboxvalidator.com/v1/validation/single', {
+    const api = `045JCSD8J80QQZ22761H`
+
+    try {
+        const response = await axios.get('https://api.mailboxvalidator.com/v1/validation/single', {
             params: {
                 key: api,
-                email: req.body.email
+                email: email
             }
         })
-            .then(function (response) {
-                console.log(`tes`);
-                res.status(200).json(response.data)
-            })
-            .catch(function (error) {
-                res.json(error)
-            })
+        console.log('>>>>>', response.data.is_verified)
+        return response.data.is_verified
+    } catch (error) {
+        return error
     }
 
 }
 
-module.exports = VerificationEmailController
+module.exports = emailValidator
