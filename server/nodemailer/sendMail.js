@@ -8,14 +8,14 @@ function mailNotif(data) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.USERNAME,
-      pass: process.env.PASSWORD,
+      user: process.env.EMAILPS,
+      pass: process.env.EMAILPASSWORD,
     },
   });
   // console.log("setelah transporter")
 
   const mailOption = {
-    from: process.env.USERNAME,
+    from: process.env.EMAILPS,
     to: data.email, // email tujuan diambil dari data object parameter => data.email
     subject: `Price is set`,
     text: `The price of ${data.url} is ${data.targetPrice}, check it out!!!`, // di sini juga ada nama dan url dari parameter => data.url, data.targetPrice
@@ -37,14 +37,14 @@ function mailWatch(data) {
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: process.env.USERNAME,
-      pass: process.env.PASSWORD,
+      user: process.env.EMAILPS,
+      pass: process.env.EMAILPASSWORD,
     },
   });
   // console.log("setelah transporter")
 
   const mailOption = {
-    from: process.env.USERNAME,
+    from: process.env.EMAILPS,
     to: data.email, // email tujuan diambil dari data object parameter => data.email
     subject: `Price is set`,
     text: `The price of ${data.url} before is ${data.priceBefore}, and after is ${data.priceAfter}, check it out!!!`, // di sini juga ada nama dan url dari parameter => data.url, data.targetPrice

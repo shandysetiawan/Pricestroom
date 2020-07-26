@@ -1,5 +1,5 @@
 const Bull = require("bull");
-const { tokopediaScraper, bukalapakScraper } = require("../scrapers");
+const { scrapper } = require("../scrapers");
 const Item = require("../models/track");
 let watchers = [];
 const { mailNotif, mailWatch } = require("../nodemailer/sendMail");
@@ -8,158 +8,87 @@ function priceWatcher(url, id) {
   console.log("into priceWatcher");
   const watcher = new Bull(`watcher ${id}`);
   // watcher.empty();
+  watchers = [...watchers, watcher];
+  // console.log(watchers);
   const jobs = [
     {
-      job: "Updating",
+      job: `Updating ${id}`,
     },
   ];
-  watcher.add(jobs, {
+  watchers[watchers.length - 1].add(jobs, {
     repeat: {
       cron: "*/20 * * * * *",
       // every: 3000
     },
   });
-  if (url.search("tokopedia") !== -1) {
-    watcher.process((job, done) => {
-      tokopediaScraper(url)
-        .then((result) => {
-          console.log(result);
-          if (result) {
-            Item.findByUrl(url).then((data) => {
-              if (data) {
-                console.log(data);
-                let dataHistory = data.history;
-                let history = {
-                  time: result.date,
-                  price: result.price,
-                  stock: result.stock,
-                };
-                let pushHistory = [...dataHistory, history];
-                const editItem = {
-                  currentPrice: result.price,
-                  history: pushHistory,
-                };
-                Item.updateMany(data.url, editItem)
-                  .then((data1) => {
-                    console.log("Items history has been successfully updated!");
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-                if (data.email && !data.targetPrice) {
-                  console.log("email && null targetPrice");
-                  if (data.currentPrice !== result.price) {
-                    const input = {
-                      email: data.email,
-                      url: data.url,
-                      priceBefore: data.currentPrice,
-                      priceAfter: result.price,
-                    };
-                    mailWatch(input);
-                  }
+  watchers[watchers.length - 1].process((job, done) => {
+    scrapper(url)
+      .then((result) => {
+        console.log(result);
+        if (result) {
+          Item.findByUrl(url).then((data) => {
+            if (data) {
+              console.log(data);
+              let dataHistory = data.history;
+              let history = {
+                time: result.date,
+                price: result.price,
+                stock: result.stock,
+              };
+              let pushHistory = [...dataHistory, history];
+              const editItem = {
+                currentPrice: result.price,
+                history: pushHistory,
+              };
+              Item.updateMany(data.url, editItem)
+                .then((data1) => {
+                  console.log("Items history has been successfully updated!");
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+              if (data.email && !data.targetPrice) {
+                console.log("email && null targetPrice");
+                if (data.currentPrice !== result.price) {
+                  const input = {
+                    email: data.email,
+                    url: data.url,
+                    priceBefore: data.currentPrice,
+                    priceAfter: result.price,
+                  };
+                  mailWatch(input);
                 }
-                if (data.email && data.targetPrice) {
-                  console.log("email && targetPrice");
-                  if (result.price == data.targetPrice) {
-                    const input = {
-                      email: data.email,
-                      url: data.url,
-                      targetPrice: data.targetPrice,
-                    };
-                    mailNotif(input);
-                  }
-                }
-              } else {
-                throw {
-                  code: 404,
-                  message: "Sorry, data is not found",
-                };
               }
-            });
-          } else {
-            throw {
-              code: 404,
-              message: "Sorry, result is not found",
-            };
-          }
-        })
-        .catch(({ response }) =>
-          console.log(`Error(${response.status}): ${response.statusText}`)
-        );
-      done(null, `${job.data}`);
-    });
-  } else if (url.search("bukalapak") !== -1) {
-    watcher.process((job, done) => {
-      bukalapakScraper(url)
-        .then((result) => {
-          console.log(result);
-          if (result) {
-            Item.findByUrl(url).then((data) => {
-              if (data) {
-                console.log(data);
-                let dataHistory = data.history;
-                let history = {
-                  time: result.date,
-                  price: result.price,
-                  stock: result.stock,
-                };
-                let pushHistory = [...dataHistory, history];
-                const editItem = {
-                  currentPrice: result.price,
-                  history: pushHistory,
-                };
-                Item.updateMany(data.url, editItem)
-                  .then((data1) => {
-                    console.log("Items history has been successfully updated!");
-                  })
-                  .catch((err) => {
-                    console.log(err);
-                  });
-                if (data.email && !data.targetPrice) {
-                  console.log("email && null targetPrice");
-                  if (data.currentPrice !== result.price) {
-                    const input = {
-                      email: data.email,
-                      url: data.url,
-                      priceBefore: data.currentPrice,
-                      priceAfter: result.price,
-                    };
-                    mailWatch(input);
-                  }
+              if (data.email && data.targetPrice) {
+                console.log("email && targetPrice");
+                if (result.price == data.targetPrice) {
+                  const input = {
+                    email: data.email,
+                    url: data.url,
+                    targetPrice: data.targetPrice,
+                  };
+                  mailNotif(input);
                 }
-                if (data.email && data.targetPrice) {
-                  console.log("email && targetPrice");
-                  if (result.price == data.targetPrice) {
-                    const input = {
-                      email: data.email,
-                      url: data.url,
-                      targetPrice: data.targetPrice,
-                    };
-                    mailNotif(input);
-                  }
-                }
-              } else {
-                throw {
-                  code: 404,
-                  message: "Sorry, data is not found",
-                };
               }
-            });
-          } else {
-            throw {
-              code: 404,
-              message: "Sorry, result is not found",
-            };
-          }
-        })
-        .catch(({ response }) =>
-          console.log(`Error(${response.status}): ${response.statusText}`)
-        );
-      done(null, `${job.data}`);
-    });
-  }
-  watchers = [...watchers, watcher];
-  // console.log(watchers);
+            } else {
+              throw {
+                code: 404,
+                message: "Sorry, data is not found",
+              };
+            }
+          });
+        } else {
+          throw {
+            code: 404,
+            message: "Sorry, result is not found",
+          };
+        }
+      })
+      .catch(({ response }) =>
+        console.log(`Error(${response.status}): ${response.statusText}`)
+      );
+    done(null, `${job.data}`);
+  });
 }
 module.exports = {
   priceWatcher,
