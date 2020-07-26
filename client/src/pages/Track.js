@@ -18,6 +18,7 @@ export default () => {
     const { id } = useParams()
     let [data, setData] = useState(null)
     const [newData, setNewData] = useState(data)
+    const currencyFormatter = new Intl.NumberFormat("id", { style: 'currency', currency: 'IDR' })
 
     const backgrounds = [
         "https://i.pinimg.com/564x/2f/33/71/2f337177bd046a050deabeb6defbe4b0.jpg",
@@ -46,8 +47,8 @@ export default () => {
     useEffect(() => {
         // console.log("masuk")
         if (data) {
-            if (data.history.length > 40) {
-                data.history = data.history.slice(data.history.length - 40, data.history.length - 1)
+            if (data.history.length > 46) {
+                data.history = data.history.slice(data.history.length - 46, data.history.length - 1)
                 // console.log("sudah ada")
             }
             setNewData({
@@ -74,9 +75,9 @@ export default () => {
     }, [id]);
 
     return (
-        <div style={{ background: `url(${background})`, height: "100%" }}>
+        <div style={{ background: `url(${background})`, height: data ? "100%" : "100vh" }}>
             <div className="row justify-content-center">
-                <div className="col-4 mt-3">
+                <div className="col-4 mt-3 align-self-center">
                     <select className="form-control" onChange={onChangeBackground}>
                         {backgrounds.map((_, idx) => <option key={idx} value={idx}>background {idx + 1}</option>)}
                     </select>
@@ -99,19 +100,20 @@ export default () => {
                                 >
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="time" />
-                                    <YAxis />
+                                    <YAxis dataKey="price"/>
                                     <Tooltip />
                                     <Legend />
-                                    <Line type="monotone" dataKey={Object.keys(data.history[0])[1]} stroke="#8884d8" activeDot={{ r: 8 }} />
+                                    <Line type="monotone" dataKey="price" stroke="#8884d8" activeDot={{ r: 8 }} />
+                                    {/* <Line type="monotone" dataKey={Object.keys(data.history[0])[1]} stroke="#8884d8" activeDot={{ r: 8 }} /> */}
                                 </LineChart>
                             </section>
                         </div>
                     </div>
-                    <div className="row justify-content-center mt-3">
+                    <div className="row justify-content-center mt-3 pb-5">
                         <div
                             className="col bg-light text-dark border border-info rounded-lg mt-2 p-3 row justify-content-center"
                             style={{ maxWidth: "900px" }}>
-                            <div className="card mb-3" style={{ maxWidth: "800px" }}>
+                            <div className="card" style={{ maxWidth: "800px" }}>
                                 <div className="row no-gutters">
                                     <div className="col-md-4">
                                         <img src={data.imageUrl} className="card-img" alt="..." />
@@ -120,12 +122,12 @@ export default () => {
                                         <div className="card-body">
                                             <h5 className="card-title">{data.name}</h5>
                                             <p className="card-text">
-                                                Initial Price: Rp.{data.initialPrice} <br />
-                                            Last Price: Rp.{data.currentPrice}<br />
-                                                {data.targetPrice ? `Target Price: ${data.targetPrice}` : ""}
+                                                Initial Price: {currencyFormatter.format(data.initialPrice)} <br />
+                                                Last Price: {currencyFormatter.format(data.currentPrice)}<br />
+                                                {data.targetPrice ? `Target Price: ${currencyFormatter.format(data.targetPrice)}` : ""}
                                                 {data.targetPrice && <br />}
-                                            Store: {data.storeName}<br />
-                                            Ulr: <a href={data.url}>Go to Product</a>
+                                                Store: {data.storeName}<br />
+                                                <a href={data.url}><span role="img" aria-label="">🛒</span>Buy This Product</a>
                                             </p>
                                             <p className="card-text"><small className="text-muted">
                                                 Last updated on {
