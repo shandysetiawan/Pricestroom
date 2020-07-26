@@ -7,7 +7,7 @@
     <style>
         body {
             height: 40rem;
-            width: 24rem;
+            width: 30rem;
             margin: 1rem;
         }
 
@@ -34,22 +34,39 @@
             height: 12rem;
         }
 
+        .tableImage {
+            height: 3rem;
+        }
+
+        #optionSection {
+            margin-left: 4rem;
+        }
+
+        #settingTitle {
+            margin-left: 1.8rem;
+        }
+
         #watcherSection {
-            height: 12rem;
+            height: 11rem;
         }
 
         #notifSection {
-            height: 16rem;
+            height: 14.5rem;
         }
+
         #emailInputDiv {
             height: 2rem;
+        }
+
+        #bottomButton {
+            margin-left: 1.5rem;
         }
     </style>
     <title>hello</title>
 </head>
 
 <body>
-    <section id="MainPage" class="container">
+    <section id="mainPage" class="container">
         <p class="lead text-center">Hello Extensions</p>
         <div class="newProduct">
             <div class="row">
@@ -61,15 +78,16 @@
             </div>
             <!-- Will be run with jQuery function from trackProduct.js -->
             <button id="TrackProduct" class="btn btn-success">Track Product</button>
-            <!-- <button id="ButtonSetting" class="btn btn-primary">To setting</button> -->
+            <button id="ClearButton" class="btn btn-sm btn-link">Clear Storage</button>
         </div>
 
         <table id="MainTable" class="table">
             <thead class="small">
                 <tr>
-                    <th>Product Name</th>
-                    <th class="text-right">Target</th>
+                    <th>Product</th>
                     <th class="text-right">Current</th>
+                    <th class="text-right">Target</th>
+                    <th class="text-right">X</th>
                 </tr>
             </thead>
             <tbody id="MainTableBody">
@@ -80,47 +98,52 @@
 
     <section class="container" id="optionSection">
         <div>
-            <h3 class="lead text-center">Setting</h3>
+
+            <button id="settingTitle" type="button" class="btn btn-lg btn-light disabled">Settings</button>
+
             <form>
-            <div class="container">
-                <div id="watcherSection">
-                    <div class="small text-center">Watcher Setting</div>
-                    <div class="watcherSetting">
-                        <input type="radio" id="priceChangeNotif" name="watcher">
-                        <label>Price Change</label>
+                <div class="container">
+                    <div id="watcherSection">
+                        <div class="small text-center">Watcher Setting</div>
+                        <div class="watcherSetting">
+                            <input type="radio" id="priceChangeNotif" name="watcher">
+                            <label>Price Change</label>
                             <br>
-                        <input type="radio" id="targetPrice" name="watcher">
-                        <label>Target Price</label>
-                        <section class="container" id="priceTargetOption">
-                            <div>
-                                <input type="number" min="1" id="targetPriceInput" required><br>
-                            </div>
-                        </section>
-                    </div>
-                </div>
-
-                <div id="notifSection">
-                    <div class="small text-center">Notification Setting</div>
-                    <div class="notifSetting">
-                        <input type="radio" id="pushNotif" name="notif">
-                        <label class="">Push Notification</label><br>
-                        <input type="radio" id="emailNotif" name="notif">
-                        <label class="">Email Notification</label>
-                        <div id="emailInputDiv">
-                            <section class="container" id="emailNotification">
-                                <input type="email" id="emailInput" placeholder="notification@mail.com" required>
+                            <input type="radio" id="targetPrice" name="watcher">
+                            <label>Target Price</label>
+                            <section class="container" id="priceTargetOption">
+                                <div>
+                                    <input type="number" min="1" id="targetPriceInput" required><br>
+                                </div>
                             </section>
-                        </div><br>
+                        </div>
+                    </div>
 
-                        <input type="radio" id="turnOffNotif" name="notif">
-                        <label class="">Turn Off All Notification</label><br>
+                    <div id="notifSection">
+                        <div class="small text-center">Notification Setting</div>
+                        <div class="notifSetting">
+                            <input type="radio" id="pushNotif" name="notif">
+                            <label class="">Push Notification</label><br>
+                            <input type="radio" id="emailNotif" name="notif">
+                            <label class="">Email Notification</label>
+                            <div id="emailInputDiv">
+                                <section class="container" id="emailNotification">
+                                    <input type="email" id="emailInput" placeholder="notification@mail.com" required>
+                                </section>
+                            </div><br>
+
+                            <input type="radio" id="turnOffNotif" name="notif">
+                            <label class="">Turn Off All Notification</label><br>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" id="applySetting" class="btn btn-primary">Apply Setting</button>
+                    </div><br>
+                    <div id="bottomButton">
+                        <button type="button" id="cancelButton" class="btn btn-sm btn-warning">Cancel</button>
+                        <button type="button" id="deleteButton" class="btn btn-sm btn-danger">Delete Item</button>
                     </div>
                 </div>
-
-                <div>
-                    <button type="button" id="applySetting" class="btn btn-primary">Apply Setting</button>
-                </div>
-            </div>
             </form>
         </div>
     </section>
@@ -137,8 +160,8 @@
     <script src="./assets/actionScript.js"></script>
     <!-- actionScript to PUT & DELETE -->
     <script src="./assets/optionScript.js"></script>
-    <!-- contentScript to send data to website -->
-    <script src="./assets/content.js"></script>
+    <!-- contentScript to send data to PS website -->
+    <!-- <script src="./assets/content.js"></script> -->
 </body>
 
 </html>
