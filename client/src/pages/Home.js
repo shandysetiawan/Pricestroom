@@ -1,126 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-} from 'recharts';
-import axios from "axios"
-import dateformat from "dateformat"
-import ExampleData from "../ExampleData"
+import React, { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { Link } from "react-router-dom"
+import { getProducts } from "../store/actions/productAction"
 
 export default () => {
 
-    let [data, setData ] = useState(ExampleData)
-    const [ newData ,setNewData ] = useState(data)
+    const dispatch = useDispatch()
+    const { products, productLoading, productError } = useSelector(state => state.productReducer)
+    const currencyFormatter = new Intl.NumberFormat("id")
 
-    const backgrounds = [
-        "https://i.pinimg.com/564x/2f/33/71/2f337177bd046a050deabeb6defbe4b0.jpg",
-        "https://i.pinimg.com/564x/c5/1e/ef/c51eefd6458889941fff518c31e924b4.jpg",
-        "https://i.pinimg.com/564x/96/ae/99/96ae99ba5b80a2f8ba635ee2100db5b0.jpg"
-    ]
-    const [background, setBackground] = useState([backgrounds[0]])
-
-    function onChangeBackground(event) {
-        const { value } = event.target
-        setBackground(backgrounds[value])
-    }
-
-    useEffect(()=> {
-        if (data.history.length > 40 ) {
-            data.history = data.history.slice(data.history.length - 40, data.history.length - 1)
-        }
-        setNewData({
-            ...data, 
-            history: data.history.map(his => {
-                return {
-                    [data.name]: his.price, 
-                    time: dateformat(his.time, "h:MM:ss TT"),
-                    stock: his.stock
-                }
-            })
-        })
-    },[data])
+    const backgroundUrl = "https://i.pinimg.com/474x/8f/4e/8a/8f4e8a77b57c243fa020207909ef377a.jpg"
 
     useEffect(() => {
-        const interval = setInterval(() => {
-          console.log('This will run every 20 second!');
-            // axios({
-            //     method: "get",
-            //     url: "http://localhost:3001/data"
-            // })
-            //     .then(({data : data2}) => {
-            //         setData(data2)
-            //         console.log(data2)
-            //     })
-            //     .catch(console.log)
-        }, 20000);
-        return () => clearInterval(interval);
-    }, []);
+        dispatch(getProducts())
+    }, [dispatch])
 
     return (
-        <div style={{ background: `url(${background})`, height: "100%" }}>
+        <div style={{
+            background: `url(${backgroundUrl})`,
+            height: "100vh"
+        }}>
+
             <div className="row justify-content-center">
-                <div className="col-4 mt-3">
-                    <select className="form-control" onChange={onChangeBackground}>
-                        {backgrounds.map((_, idx) => <option key={idx} value={idx}>background {idx + 1}</option>)}
-                    </select>
-                </div>
-            </div>
-            <div className="row justify-content-center">
-                <div className="col bg-light text-dark border border-info rounded-lg mt-2" style={{ maxWidth: "900px" }}>
-                    <h1 className="text-center">Chart</h1>
-                    <section id="Chart">
-                        <LineChart
-                            width={800}
-                            height={400}
-                            data={newData.history}
-                            margin={{
-                                top: 5, right: 30, left: 20, bottom: 5,
-                            }}
-                        >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="time" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Line type="monotone" dataKey={data.name} stroke="#8884d8" activeDot={{ r: 8 }} />
-                        </LineChart>
-                    </section>
-                </div>
-            </div>
-            <div className="row justify-content-center">
-                <div 
-                    className="col bg-light text-dark border border-info rounded-lg mt-2 p-3 row justify-content-center" 
-                    style={{ maxWidth: "900px" }}>
-                    <div className="card mb-3" style={{maxWidth: "800px"}}>
-                        <div className="row no-gutters">
-                            <div className="col-md-4">
-                                <img src={data.imageUrl} className="card-img" alt="..." />
+                <div className="col-10">
+                    {
+                        productLoading ? (
+                            <div className="spinner-grow" style={{ width: "3rem", height: "3rem" }} role="status">
+                                <span className="sr-only">Loading...</span>
                             </div>
-                            <div className="col-md-8">
-                                <div className="card-body">
-                                    <h5 className="card-title">{data.name}</h5>
-                                    <p className="card-text">
-                                        Initial Price: Rp.{data.initialPrice} <br/>
-                                        Last Price: Rp.{data.currentPrice}<br/>
-                                        {data.targetPrice ? `Target Price: ${data.targetPrice}` : ""}
-                                        {data.targetPrice && <br/>}
-                                        Store: {data.storeName}<br/>
-                                        Ulr: <a href={data.url}>Go to Product</a>
-                                    </p>
-                                    <p className="card-text"><small className="text-muted">
-                                        Last updated on {
-                                            dateformat(
-                                                Date(data.history[data.history.length - 1]), 
-                                                "dddd, mmmm dS, yyyy, h:MM:ss TT"
-                                            )
-                                        }
-                                    </small></p>
-                                </div>
+                        ) : productError ? (
+                            <h3 className="text-center p-5">{productError}</h3>
+                        ) : (
+                            products.length && 
+                            <div className="mt-3">
+                                <h1 className="text-center pt-3">Product List</h1>
+                                <table className="table table-hover table-striped table-sm myTable">
+                                    <thead>
+                                        <tr className="table-info">
+                                            <th scope="col">No</th>
+                                            <th scope="col">Image</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Current Price</th>
+                                            <th scope="col">Store</th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {products.map((product, idx) =>
+                                            <tr key={idx}>
+                                                <th scope="row">{idx + 1}</th>
+                                                <td>
+                                                    <img
+                                                        src={product.imageUrl}
+                                                        alt="IMG"
+                                                        style={{ width: "50px", height: "50px" }}
+                                                    />
+                                                </td>
+                                                <td>{product.name}</td>
+                                                <td>Rp.{currencyFormatter.format(product.currentPrice)}</td>
+                                                <td>{product.storeName}</td>
+                                                <td>
+                                                    <Link to={`/track/${product._id}`}>Track</Link>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>
-                    </div>
+                        )
+                    }
                 </div>
             </div>
         </div>
-    );
+    )
 }
