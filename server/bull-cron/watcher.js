@@ -84,7 +84,7 @@ function priceWatcher(url, id) {
           }
         })
         .catch(({ response }) =>
-          console.log(`Error(${response.status}): ${response.statusText}`)
+          console.log(response)
         );
       done(null, `${job.data}`);
     });
