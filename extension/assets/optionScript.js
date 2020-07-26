@@ -1,7 +1,7 @@
 $("#optionSection").hide();
-// editOptionsPage();
+// toOptionsPage();
 
-function editOptionsPage() {
+function toOptionsPage() {
     $("#MainPage").hide()
     $("#optionSection").show()
     $("#emailNotification").hide()
@@ -9,10 +9,7 @@ function editOptionsPage() {
 };
 
 $("#ButtonSetting").click(function () {
-    $("#optionSection").show()
-    $("#MainPage").hide()
-    $("#emailNotification").hide()
-    $("#priceTargetOption").hide()
+    toOptionsPage()
 })
 
 $("#emailNotif").click(function () {
@@ -46,7 +43,7 @@ let dataDummy = {
     priceChangeNotif: true // priceChange
 }
 
-prepareSetting(dataDummy)
+// prepareSetting(dataDummy)
 function prepareSetting(object) {
     let { targetPrice, email, emailNotif, pushNotif, priceChangeNotif } = object;
     if (pushNotif) $('#pushNotif').attr("checked", pushNotif);
@@ -63,10 +60,10 @@ function prepareSetting(object) {
         $("#priceTargetOption").hide();
     }
     $("#targetPriceInput").val(targetPrice);
+    turnOffNotifications(object)
 }
 
-turnOffNotification(dataDummy)
-function turnOffNotification(object) {
+function turnOffNotifications(object) {
     let condition
     let { emailNotif, pushNotif } = object
     if (emailNotif || pushNotif) condition = false
@@ -81,18 +78,17 @@ function turnOffNotification(object) {
 };
 
 $("#applySetting").click(function () {
-    let currentItemId = "5f1c582628d1cd0532379bc8"
+    let currentItemId = "5f1c80902676be4cc7e6a97a"
     let data = {
         targetPrice: Number($("#targetPriceInput").val()),
         email: String($("#emailInput").val()),
-        emailNotif: Boolean($('#emailNotif').prop("checked")),
-        pushNotif: Boolean($('#pushNotif').prop("checked")),
-        priceChangeNotif: Boolean($('#priceChangeNotif').prop("checked"))
+        emailNotif: $('#emailNotif').prop("checked"),
+        pushNotif: $('#pushNotif').prop("checked"),
+        priceChangeNotif: $('#priceChangeNotif').prop("checked")
     }
     if (!data.emailNotif) data.email = null
     if (data.priceChangeNotif) data.targetPrice = null
     prepareSetting(data)
-    turnOffNotification(data)
 
     console.log(data)
 
@@ -109,17 +105,3 @@ $("#applySetting").click(function () {
         })
 
 })
-
-    // let selectedOption1 = $("input:radio[name=watcher]:checked").val()
-    // let selectedOption2 = $("input:radio[name=notif]:checked").val()
-
-    // let editSetting = {
-    //     pushNotif: $('#pushNotif').val(),
-    //     priceChangeNotif: $('#priceChange').val(),
-    //     email: $('#emailOption').val(),
-    //     targetPrice: $('#targetPrice').val()
-    // }
-
-    // console.log('hit here')
-    // console.log(editSetting)
-    // console.log(editSetting)
