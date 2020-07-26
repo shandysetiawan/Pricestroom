@@ -112,9 +112,9 @@ class TrackController {
     const { email, pushNotif, priceChangeNotif, targetPrice } = req.body
 
     const editItem = {
-      pushNotif,
       email,
-      priceChangeNotif,
+      pushNotif: !!JSON.parse(String(pushNotif)),
+      priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
       targetPrice
     };
 
