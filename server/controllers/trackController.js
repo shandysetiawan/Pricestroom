@@ -4,7 +4,6 @@ const { priceWatcher } = require("../bull-cron");
 class TrackController {
   static fetchItems(req, res, next) {
     Item.find()
-
       // Item.find(dataItem)
       .then((data) => {
         res.status(200).json(data);
@@ -22,35 +21,35 @@ class TrackController {
     const { url, imageUrl, storeName, price, stock, name } = req.body;
     console.log("line 23", req.body);
 
-    if (isUrl(req.body.url)) {
+    if (isUrl(url)) {
       if (
-        req.body.url.search("tokopedia") !== -1 ||
-        req.body.url.search("bukalapak") !== -1
+        url.search("tokopedia") !== -1 ||
+        url.search("bukalapak") !== -1
       ) {
         //nambahin buat ngecek number
         let newItem;
+        let defaultItem = {
+          url,
+          name,
+          imageUrl,
+          storeName,
+          email: null,
+          targetPrice: null,
+          emailNotif: false,
+          pushNotif: true,
+          priceChangeNotif: true
+        };
         if (typeof price === "number") {
           newItem = {
-            url,
-            name,
-            imageUrl,
-            storeName,
+            ...defaultItem,
             initialPrice: price,
             currentPrice: price,
-            history: [{ time: new Date(), price: req.body.price, stock }],
-            targetPrice: req.body.targetPrice,
-            email: req.body.email,
-            createdAt: new Date(),
-            emailNotif: false,
-            pushNotif: true,
-            priceChangeNotif: true
+            history: [{ time: new Date(), price, stock }],
+            createdAt: new Date()
           };
         } else {
           newItem = {
-            url,
-            name,
-            imageUrl,
-            storeName,
+            ...defaultItem,
             initialPrice: Number(price.match(/\d+/g).join("")),
             currentPrice: Number(price.match(/\d+/g).join("")),
             history: [
@@ -60,12 +59,7 @@ class TrackController {
                 stock,
               },
             ],
-            targetPrice: req.body.targetPrice,
-            email: req.body.email,
-            createdAt: new Date(),
-            emailNotif: false,
-            pushNotif: true,
-            priceChangeNotif: true
+            createdAt: new Date()
           };
         }
         // console.log(newItem)

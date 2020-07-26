@@ -18,7 +18,7 @@ function priceWatcher(url, id) {
   watchers[watchers.length - 1].add(jobs, {
     repeat: {
       cron: "*/20 * * * * *",
-      // every: 3000
+      // every: 20000
     },
   });
   watchers[watchers.length - 1].process((job, done) => {

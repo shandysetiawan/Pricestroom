@@ -7,8 +7,12 @@
     "test": "test"
   },
   "scripts": {
+<<<<<<< HEAD
     "dev": "NODE_ENV=development nodemon app.js",
     "dev1": "set NODE_ENV=development&&nodemon app.js",
+=======
+    "dev": "set NODE_ENV=development&&nodemon app.js",
+>>>>>>> origin
     "test": "jest --detectOpenHandles --runInBand --forceExit --verbose",
     "start": "node app.js"
   },
