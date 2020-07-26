@@ -1,7 +1,7 @@
 const Bull = require("bull");
 const { tokopediaScraper, bukalapakScraper } = require("../scrapers");
 const Item = require("../models/track");
-const watchers = [];
+let watchers = [];
 const { mailNotif, mailWatch } = require("../nodemailer/sendMail");
 
 function priceWatcher(url, id) {
@@ -16,18 +16,18 @@ function priceWatcher(url, id) {
   watcher.add(jobs, {
     repeat: {
       cron: "*/20 * * * * *",
-      // every: 3000
+      // every: 20000
     },
   });
   if (url.search("tokopedia") !== -1) {
     watcher.process((job, done) => {
       tokopediaScraper(url)
         .then((result) => {
-          console.log(result);
+          // console.log(result);
           if (result) {
             Item.findByUrl(url).then((data) => {
               if (data) {
-                console.log(data);
+                // console.log(data);
                 let dataHistory = data.history;
                 let history = {
                   time: result.date,
