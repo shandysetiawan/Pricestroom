@@ -182,7 +182,7 @@ describe('Track', () => {
         .delete(`/tracks/${noId}`)
         .then(response => {
           const { body, status, error } = response
-          console.log(body)
+          // console.log(body)
           expect(status).toBe(400)
           expect(body).toHaveProperty('message', "Id not found")
 
