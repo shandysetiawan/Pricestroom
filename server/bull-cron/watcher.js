@@ -68,6 +68,7 @@ function priceWatcher(url, id) {
                     targetPrice: data.targetPrice,
                   };
                   mailNotif(input);
+                  watchers[watchers.length - 1].empty();
                 }
               }
             } else {
