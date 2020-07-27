@@ -1,4 +1,5 @@
 module.exports = {
-    tokopediaScraper: require("./tokopediaScraper"),
-    bukalapakScraper: require("./bukalapakScraper")
-}
+  // tokopediaScraper: require("./tokopediaScraper"),
+  // bukalapakScraper: require("./bukalapakScraper")
+  scrapper: require("./scrapper"),
+};

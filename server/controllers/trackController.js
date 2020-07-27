@@ -94,6 +94,9 @@ class TrackController {
 
     Item.findById(id)
       .then((data) => {
+        if (data === null) {
+          return res.status(400).json({ message: "Id not found" });
+        }
         res.status(200).json(data);
       })
       .catch((err) => {
@@ -116,7 +119,7 @@ class TrackController {
         emailResult = true
       }
 
-      console.log(emailValid)
+      // console.log(emailValid)
       editItem = {
         email,
         pushNotif: !!JSON.parse(String(pushNotif)),
@@ -127,6 +130,7 @@ class TrackController {
 
       Item.updateById(id, editItem)
         .then((data) => {
+          if (data.lastErrorObject.updatedExisting === false) return res.status(400).json({ message: "Id not found" })
           res
             .status(200)
             .json({ data, message: "Item has been successfully updated!" });
@@ -136,7 +140,7 @@ class TrackController {
         });
 
     } catch (error) {
-      console.log(error)
+      return res.status(500).json({ message: "Internal Server Error" });
     }
 
   }
@@ -150,7 +154,10 @@ class TrackController {
 
     Item.deleteById(id)
       .then((data) => {
-        res.status(200).json({ message: "Success to delete item!" });
+
+        if (data.deletedCount === 0) return res.status(400).json({ message: "Id not found" })
+
+        res.status(200).json({ data, message: "Success to delete item!" });
       })
       .catch((err) => {
         res.status(500).json({ message: "Internal Server Error" });
