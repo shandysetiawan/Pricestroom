@@ -1,39 +1,58 @@
 // $("#optionSection").hide();
-// toOptionsPage();
+toOptionsPage();
+
+// Navigation
 
 function toOptionsPage() {
-    $("#MainPage").hide()
+    $("#mainPage").hide()
     $("#optionSection").show()
-    $("#emailNotification").hide()
-    $("#priceTargetOption").hide()
 };
 
+function toMainPage() {
+    $("#optionSection").hide()
+    $("#mainPage").show()
+}
+
+$("#backButton").click(function () {
+    toMainPage()
+});
+
+$("#cancelButton").click(function () {
+    toMainPage()
+});
+
+$("#deleteButton").click(function () {
+    // confirmation
+    console.log('delete')
+});
+
+/* Form Logic */
 $("#ButtonSetting").click(function () {
     toOptionsPage()
-})
+});
 
 $("#emailNotif").click(function () {
     $("#emailNotification").show()
-})
+});
 
 $("#pushNotif").click(function () {
     $("#emailNotification").hide()
-})
+});
 
 $("#turnOffNotif").click(function () {
     $("#emailNotification").hide()
     $('#priceChangeNotif').attr("checked", false)
     $("#priceTargetOption").hide()
     $("#targetPrice").attr("checked", false)
-})
+});
 
 $("#targetPrice").click(function () {
     $("#priceTargetOption").show()
-})
+});
 
 $("#priceChangeNotif").click(function () {
     $("#priceTargetOption").hide()
-})
+});
 
 let dataDummy = {
     targetPrice: null, // targetPriceInput
@@ -43,7 +62,7 @@ let dataDummy = {
     priceChangeNotif: true // priceChange
 }
 
-// prepareSetting(dataDummy)
+prepareSetting(dataDummy)
 function prepareSetting(object) {
     let { targetPrice, email, emailNotif, pushNotif, priceChangeNotif } = object;
     if (pushNotif) $('#pushNotif').attr("checked", pushNotif);

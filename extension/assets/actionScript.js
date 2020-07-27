@@ -21,7 +21,7 @@ function searcDOM() {
 
     /* -----TOKOPEDIA----- */
     let imageElement, storeNameElement, priceElement, stockElement, nameElement;
-    
+
     if (currentUrl.search("www.tokopedia.com") > 0) {
 
       imageElement = "[data-testid='PDPImageMain']";
@@ -105,82 +105,161 @@ const appendNotProductPage = `
 // argument here is a string but function.toString() returns function's code
 chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
   (response) => {
-  console.log('Popup onActivated script:');
-  $('#previewImage').attr("src", "");
+    console.log('Popup onActivated script:');
+    $('#previewImage').attr("src", "");
 
-  $('#notFound').empty();
-  if (!response || !response[0]) {
-    $('#TrackProduct').attr("disabled", true);
-    $('#notFound').append(
-      appendNotProductPage
+    $('#notFound').empty();
+    if (!response || !response[0]) {
+      $('#TrackProduct').attr("disabled", true);
+      $('#notFound').append(
+        appendNotProductPage
+      );
+    } else {
+      $('#TrackProduct').attr("disabled", false);
+      $('#previewImage').attr("src", response[0].imageUrl);
+      $('#TrackProduct').attr("disabled", true);
+
+    }
+  });
+
+/* ----- chrome.storage SET & GET -----
+  chrome.storage.sync.set({ data }, function() {
+    console.log('Data is set to ' + data);
+  });
+  chrome.storage.sync.set({ newData: 'newData' }, function() {
+    console.log('Data is set to ' + data);
+  });
+*/
+
+const appendProductCreated = `
+<p>Product has been successfully added to our tracker</p>
+<p class='small'>
+  You can modify the notification settings
+</p>`;
+
+const appendProductExceeded = `
+<p>You are tracking too many products</p>
+<p class='small'>
+  Please consider deleting other product(s)
+  if you really want to track this product
+</p>`;
+
+const appendProductExisted = `
+<p>You have already tracked this product</p>
+<p class='small'>
+  You are not allowed to track
+  the same product at the same time
+</p>`;
+
+function checkExistingItems(stringUrl, array) {
+  const isNotExisting = (item) => item.url !== stringUrl
+  return array.every(isNotExisting)
+};
+
+
+/* Display Table */
+chrome.storage.sync.get(['items'], function (result) {
+  let { items } = result
+  items.map(item => {
+    let { name, imageUrl, currentPrice, targetPrice } = item
+    $('#MainTableBody').append(
+      `<tr>
+          <td><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
+          <td class="text-right">${ currentPrice }</td>
+          <td class="text-right">${ targetPrice || '-' }</td>
+          <td>E & D</td>
+        </tr>`
     );
-  } else {
-    $('#TrackProduct').attr("disabled", false);
-    $('#previewImage').attr("src", response[0].imageUrl);
-  }
-});
+  })
 
-  /* ----- chrome.storage SET & GET -----
-    chrome.storage.sync.set({ data }, function() {
-      console.log('Data is set to ' + data);
-    });
-    chrome.storage.sync.set({ newData: 'newData' }, function() {
-      console.log('Data is set to ' + data);
-    });
-  */
+})
 
-$("#TrackProduct").click(function() {
+
+
+
+
+$("#ClearButton").click(function () {
+  chrome.storage.sync.set({ items: [] })
+})
+
+$("#TrackProduct").click(function () {
   chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' }, (response) => {
     console.log('Popup script:');
     $('#previewImage').attr("src", "");
-    $('#MainTableBody').empty();
     $('#notFound').empty();
-    
+
     if (!response || !response[0]) {
       $('#notFound').append(
         appendNotProductPage
       );
     } else {
-      const data = response[0]
-      console.log('actionScript', data);
-      $.ajax({
-        method: 'post',
-        url, // from getProducts.js
-        data
-      })
-        .done(item => {
-          console.log('POST done', item.data)
-          prepareSetting(item.data)  // from optionScript.js
-        })
-        .done(_=> {
-          toOptionsPage()  // from optionScript.js
-        })
-        .fail(err => {
-          console.log('POST err', err)
-        })
-
-      $('#previewImage').attr("src", data.imageUrl);
-
-      // get chrome.storage
-      chrome.storage.sync.get(['newData', 'data'], function (result) {
-        let { data, newData } = result; // const
-        if (data) data.map(item => {
-          let { poduct_name, current_price, target_price } = item
-          $('#MainTableBody').append(
-            `<tr>
-            <td>${ poduct_name}</td>
-            <td class="text-right">${ current_price}</td>
-            <td class="text-right">${ target_price}</td>
-          </tr>`
+      const data = response[0];
+      // check jumlah items
+      chrome.storage.sync.get(['items'], function (result) {
+        let { items } = result
+        console.log('getItems', items)
+        if (items.length >= 5) {
+          $('#notFound').append(
+            appendProductExceeded
           );
-        })
-        if (!data) data = 'empty chrome.storage.data'
-        console.log('data', data)
-        console.log('newData', newData);
-      });
+          console.log('Sudah ada lima tidak boleh lebih jangan serakah')
+        } else {
+          console.log('actionScript', data);
+
+          if (checkExistingItems(data.url, items)) {
+            $.ajax({
+              method: 'post',
+              url, // from getProducts.js
+              data
+            })
+              .done(response => {
+                $('#MainTableBody').empty()
+                console.log('POST done', response)
+                let { data, message } = response
+                console.log(message)
+                // get chrome.storage
+                let newItems = [...items, data]
+                console.log('newItems', newItems)
+  
+                chrome.storage.sync.set({ items: newItems }, function () {
+                  if (newItems.length > 0) {
+                    newItems.map(item => {
+                      let { name, imageUrl, currentPrice, targetPrice } = item
+                      $('#MainTableBody').append(
+                        `<tr>
+                            <td><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
+                            <td class="text-right">${ currentPrice}</td>
+                            <td class="text-right">${ targetPrice}</td>
+                            <td>E & D</td>
+                          </tr>`
+                      );
+                    })
+                  } else console.log('error @ set items')
+                })  
+                prepareSetting(data)  // from optionScript.js
+              })
+              .done(_ => {
+                toOptionsPage() // from optionScript.js
+              })
+              .fail(err => {
+                console.log('POST err', err)
+              })
+  
+            $('#notFound').append(
+              appendProductCreated
+            );
+          } else {
+            $('#notFound').append(
+              appendProductExisted
+            );
+          }
+        }
+      })
+
+
 
     }
 
   })
-  
+
 });
