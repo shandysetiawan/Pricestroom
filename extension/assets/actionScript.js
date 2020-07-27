@@ -108,52 +108,15 @@ function searcDOM() {
   }
 };
 
+// messages
+
 const appendNotProductPage = `
 <p>Wait for the page to fully load</p>
 <p class='small'>
-  Note: currently our service is 
-  <br> only available on specific product site
+  Note: currently our service
+  <br> is only available on specific product site
   <br> of tokopedia.com or bukalapak.com
 </p>`;
-
-// The following function will have access to extension
-// We have permission to access the activeTab, so we can call chrome.tabs.executeScript:
-// argument here is a string but function.toString() returns function's code
-chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
-  (response) => {
-    console.log('Popup onActivated script:');
-    $('#previewImage').attr("src", "");
-
-    $('#notFound').empty();
-    if (!response || !response[0]) {
-      $('#TrackProduct').attr("disabled", true);
-      $('#notFound').append(
-        appendNotProductPage
-      );
-    } else {
-      let data = response[0]
-      chrome.storage.sync.get(['items'], function (result) {
-        let { items } = result      
-        if (checkExistingItems(data.url, items)) $('#TrackProduct').attr("disabled", false)
-        else $('#TrackProduct').attr("disabled", true)
-      })
-      $('#previewImage').attr("src", response[0].imageUrl);
-    }
-  });
-
-  function checkExistingItems(stringUrl, array) {
-    const isNotExisting = (item) => item.url !== stringUrl
-    return array.every(isNotExisting)
-  };
-
-/* ----- chrome.storage SET & GET -----
-  chrome.storage.sync.set({ data }, function() {
-    console.log('Data is set to ' + data);
-  });
-  chrome.storage.sync.set({ newData: 'newData' }, function() {
-    console.log('Data is set to ' + data);
-  });
-*/
 
 const appendProductCreated = `
 <p>Product has been successfully added to our tracker</p>
@@ -175,35 +138,136 @@ const appendProductExisted = `
   the same product at the same time
 </p>`;
 
-/* Display Table */
-chrome.storage.sync.get(['items'], function (result) {
-  let { items } = result
-  items.map(item => {
-    let { name, imageUrl, currentPrice, targetPrice } = item
-    $('#MainTableBody').append(
-      `<tr>
-          <td><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
-          <td class="text-right">${ currentPrice }</td>
-          <td class="text-right">${ targetPrice || '-' }</td>
-          <td>E & D</td>
-        </tr>`
-    );
+// The following function will have access to extension
+// We have permission to access the activeTab, so we can call chrome.tabs.executeScript:
+// argument here is a string but function.toString() returns function's code
+chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
+  (response) => {
+    console.log('Popup onActivated script:');
+    $('#previewImage').attr("src", "");
+
+    $('#mainMessage').empty();
+    if (!response || !response[0]) {
+      $('#TrackProduct').attr("disabled", true);
+      $('#mainMessage').append(
+        appendNotProductPage
+      );
+    } else {
+      let data = response[0]
+      chrome.storage.sync.get(['items'], function (result) {
+        let { items } = result      
+        if (checkExistingItems(data.url, items)) {
+          $('#TrackProduct').attr("disabled", false)
+          $('#previewImage').attr("src", response[0].imageUrl);
+        } else {
+          $('#TrackProduct').attr("disabled", true)
+          $('#previewImage').attr("src", "");
+          $('#mainMessage').append(
+            appendProductExisted
+          );
+        }
+      })
+    }
+});
+
+/* Display Table and Temporary Variables */
+let setOptions0, setOptions1, setOptions2, setOptions3, setOptions4;
+let delete0, delete1, delete2, delete3, delete4;
+
+displayTable();
+function displayTable(data = 'items') {
+  $('#MainTableBody').empty()
+  chrome.storage.sync.get([data], function (result) {
+    let items = result[data]
+    if (!items) items = []
+    items.map((item, idx) => {
+      let { _id, name, imageUrl, currentPrice, targetPrice } = item
+      console.log(name, targetPrice)
+      $('#MainTableBody').append(
+        `<tr>
+            <td class="products"><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
+            <td class="text-right">${ currentPrice }</td>
+            <td class="text-right">${ targetPrice || '-' }</td>
+            <td class="options">
+              <i id="setting${ _id }" class="icon icon-cog-circled">
+                <span class="tooltiptext">Modify setting</span>
+              </i>
+              <i id="delete${ _id }" class="icon icon-trash">
+                <span class="tooltiptext">Delete product</span>
+              </i>
+            </td>
+          </tr>`
+      );
+      if (idx === 0) {
+        setOptions0 = buildSetting(item)
+        delete0 = buildDelete(item)
+      } else if (idx === 1) {
+        setOptions1 = buildSetting(item)
+        delete1 = buildDelete(item)
+      } else if (idx === 2) {
+        setOptions2 = buildSetting(item)
+        delete2 = buildDelete(item)
+      } else if (idx === 3) {
+        setOptions3 = buildSetting(item)
+        delete3 = buildDelete(item)
+      } else if (idx === 4) {
+        setOptions4 = buildSetting(item)
+        delete4 = buildDelete(item)
+      }
+    })
+  })
+};
+
+function buildSetting(object) {
+  return $(`#setting${ object._id }`).click(function () {
+    prepareSetting(object)
+    toOptionsPage()
+    console.log('edit', object)
+    });
+}
+
+function buildDelete(object) {
+  return $(`#delete${ object._id }`).click(function () {
+    console.log('delete', object)
+    });
+};
+
+// items Set & Get
+
+function checkExistingItems(stringUrl, array) {
+  const isNotExisting = (item) => item.url !== stringUrl
+  return array.every(isNotExisting)
+};
+
+function updateItems(newItem) {
+  chrome.storage.sync.get(['items'], function (result) {
+    let { items } = result
+    removedItems = items.filter(item => item._id !== newItem._id)
+    console.log(removedItems)
+    console.log('newItem', newItem)
+    updated = [newItem, ...removedItems]
+    console.log(updated)
+
+    chrome.storage.sync.set({ items: updated }, function () {
+      if (updated.length > 0) displayTable()
+      else console.log('error @ update items')
+    })
   })
 
-})
+};
 
-$("#ClearButton").click(function () {
-  chrome.storage.sync.set({ items: [] })
-})
+chrome.storage.onChanged.addListener(function(changes, namespace) {
+  console.log(changes.items)
+});
 
 $("#TrackProduct").click(function () {
   chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' }, (response) => {
     console.log('Popup script:');
     $('#previewImage').attr("src", "");
-    $('#notFound').empty();
+    $('#mainMessage').empty();
 
     if (!response || !response[0]) {
-      $('#notFound').append(
+      $('#mainMessage').append(
         appendNotProductPage
       );
     } else {
@@ -214,13 +278,10 @@ $("#TrackProduct").click(function () {
         console.log('getItems', items)
         if (!items) items = []
         if (items.length >= 5) {
-          $('#notFound').append(
+          $('#mainMessage').append(
             appendProductExceeded
           );
-          console.log('Sudah ada lima tidak boleh lebih jangan serakah')
         } else {
-          console.log('actionScript', data);
-
           if (checkExistingItems(data.url, items)) {
             $.ajax({
               method: 'post',
@@ -231,26 +292,15 @@ $("#TrackProduct").click(function () {
                 $('#MainTableBody').empty()
                 console.log('POST done', response)
                 let { data, message } = response
-                console.log(message)
-                // get chrome.storage
+                console.log('message', message)
+
                 let newItems = [...items, data]
                 console.log('newItems', newItems)
   
                 chrome.storage.sync.set({ items: newItems }, function () {
-                  if (newItems.length > 0) {
-                    newItems.map(item => {
-                      let { name, imageUrl, currentPrice, targetPrice } = item
-                      $('#MainTableBody').append(
-                        `<tr>
-                            <td><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
-                            <td class="text-right">${ currentPrice}</td>
-                            <td class="text-right">${ targetPrice}</td>
-                            <td>E & D</td>
-                          </tr>`
-                      );
-                    })
-                  } else console.log('error @ set items')
-                })  
+                  if (newItems.length > 0) displayTable()
+                  else console.log('error @ set items')
+                })
                 prepareSetting(data)  // from optionScript.js
               })
               .done(_ => {
@@ -260,11 +310,11 @@ $("#TrackProduct").click(function () {
                 console.log('POST err', err)
               })
   
-            $('#notFound').append(
+            $('#mainMessage').append(
               appendProductCreated
             );
           } else {
-            $('#notFound').append(
+            $('#mainMessage').append(
               appendProductExisted
             );
           }
@@ -276,3 +326,18 @@ $("#TrackProduct").click(function () {
   })
 
 });
+
+// helpers
+$("#ClearButton").click(function () {
+  chrome.storage.sync.set({ items: [] })
+  displayTable();
+})
+
+/* ----- chrome.storage SET & GET -----
+  chrome.storage.sync.set({ data }, function() {
+    console.log('Data is set to ' + data);
+  });
+  chrome.storage.sync.set({ newData: 'newData' }, function() {
+    console.log('Data is set to ' + data);
+  });
+*/

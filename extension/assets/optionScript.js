@@ -1,4 +1,5 @@
 $("#optionSection").hide();
+$("#currentItemId").hide();
 // toOptionsPage();
 
 // Navigation
@@ -54,17 +55,18 @@ $("#priceChangeNotif").click(function () {
     $("#priceTargetOption").hide()
 });
 
-let dataDummy = {
-    targetPrice: null, // targetPriceInput
-    email: null, // emailInput
-    emailNotif: false, // emailNotif
-    pushNotif: true, // #pushNotif
-    priceChangeNotif: true // priceChange
-}
+// let dataDummy = {
+//     targetPrice: null, // targetPriceInput
+//     email: null, // emailInput
+//     emailNotif: false, // emailNotif
+//     pushNotif: true, // #pushNotif
+//     priceChangeNotif: true // priceChange
+// }
 
-prepareSetting(dataDummy)
+// prepareSetting(dataDummy)
 function prepareSetting(object) {
-    let { targetPrice, email, emailNotif, pushNotif, priceChangeNotif } = object;
+    let { _id, targetPrice, email, emailNotif, pushNotif, priceChangeNotif } = object;
+    $("#currentItemId").text(_id)
     if (pushNotif) $('#pushNotif').attr("checked", pushNotif);
     else if (emailNotif) $('#emailNotif').attr("checked", emailNotif);
     $('#priceChangeNotif').attr("checked", priceChangeNotif);
@@ -79,7 +81,7 @@ function prepareSetting(object) {
         $("#priceTargetOption").hide();
     }
     $("#targetPriceInput").val(targetPrice);
-    turnOffNotifications(object)
+    turnOffNotifications(object);
 }
 
 function turnOffNotifications(object) {
@@ -97,7 +99,6 @@ function turnOffNotifications(object) {
 };
 
 $("#applySetting").click(function () {
-    let currentItemId = "5f1d786de4895c5742ed91c5"
     let data = {
         targetPrice: Number($("#targetPriceInput").val()),
         email: String($("#emailInput").val()),
@@ -110,6 +111,7 @@ $("#applySetting").click(function () {
     prepareSetting(data)
 
     console.log(data)
+    let currentItemId = $("#currentItemId").text()
 
     $.ajax({
         method: "PUT",
@@ -117,7 +119,10 @@ $("#applySetting").click(function () {
         data,
     })
         .done((response) => {
-            console.log('PUT done', response)
+            let { value } = response.data
+            console.log('PUT done value', value)
+            updateItems(value)
+            toMainPage()
         })
         .fail((err) => {
             console.log('PUT err', err)
