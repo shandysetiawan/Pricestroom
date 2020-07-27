@@ -9,7 +9,7 @@ function priceWatcher(url, id) {
   const watcher = new Bull(`watcher ${id}`);
   // watcher.empty();
   watchers = [...watchers, watcher];
-  // console.log(watchers);
+  console.log(watchers);
   const jobs = [
     {
       job: `Updating ${id}`,
