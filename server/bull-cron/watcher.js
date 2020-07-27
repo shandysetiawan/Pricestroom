@@ -62,11 +62,11 @@ function priceWatcher(url, id) {
               }
               if (data.email && data.targetPrice) {
                 console.log("email && targetPrice");
-                if (result.price == data.targetPrice) {
+                if (result.price <= data.targetPrice) {
                   const input = {
                     email: data.email,
                     url: data.url,
-                    targetPrice: data.targetPrice,
+                    price: result.price,
                   };
                   mailNotif(input);
                   queue.empty();
