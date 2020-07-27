@@ -100,7 +100,7 @@ export default () => {
                                 >
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="time" />
-                                    <YAxis dataKey="price" domain={['dataMin - 10000', 'dataMax + 10000']}/>
+                                    <YAxis dataKey="price" domain={[dataMin => ((dataMin - 10000) <= 0 ? 0 : dataMin - 10000), 'dataMax + 10000']}/>
                                     <Tooltip />
                                     <Legend />
                                     <Line type="monotone" dataKey="price" stroke="#8884d8" activeDot={{ r: 8 }} />
