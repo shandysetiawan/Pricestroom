@@ -6,12 +6,11 @@ async function emailValidator(email) {
 
     try {
         const response = await axios.get('https://api.mailboxvalidator.com/v1/validation/single', {
-            headers: requestIntent.headers,
-            adapter: require('axios/lib/adapters/http'),
             params: {
                 key: api,
                 email: email
-            }
+            },
+            adapter: require('axios/lib/adapters/http'),
         })
         // console.log('>>>>>', response.data.is_verified)
         return response.data.is_verified

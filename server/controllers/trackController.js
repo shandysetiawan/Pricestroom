@@ -4,9 +4,15 @@ const emailValidator = require('../emailValidator/emailValidator')
 
 class TrackController {
   static fetchItems(req, res, next) {
+    // const dataItem = JSON.parse(req.headers.dataitem)
+
     Item.find()
       // Item.find(dataItem)
       .then((data) => {
+        data.map((elem) => {
+          elem.history = null
+        })
+
         res.status(200).json(data);
       })
       .catch((err) => {
@@ -73,6 +79,7 @@ class TrackController {
             const { url, _id } = data.ops[0];
             // console.log("INTO PRICE WATCHER");
             priceWatcher(url, _id);
+            data.ops[0].history = null
             return res.status(201).json({ data: data.ops[0], message });
           })
           .catch((err) => {
@@ -119,18 +126,19 @@ class TrackController {
         emailResult = true
       }
 
-      // console.log(emailValid)
+      // console.log(emailResult)
       editItem = {
         email,
         pushNotif: !!JSON.parse(String(pushNotif)),
         priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
-        targetPrice,
+        targetPrice: Number(targetPrice),
         emailNotif: emailResult
       };
 
       Item.updateById(id, editItem)
         .then((data) => {
           if (data.lastErrorObject.updatedExisting === false) return res.status(400).json({ message: "Id not found" })
+          data.value.history = null
           res
             .status(200)
             .json({ data, message: "Item has been successfully updated!" });

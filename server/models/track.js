@@ -6,14 +6,12 @@ const { ObjectId } = require("mongodb");
 
 module.exports = class ItemModel {
   static find(data) {
-    let dataItem = [];
+    // let dataItem = [];
 
     // for (let i = 0; i < data.length; i++) {
     //   dataItem.push(new ObjectId(data[i]))
     // }
-
     // { "_id": { "$in": dataItem } }
-
     return Item.find().toArray();
   }
 
