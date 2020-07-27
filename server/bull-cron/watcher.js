@@ -23,72 +23,88 @@ function priceWatcher(url, id) {
     },
   });
   queue.process((job, done) => {
-    scrapper(url)
-      .then((result) => {
-        console.log(result);
-        if (result) {
-          Item.findByUrl(url).then((data) => {
-            if (data) {
-              console.log(data);
-              let dataHistory = data.history;
-              let history = {
-                time: result.date,
-                price: result.price,
-                stock: result.stock,
-              };
-              let pushHistory = [...dataHistory, history];
-              const editItem = {
-                currentPrice: result.price,
-                history: pushHistory,
-              };
-              Item.updateMany(data.url, editItem)
-                .then((data1) => {
-                  console.log("Items history has been successfully updated!");
-                })
-                .catch((err) => {
-                  console.log(err);
+    Item.findById(id)
+      .then((found) => {
+        if (found) {
+          scrapper(url)
+            .then((result) => {
+              console.log("scrapping success");
+              if (result) {
+                Item.findByUrl(url).then((data) => {
+                  if (data) {
+                    let dataHistory = data.history;
+                    let history = {
+                      time: result.date,
+                      price: result.price,
+                      stock: result.stock,
+                    };
+                    let pushHistory = [...dataHistory, history];
+                    console.log(
+                      data.url,
+                      "targetPrice: " + data.targetPrice,
+                      pushHistory
+                    );
+                    const editItem = {
+                      currentPrice: result.price,
+                      history: pushHistory,
+                    };
+                    Item.updateMany(data.url, editItem)
+                      .then((data1) => {
+                        console.log(
+                          "Items history has been successfully updated!"
+                        );
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                    if (data.email && !data.targetPrice) {
+                      console.log("email && null targetPrice");
+                      if (data.currentPrice !== result.price) {
+                        const input = {
+                          email: data.email,
+                          url: data.url,
+                          priceBefore: data.currentPrice,
+                          priceAfter: result.price,
+                        };
+                        mailWatch(input);
+                      }
+                    }
+                    if (data.email && data.targetPrice) {
+                      console.log("email && targetPrice");
+                      if (result.price <= data.targetPrice) {
+                        const input = {
+                          email: data.email,
+                          url: data.url,
+                          price: result.price,
+                        };
+                        mailNotif(input);
+                        queue.empty();
+                      }
+                    }
+                  } else {
+                    throw {
+                      code: 404,
+                      message: "Sorry, data is not found",
+                    };
+                  }
                 });
-              if (data.email && !data.targetPrice) {
-                console.log("email && null targetPrice");
-                if (data.currentPrice !== result.price) {
-                  const input = {
-                    email: data.email,
-                    url: data.url,
-                    priceBefore: data.currentPrice,
-                    priceAfter: result.price,
-                  };
-                  mailWatch(input);
-                }
+              } else {
+                throw {
+                  code: 404,
+                  message: "Sorry, result is not found",
+                };
               }
-              if (data.email && data.targetPrice) {
-                console.log("email && targetPrice");
-                if (result.price <= data.targetPrice) {
-                  const input = {
-                    email: data.email,
-                    url: data.url,
-                    price: result.price,
-                  };
-                  mailNotif(input);
-                  queue.empty();
-                }
-              }
-            } else {
-              throw {
-                code: 404,
-                message: "Sorry, data is not found",
-              };
-            }
-          });
+            })
+            .catch(({ response }) =>
+              console.log(`Error(${response.status}): ${response.statusText}`)
+            );
         } else {
-          throw {
-            code: 404,
-            message: "Sorry, result is not found",
-          };
+          queue.empty();
         }
       })
-      .catch(({ response }) =>
-        console.log(`Error(${response.status}): ${response.statusText}`)
-      );
+      .catch((err) => {
+        console.log(err);
+      });
     done(null, `${job.data}`);
   });
 }
