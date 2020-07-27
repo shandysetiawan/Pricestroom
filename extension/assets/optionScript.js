@@ -1,5 +1,5 @@
-$("#optionSection").hide();
-// toOptionsPage();
+// $("#optionSection").hide();
+toOptionsPage();
 
 // Navigation
 

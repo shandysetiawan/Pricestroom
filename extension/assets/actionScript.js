@@ -117,6 +117,8 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
     } else {
       $('#TrackProduct').attr("disabled", false);
       $('#previewImage').attr("src", response[0].imageUrl);
+      $('#TrackProduct').attr("disabled", true);
+
     }
   });
 
@@ -155,6 +157,27 @@ function checkExistingItems(stringUrl, array) {
 };
 
 
+/* Display Table */
+chrome.storage.sync.get(['items'], function (result) {
+  let { items } = result
+  items.map(item => {
+    let { name, imageUrl, currentPrice, targetPrice } = item
+    $('#MainTableBody').append(
+      `<tr>
+          <td><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
+          <td class="text-right">${ currentPrice }</td>
+          <td class="text-right">${ targetPrice || '-' }</td>
+          <td>E & D</td>
+        </tr>`
+    );
+  })
+
+})
+
+
+
+
+
 $("#ClearButton").click(function () {
   chrome.storage.sync.set({ items: [] })
 })
@@ -163,7 +186,6 @@ $("#TrackProduct").click(function () {
   chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' }, (response) => {
     console.log('Popup script:');
     $('#previewImage').attr("src", "");
-    $('#MainTableBody').empty();
     $('#notFound').empty();
 
     if (!response || !response[0]) {
@@ -191,6 +213,7 @@ $("#TrackProduct").click(function () {
               data
             })
               .done(response => {
+                $('#MainTableBody').empty()
                 console.log('POST done', response)
                 let { data, message } = response
                 console.log(message)
