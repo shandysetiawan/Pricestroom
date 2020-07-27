@@ -4,10 +4,10 @@ const emailValidator = require('../emailValidator/emailValidator')
 
 class TrackController {
   static fetchItems(req, res, next) {
-    // const dataItem = JSON.parse(req.headers.dataitem)
+    const dataItem = JSON.parse(req.headers.dataitem)
 
-    Item.find()
-      // Item.find(dataItem)
+    // Item.find()
+    Item.find(dataItem)
       .then((data) => {
         data.map((elem) => {
           elem.history = null
