@@ -3,6 +3,14 @@ function searcDOM() {
   console.log('Tab script:', document.body);
   let currentUrl, imageUrl, storeName, price, stock, name;
 
+  chrome.storage.sync.get(['items'], function (result) {
+    let { items } = result
+    document.dispatchEvent( new CustomEvent('csEvent', {detail: items}))
+  })
+  // const test = {
+  //   contoh: "text"
+  // }
+  
   // We can play with DOM or validate URL here
   // and remove queries from URL
   currentUrl = document.URL;
@@ -115,12 +123,20 @@ chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
         appendNotProductPage
       );
     } else {
-      $('#TrackProduct').attr("disabled", false);
+      let data = response[0]
+      chrome.storage.sync.get(['items'], function (result) {
+        let { items } = result      
+        if (checkExistingItems(data.url, items)) $('#TrackProduct').attr("disabled", false)
+        else $('#TrackProduct').attr("disabled", true)
+      })
       $('#previewImage').attr("src", response[0].imageUrl);
-      $('#TrackProduct').attr("disabled", true);
-
     }
   });
+
+  function checkExistingItems(stringUrl, array) {
+    const isNotExisting = (item) => item.url !== stringUrl
+    return array.every(isNotExisting)
+  };
 
 /* ----- chrome.storage SET & GET -----
   chrome.storage.sync.set({ data }, function() {
@@ -150,12 +166,6 @@ const appendProductExisted = `
   You are not allowed to track
   the same product at the same time
 </p>`;
-
-function checkExistingItems(stringUrl, array) {
-  const isNotExisting = (item) => item.url !== stringUrl
-  return array.every(isNotExisting)
-};
-
 
 /* Display Table */
 chrome.storage.sync.get(['items'], function (result) {

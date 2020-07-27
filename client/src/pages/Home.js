@@ -1,19 +1,44 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom"
 import { getProducts } from "../store/actions/productAction"
 
+// let contoh
+// async function getData () {
+//     document.addEventListener('csEvent', function(event) {
+//         // const { test } = event.detail
+//         // console.log(event.detail)
+//         contoh = event.detail
+//     })
+
+// } 
+
 export default () => {
+    
+    // console.log(">>>>?", contoh)
+    // getData()
 
     const dispatch = useDispatch()
     const { products, productLoading, productError } = useSelector(state => state.productReducer)
     const currencyFormatter = new Intl.NumberFormat("id-ID", { style: 'currency', currency: 'IDR' })
+    const [ items, setItems ] = useState([])
 
     const backgroundUrl = "https://i.pinimg.com/474x/8f/4e/8a/8f4e8a77b57c243fa020207909ef377a.jpg"
 
     useEffect(() => {
         dispatch(getProducts())
     }, [dispatch])
+
+    useEffect(() => {
+        // getData()
+        // console.log(">>>>?", contoh)
+        document.addEventListener('csEvent', function(event) {
+            // const { test } = event.detail
+            // console.log(event.detail)
+            // contoh = event.detail
+            setItems(event.detail)
+        })
+    },[])
 
     // Listenin data from extensiond
     // document.addEventListener('csEvent', function(event) {
@@ -36,7 +61,7 @@ export default () => {
                             </div>
                         ) : productError ? (
                             <h3 className="text-center p-5">{productError}</h3>
-                        ) : products.length ? (
+                        ) : items.length ? (
                             <div className="mt-3">
                                 <h1 className="text-center pt-3">Product List</h1>
                                 <table className="table table-hover table-striped table-sm myTable">
@@ -51,7 +76,7 @@ export default () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {products.map((product, idx) =>
+                                        {items.map((product, idx) =>
                                             <tr key={idx}>
                                                 <th scope="row">{idx + 1}</th>
                                                 <td>
@@ -74,6 +99,7 @@ export default () => {
                             </div>
                         ) : (<h3 className="text-center p-5">No Data</h3>)
                     }
+                    {/* {JSON.stringify(items)} */}
                 </div>
             </div>
         </div>
