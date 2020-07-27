@@ -21,7 +21,8 @@ function checkUrl(stringUrl) {
   if (
     stringUrl.search("www.tokopedia.com") > 0 ||
     stringUrl.search("bukalapak.com") > 0 ||
-    stringUrl.search("localhost:4000") > 0
+    stringUrl.search("localhost:4000") > 0 ||
+    stringUrl.search("localhost:3000") > 0
     ) return true
   else return false
 }
