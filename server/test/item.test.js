@@ -50,8 +50,6 @@ describe('Track', () => {
           })
       })
     })
-
-
   })
 
   describe('Failed Tracking', () => {
@@ -134,31 +132,56 @@ describe('Track', () => {
         })
     });
   });
+  it('responds 400 id not found', function (done) {
+    let idNotFound = "5f1ab124d6e5ce33c52ea563"
+    request(app)
+      .get(`/tracks/${idNotFound}`)
+      .then(response => {
+        // console.log(response)
+        const { body, status } = response
+        // console.log(body)
+        expect(status).toBe(400)
+        expect(body).toHaveProperty('message', "Id not found")
 
-  describe('PUT /tracks/:id', function () {
-    it('responds 200 in put and receive an object', function (done) {
-      request(app)
-        .put(`/tracks/${currentItemId}`)
-        .send({ email: "lala@mail.com", targetPrice: 454000 })
-        .then(response => {
-          const { body, status } = response
-          expect(status).toBe(200)
-          expect(body).toHaveProperty('message', 'Item has been successfully updated!')
-          done()
-        })
-    });
-    it('responds 400 id not found', function (done) {
-      let idNotFound = "5f1ab124d6e5ce33c52ea563"
-      request(app)
-        .put(`/tracks/${idNotFound}`)
-        .send({ targetPrice: 454000, email: "lala@mail.com" })
-        .then(response => {
-          const { body, status } = response
-          expect(status).toBe(400)
-          expect(body).toHaveProperty('message', "Id not found")
-          done()
-        })
-    });
+        done()
+      })
+  });
+});
+
+describe('PUT /tracks/:id', function () {
+  it('responds 200 in put and receive an object', function (done) {
+    request(app)
+      .put(`/tracks/${currentItemId}`)
+      .send({ email: "lala@mail.com", targetPrice: 454000, pushNotif: "false", priceChangeNotif: "false" })
+      .then(response => {
+        const { body, status } = response
+        expect(status).toBe(200)
+        expect(body).toHaveProperty('message', 'Item has been successfully updated!')
+        done()
+      })
+  });
+  it('responds 200 in put for sending boolean type data and receive an object', function (done) {
+    request(app)
+      .put(`/tracks/${currentItemId}`)
+      .send({ email: "lala@mail.com", targetPrice: null, pushNotif: true, priceChangeNotif: "true" })
+      .then(response => {
+        const { body, status } = response
+        expect(status).toBe(200)
+        expect(body).toHaveProperty('message', 'Item has been successfully updated!')
+        done()
+      })
+  });
+  it('responds 400 id not found', function (done) {
+    let idNotFound = "5f1ab124d6e5ce33c52ea563"
+    request(app)
+      .put(`/tracks/${idNotFound}`)
+      .send({ email: "shiioriseki@gmail.com", targetPrice: null, pushNotif: "true", priceChangeNotif: "false" })
+      .then(response => {
+        const { body, status } = response
+        expect(status).toBe(400)
+        expect(body).toHaveProperty('message', "Id not found")
+        done()
+      })
 
   })
 
