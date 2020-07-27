@@ -70,7 +70,6 @@ class TrackController {
             const message = { message: "Item has been successfully tracked!" };
             // console.log('masuk create')
             const { url, _id } = data.ops[0];
-            console.log("INTO PRICE WATCHER");
             priceWatcher(url, _id);
             res.status(201).json({ data: data.ops[0], message });
           })
