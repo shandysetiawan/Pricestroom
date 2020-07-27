@@ -1,15 +1,23 @@
+// listener from background.js
+console.log('no event')
+
+
+// chrome.runtime.onMessage.addListener(notify)
+
+// function notify(message) {
+//   console.log(message)
+// }
+
 // This function will have access to browser DOM
 function searcDOM() {
   console.log('Tab script:', document.body);
   let currentUrl, imageUrl, storeName, price, stock, name;
 
+  // send data to website
   chrome.storage.sync.get(['items'], function (result) {
     let { items } = result
     document.dispatchEvent( new CustomEvent('csEvent', {detail: items}))
   })
-  // const test = {
-  //   contoh: "text"
-  // }
   
   // We can play with DOM or validate URL here
   // and remove queries from URL
@@ -184,10 +192,6 @@ chrome.storage.sync.get(['items'], function (result) {
 
 })
 
-
-
-
-
 $("#ClearButton").click(function () {
   chrome.storage.sync.set({ items: [] })
 })
@@ -208,6 +212,7 @@ $("#TrackProduct").click(function () {
       chrome.storage.sync.get(['items'], function (result) {
         let { items } = result
         console.log('getItems', items)
+        if (!items) items = []
         if (items.length >= 5) {
           $('#notFound').append(
             appendProductExceeded
@@ -265,8 +270,6 @@ $("#TrackProduct").click(function () {
           }
         }
       })
-
-
 
     }
 
