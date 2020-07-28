@@ -82,7 +82,7 @@ function priceWatcher(url, id) {
                       if (result.price <= data.targetPrice) {
                         data.pushNotif = true;
                         console.log("notif sent");
-                        Item.updateById(id, data)
+                        Item.updateById(id, data.pushNotif)
                           .then(console.log)
                           .catch(console.error)
                         queue.empty();
@@ -92,7 +92,7 @@ function priceWatcher(url, id) {
                       if (data.currentPrice !== result.price) {
                         data.pushNotif = true;
                         console.log("notif sent");
-                        Item.updateById(id, data)
+                        Item.updateById(id, data.pushNotif)
                           .then(console.log)
                           .catch(console.error)
                       }

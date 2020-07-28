@@ -130,20 +130,27 @@ class TrackController {
       const emailValid = await emailValidator(email)
 
       let editItem
-      let emailResult = false
+
       if (emailValid === "True") {
-        // console.log('masuk sini ga')
-        emailResult = true
+        editItem = {
+          email,
+          pushNotif: false,
+          priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
+          targetPrice: Number(targetPrice),
+          emailNotif: true
+        };
+      } else {
+        editItem = {
+          email: null,
+          pushNotif: true,
+          priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
+          targetPrice: Number(targetPrice),
+          emailNotif: false
+        };
       }
 
-      // console.log(emailResult)
-      editItem = {
-        email,
-        pushNotif: !!JSON.parse(String(pushNotif)),
-        priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
-        targetPrice: Number(targetPrice),
-        emailNotif: emailResult
-      };
+      if (!!JSON.parse(String(pushNotif))) editItem.pushNotif = true;
+      else editItem.pushNotif = false;
 
       Item.updateById(id, editItem)
         .then((data) => {
