@@ -16,7 +16,7 @@ function priceWatcher(url, id) {
   ];
   queue.add(jobs, {
     repeat: {
-      cron: "30 * * * * *",
+      cron: "5 * * * *",
       // every: 20000
     },
   });
