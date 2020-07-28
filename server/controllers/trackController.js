@@ -124,7 +124,7 @@ class TrackController {
   static async updateItem(req, res, next) {
     // email validator to check email format and change emailNotif and/or pushNotif
     const { id } = req.params;
-    const { email, pushNotif, priceChangeNotif, targetPrice } = req.body
+    const { email, priceChangeNotif, targetPrice } = req.body
 
     try {
       const emailValid = await emailValidator(email)
@@ -151,6 +151,7 @@ class TrackController {
 
       if (!!JSON.parse(String(pushNotif))) editItem.pushNotif = true;
       else editItem.pushNotif = false;
+
 
       Item.updateById(id, editItem)
         .then((data) => {
