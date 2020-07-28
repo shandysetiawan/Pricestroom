@@ -1,6 +1,5 @@
 const Item = require("../models/track");
 const { priceWatcher } = require("../bull-cron/watcher");
-const emailValidator = require('../emailValidator/emailValidator')
 
 class TrackController {
 
