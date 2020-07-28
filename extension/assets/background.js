@@ -100,3 +100,45 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
 // chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
 //   console.log(tabs[0].url);
 // });
+
+let dataDummy ={
+  "_id": "5f1fac1565b98821a9960def",
+  "url": "https://www.bukalapak.com/p/mobil-part-dan-aksesoris/eksterior-mobil/headlamp-stoplamp/2ktrzz2-jual-osram-lampu-mobil-h9-cool-blue-hyper-plus-12v-55w-62213cbhplus-putih-kebiruan",
+  "name": "Osram  Lampu Mobil H9 Cool Blue Hyper Plus 12V 55W - 62213CBHPLUS- Putih Kebiruan ",
+  "imageUrl": "https://s1.bukalapak.com/img/65011464361/large/data.jpeg",
+  "storeName": "Autolicht Official Store",
+  "email": "markhiro77@gmail.com",
+  "targetPrice": 140000,
+  "emailNotif": false,
+  "pushNotif": true,
+  "priceChangeNotif": false,
+  "initialPrice": 220000,
+  "currentPrice": 220000
+}
+
+function checkNotification(object) {
+  if (!object.pushNotif) {
+    return null
+  } else {
+    pushNotification(object)
+  }
+}
+
+function pushNotification(objectData) {
+  let notifOptions = {
+    type: 'basic',
+    title: 'Price is set!',
+    message: `${objectData.name} now price is ${objectData.targetPrice}`,
+    iconUrl: '../icons/icon_32.png'
+  }
+  chrome.notifications.create(notifOptions, callback)
+  function callback() {
+    onjectData.pushNotif = false
+  }
+  console.log(objectData)
+}
+
+chrome.storage.sync.get(['items'], function(result) {
+  let {items} = result
+  items.forEach(el => pushNotification(el))
+})

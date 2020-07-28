@@ -349,20 +349,11 @@ $("#TrackProduct").click(function () {
 
 });
 
+
+
 // helpers
 $("#ClearButton").click(function () {
-  chrome.storage.sync.set({ items: [] }, function() {
-    let notifOptions = {
-      type: 'basic',
-      title: 'Clear Storage!',
-      message: 'Storage has been cleared',
-      iconUrl: '../icons/icon_32.png'
-    }
-    chrome.notifications.create(notifOptions, callback)
-    function callback() {
-      console.log(notifOptions)
-    }
-  })
+  chrome.storage.sync.set({ items: [] })
   displayTable();
 })
 
