@@ -12,11 +12,15 @@ import {
   Legend,
 } from "recharts";
 import dateformat from "dateformat";
-// import ExampleData from "../ExampleData"
+import backgroundOcean from "../assets/background-ocean.jpg"
+import backgroundSky from "../assets/background-sky.jpg"
 
 export default () => {
 
-  const baseUrl = "http://localhost:3001"
+  // const baseUrl = "http://localhost:3001"
+  const baseUrl = "http://13.229.109.104:3001" // AWS Zul
+  // const baseUrl = "http://52.74.0.232:3001" // AWS Shandy
+
   const { id } = useParams();
   let [data, setData] = useState(null);
   const [newData, setNewData] = useState(data);
@@ -26,11 +30,11 @@ export default () => {
   });
 
   const backgrounds = [
-    "https://i.pinimg.com/564x/2f/33/71/2f337177bd046a050deabeb6defbe4b0.jpg",
-    "https://i.pinimg.com/564x/c5/1e/ef/c51eefd6458889941fff518c31e924b4.jpg",
-    "https://i.pinimg.com/564x/96/ae/99/96ae99ba5b80a2f8ba635ee2100db5b0.jpg",
+    false,
+    backgroundOcean,
+    backgroundSky,
   ];
-  const [background, setBackground] = useState([backgrounds[0]]);
+  const [background, setBackground] = useState(false);
 
   function onChangeBackground(event) {
     const { value } = event.target;
@@ -85,10 +89,13 @@ export default () => {
   return (
     <div
       style={{
-        background: `url(${background})`,
+        marginTop: "8vh",
         height: data ? "100%" : "100vh",
+        backgroundImage: background ? `url(${background})` : "linear-gradient(#162447, #1f4068)",
+        backgroundSize: "cover"
       }}
     >
+      
       <div className="row justify-content-center">
         <div className="col-4 mt-3 align-self-center">
           <select className="form-control" onChange={onChangeBackground}>
@@ -104,11 +111,11 @@ export default () => {
         <div>
           <div className="row justify-content-center mt-3">
             <div
-              className="col bg-light text-dark border border-info rounded-lg mt-2"
-              style={{ maxWidth: "900px" }}
+              className="col text-dark border border-info rounded-lg mt-2"
+              style={{ maxWidth: "900px", backgroundColor: '#1f4068' }}
             >
               <h1 className="text-center" style={styles.fontH1}>Chart</h1>
-              <section id="Chart">
+              <section id="Chart" className="col" >
                 <LineChart
                   width={800}
                   height={400}
@@ -120,10 +127,20 @@ export default () => {
                     bottom: 5,
                   }}
                 >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis
-                    dataKey="price"
+                  <CartesianGrid 
+                    stroke="#eee" 
+                    strokeDasharray="4 4" 
+                  />
+                  <XAxis 
+                    dataKey="time" 
+                    stroke="#eee" 
+                    angle={-10} 
+                    textAnchor="end"
+                    // position='insideLeft'
+                  />
+                  <YAxis 
+                    dataKey="price" 
+                    stroke="#eee" 
                     domain={[
                       (dataMin) => (dataMin - 10000 <= 0 ? 0 : dataMin - 10000),
                       "dataMax + 10000",
@@ -131,23 +148,17 @@ export default () => {
                   />
                   <Tooltip />
                   <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="price"
-                    stroke="#8884d8"
-                    activeDot={{ r: 8 }}
-                  />
-                  {/* <Line type="monotone" dataKey={Object.keys(data.history[0])[1]} stroke="#8884d8" activeDot={{ r: 8 }} /> */}
+                  <Line type="monotone" dataKey="price" stroke="#8884d8" activeDot={{ r: 8 }} />
                 </LineChart>
               </section>
             </div>
           </div>
           <div className="row justify-content-center mt-3 pb-5">
             <div
-              className="col bg-light text-dark border border-info rounded-lg mt-2 p-3 row justify-content-center"
-              style={{ maxWidth: "900px" }}
+              className="col text-light border border-info rounded-lg mt-2 p-3 row justify-content-center"
+              style={{ maxWidth: "900px", backgroundColor: '#1f4068' }}
             >
-              <div className="card" style={{ maxWidth: "800px" }}>
+              <div className="" style={{ maxWidth: "800px" }}>
                 <div className="row no-gutters">
                   <div className="col-md-4">
                     <img src={data.imageUrl} className="card-img" alt="..." />
@@ -156,33 +167,25 @@ export default () => {
                     <div className="card-body">
                       <h5 className="card-title">{data.name}</h5>
                       <p className="card-text">
-                        Initial Price:{" "}
-                        {currencyFormatter.format(data.initialPrice)} <br />
-                        Last Price:{" "}
-                        {currencyFormatter.format(data.currentPrice)}
-                        <br />
+                        Initial Price: {currencyFormatter.format(data.initialPrice)}<br />
+                        Last Price: {currencyFormatter.format(data.currentPrice)}<br />
                         {data.targetPrice
-                          ? `Target Price: ${currencyFormatter.format(
-                              data.targetPrice
-                            )}`
-                          : ""}
+                          ? `Target Price: ${currencyFormatter.format(data.targetPrice)}`
+                          : ""
+                        }
                         {data.targetPrice && <br />}
-                        Store: {data.storeName}
-                        <br />
+                        Store: {data.storeName}<br />
                         <a href={data.url}>
-                          <span role="img" aria-label="">
-                            🛒
-                          </span>
+                          <span role="img" aria-label="">🛒 </span>
                           Buy This Product
                         </a>
                       </p>
                       <p className="card-text">
-                        <small className="text-muted">
-                          Last updated on{" "}
-                          {dateformat(
-                            Date(data.history[data.history.length - 1]),
-                            "dddd, mmmm dS, yyyy, h:MM:ss TT"
-                          )}
+                        <small className="" style={{color:"#eeeeee"}}>
+                          Last updated on {
+                            dateformat(Date(data.history[data.history.length - 1]),
+                              "dddd, mmmm dS, yyyy, h:MM:ss TT")
+                          }
                         </small>
                       </p>
                     </div>
@@ -198,6 +201,9 @@ export default () => {
 };
 
 const styles = {
-    fontParagraph: { fontFamily: "Leckerli One", fontSize: "large" },
-    fontH1: { fontFamily: "Leckerli One", fontSize: "50px" },
-  };
+  main: {
+    // marginTop: "30px", 
+  },
+  fontParagraph: { fontFamily: "Leckerli One", fontSize: "large" },
+  fontH1: { fontFamily: "Leckerli One", fontSize: "50px", color: "#eeeeee" },
+};

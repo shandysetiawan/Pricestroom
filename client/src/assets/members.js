@@ -1,9 +1,13 @@
-import Zulkifli from "./Batch_43_Zulkifli.jpg"
+import Zulkifli from "./Zulkifli.jpg"
+import chairulakmal from "./chairulakmal.png"
+import shandy from "./shandy.jpeg"
+import cokro from "./cokro.jpg"
+import rudy from "./rudy.jpg"
 
 const members = [
     {
         "name": "Chairul Akmal",
-        "image": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg"
+        "image": chairulakmal
     },
     {
         "name": "Zulkifli",
@@ -11,15 +15,15 @@ const members = [
     },
     {
         "name": "Shandy Setiawan",
-        "image": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg"
+        "image": shandy
     },
     {
-        "name": "Cokrosiamdani",
-        "image": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg"
+        "name": "Cokro Siamdani",
+        "image": cokro
     },
     {
         "name": "Rudy Harun",
-        "image": "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg"
+        "image": rudy
     }
 ]
 
