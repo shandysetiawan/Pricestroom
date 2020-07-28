@@ -65,6 +65,6 @@ const styles = {
     marginTop: "-6em",
   },
   slotName: { paddingRight: "2rem", paddingLeft: "100rem" },
-  fontParagraph: { fontFamily: "Leckerli One", fontSize: "large" },
+  fontParagraph: { fontSize: "large" },
   fontH1: { fontFamily: "Leckerli One", fontSize: "50px" },
 };

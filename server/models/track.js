@@ -15,10 +15,6 @@ module.exports = class ItemModel {
     return Item.find({ "_id": { "$in": dataItem } }).toArray();
   }
 
-  static findAll() {
-    return Item.find().toArray();
-  }
-
   // static updateHistory(url) {
   //   return Item.updateMany({ url }, { $set: data })
   // }

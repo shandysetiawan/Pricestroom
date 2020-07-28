@@ -98,22 +98,47 @@ function priceWatcher(url, id) {
                     };
                   }
                 });
+                if (data.email && !data.targetPrice) {
+                  // console.log("email && null targetPrice");
+                  if (data.currentPrice !== result.price) {
+                    const input = {
+                      email: data.email,
+                      url: data.url,
+                      priceBefore: data.currentPrice,
+                      priceAfter: result.price,
+                    };
+                    mailWatch(input);
+                  }
+                }
+                if (data.email && data.targetPrice) {
+                  // console.log("email && targetPrice");
+                  if (result.price == data.targetPrice) {
+                    const input = {
+                      email: data.email,
+                      url: data.url,
+                      targetPrice: data.targetPrice,
+                    };
+                    mailNotif(input);
+                    queue.empty();
+                  }
+                }
               } else {
                 throw {
                   code: 404,
-                  message: "Sorry, result is not found",
+                  message: "Sorry, data is not found",
                 };
               }
-            })
-            .catch(({ response }) =>
-              console.log(`Error(${response.status}): ${response.statusText}`)
-            );
+            });
         } else {
-          queue.empty();
+          throw {
+            code: 404,
+            message: "Sorry, result is not found",
+          };
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(({ response }) => {
+        console.log(response)
+        // console.log(`Error(${response.status}): ${response.statusText}`)
       });
     done(null, `${job.data}`);
   });

@@ -1,23 +1,34 @@
 const Item = require("../models/track");
-const { priceWatcher } = require("../bull-cron");
+const { priceWatcher } = require("../bull-cron/watcher");
 const emailValidator = require('../emailValidator/emailValidator')
 
 class TrackController {
-  static fetchItems(req, res, next) {
-    const dataItem = JSON.parse(req.headers.dataitem)
 
+  static fetchItems(req, res, next) {
+    let dataItem
+    if (process.env.NODE_ENV === "test") {
+      dataItem = [req.headers.dataitem]
+    }
+
+    if (req.headers.dataitem === undefined) {
+      return res.status(400).json({ message: "id not found" })
+    } else if (process.env.NODE_ENV === "development") {
+      dataItem = JSON.parse(req.headers.dataitem)
+    }
+    // console.log('>>>>>>>', dataItem)
     // Item.find()
     Item.find(dataItem)
       .then((data) => {
         data.map((elem) => {
           elem.history = null
         })
-
         res.status(200).json(data);
       })
       .catch((err) => {
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({ error: err, message: "Internal Server Error" });
       });
+
+
   }
 
   static addItem(req, res, next) {
@@ -114,7 +125,7 @@ class TrackController {
   static async updateItem(req, res, next) {
     // email validator to check email format and change emailNotif and/or pushNotif
     const { id } = req.params;
-    const { email, pushNotif, priceChangeNotif, targetPrice } = req.body
+    const { email, priceChangeNotif, targetPrice } = req.body
 
     try {
       const emailValid = await emailValidator(email)
@@ -129,7 +140,7 @@ class TrackController {
       // console.log(emailResult)
       editItem = {
         email,
-        pushNotif: !!JSON.parse(String(pushNotif)),
+        // pushNotif: !!JSON.parse(String(pushNotif)),
         priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
         targetPrice: Number(targetPrice),
         emailNotif: emailResult
@@ -143,9 +154,6 @@ class TrackController {
             .status(200)
             .json({ data, message: "Item has been successfully updated!" });
         })
-        .catch((err) => {
-          res.status(500).json({ message: "Internal Server Error" });
-        });
 
     } catch (error) {
       return res.status(500).json({ message: "Internal Server Error" });
@@ -155,10 +163,6 @@ class TrackController {
 
   static removeItem(req, res, next) {
     const { id } = req.params;
-
-    if (id === null || undefined) {
-      return res.status(400).json({ message: "No input id" });
-    }
 
     Item.deleteById(id)
       .then((data) => {
