@@ -16,7 +16,7 @@ function priceWatcher(url, id) {
   ];
   queue.add(jobs, {
     repeat: {
-      cron: "5 * * * *",
+      cron: "*/10 * * * * *",
       // every: 20000
     },
   });
@@ -46,7 +46,7 @@ function priceWatcher(url, id) {
                       currentPrice: result.price,
                       history: pushHistory,
                     };
-                    Item.updateMany(data.url, editItem)
+                    Item.updateMany(url, editItem)
                       .then(_ => {
                         console.log(
                           "Items history has been successfully updated!"
@@ -67,12 +67,13 @@ function priceWatcher(url, id) {
                         mailWatch(input);
                       }
                     } else if (data.emailNotif && data.targetPrice) {
-                      console.log("email && targetPrice");
+                      console.log("email && targetPrice", result.price, data.targetPrice);
                       if (result.price <= data.targetPrice) {
+                        console.log("targetPrice reached");
                         const input = {
                           email: data.email,
                           url: data.url,
-                          price: result.price,
+                          price: data.targetPrice,
                         };
                         mailNotif(input);
                         queue.empty();
@@ -80,19 +81,19 @@ function priceWatcher(url, id) {
                     } else if (!data.emailNotif && data.targetPrice) {
                       console.log("null email && targetPrice");
                       if (result.price <= data.targetPrice) {
-                        data.pushNotif = true;
                         console.log("notif sent");
-                        Item.updateById(id, data.pushNotif)
+                        let input1 = { pushNotif: true }
+                        Item.updateById(id, input1)
                           .then(console.log)
                           .catch(console.error)
-                        queue.empty();
+                          .finally(queue.empty())
                       }
                     } else if (!data.emailNotif && data.priceChangeNotif) {
                       console.log("priceChangeNotif");
                       if (data.currentPrice !== result.price) {
-                        data.pushNotif = true;
                         console.log("notif sent");
-                        Item.updateById(id, data.pushNotif)
+                        let input2 = { pushNotif: true }
+                        Item.updateById(id, input2)
                           .then(console.log)
                           .catch(console.error)
                       }
