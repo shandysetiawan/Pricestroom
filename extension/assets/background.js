@@ -1,7 +1,7 @@
 // let url = 'http://localhost:3001/tracks';
 let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
 // let url = 'http://13.229.109.104:3001/tracks'; //AWS Zul
-// let url = 'https://gentle-lake-46054.herokuapp.com/tracks'; //Heroku
+// let url = 'https://gentle-lake-46054.herokuapp.com/tracks';
 
 chrome.alarms.create('getCurrentPrices', {
     periodInMinutes: 5
@@ -36,7 +36,7 @@ function checkUrl(stringUrl, action) {
         else return false
     default: return false
   }
-}
+};
 
 // when new tab is open
 chrome.tabs.onActivated.addListener(function({ tabId }) {
@@ -52,12 +52,10 @@ chrome.tabs.onActivated.addListener(function({ tabId }) {
       chrome.browserAction.setPopup({ popup: '../option.html', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
       console.log('onActivated matched');
-      // call function in actionScript
     } else if(checkUrl(url, 2)) {
       chrome.browserAction.setPopup({ popup: '../option.html', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
       console.log('onActivated website');
-      // chrome.runtime.sendMessage({ url: 'ada url' });
     } else {
       chrome.browserAction.setPopup({ popup: '', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32_disabled.png', tabId });
@@ -78,17 +76,9 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
     chrome.browserAction.setPopup({ popup: '../option.html', tabId });
     chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
     console.log('onUpdated true');
-    // call function in actionScript
   } else if(checkUrl(url, 2)) {
     chrome.browserAction.setPopup({ popup: '../option.html', tabId });
     chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
-    chrome.tabs.sendMessage(tabId, { type: 'background', activateStatusUpdate: true });
-    chrome.runtime.sendMessage({
-      message: 'background',
-      data: {
-        content: 'delivered'
-      }
-    })
     console.log('onUpdated website');
   } else {
     chrome.browserAction.setPopup({ popup: '', tabId });
@@ -101,44 +91,63 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
 //   console.log(tabs[0].url);
 // });
 
-let dataDummy ={
-  "_id": "5f1fac1565b98821a9960def",
-  "url": "https://www.bukalapak.com/p/mobil-part-dan-aksesoris/eksterior-mobil/headlamp-stoplamp/2ktrzz2-jual-osram-lampu-mobil-h9-cool-blue-hyper-plus-12v-55w-62213cbhplus-putih-kebiruan",
-  "name": "Osram  Lampu Mobil H9 Cool Blue Hyper Plus 12V 55W - 62213CBHPLUS- Putih Kebiruan ",
-  "imageUrl": "https://s1.bukalapak.com/img/65011464361/large/data.jpeg",
-  "storeName": "Autolicht Official Store",
-  "email": "markhiro77@gmail.com",
-  "targetPrice": 140000,
-  "emailNotif": false,
-  "pushNotif": true,
-  "priceChangeNotif": false,
-  "initialPrice": 220000,
-  "currentPrice": 220000
-}
+function updateItems(newItem) {
+  chrome.storage.sync.get(['items'], function (result) {
+    let { items } = result
+    removedItems = items.filter(item => item._id !== newItem._id)
+    updated = [newItem, ...removedItems]
+    console.log('background updated', updated)
+
+    chrome.storage.sync.set({ items: updated }, function () {
+      if (updated.length > 0) chrome.runtime.sendMessage({ action: 'displayTable' });
+      else console.log('error @ update items background.js')
+    })
+  })
+};
 
 function checkNotification(object) {
-  if (!object.pushNotif) {
+  let { _id, pushNotif } = object
+  if (!pushNotif) {
     return null
-  } else {
+  } else if (pushNotif) {
     pushNotification(object)
+    let data = {
+        ...object,
+        pushNotif: false
+    }
+    $.ajax({
+      method: "PUT",
+      url: `${url}/${_id}`,
+      data,
+  })
+    .done((response) => {
+        let { value } = response.data
+        console.log('PUT done value', value)
+        updateItems(value)
+    })
+    .fail((err) => {
+        console.log('PUT err', err)
+    })
   }
-}
+};
 
 function pushNotification(objectData) {
+  const { name, currentPrice } = objectData
+  console.log('pushNotif', name, currentPrice)
   let notifOptions = {
     type: 'basic',
     title: 'Price is set!',
-    message: `${objectData.name} now price is ${objectData.targetPrice}`,
+    message: `${name} now price is ${currentPrice}`,
     iconUrl: '../icons/icon_32.png'
   }
   chrome.notifications.create(notifOptions, callback)
   function callback() {
-    onjectData.pushNotif = false
+    objectData.pushNotif = false
   }
   console.log(objectData)
 }
 
 chrome.storage.sync.get(['items'], function(result) {
   let {items} = result
-  items.forEach(el => pushNotification(el))
-})
+  items.forEach(el => checkNotification(el))
+});

@@ -22,11 +22,6 @@ $("#cancelButton").click(function () {
     toMainPage()
 });
 
-$("#deleteButton").click(function () {
-    // confirmation
-    console.log('delete')
-});
-
 /* Form Logic */
 $("#ButtonSetting").click(function () {
     toOptionsPage()
@@ -109,5 +104,4 @@ $("#applySetting").click(function () {
         .fail((err) => {
             console.log('PUT err', err)
         })
-
 })

@@ -3,23 +3,30 @@ let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
 // let url = 'http://13.229.109.104:3001/tracks'; //AWS Zul
 // let url = 'https://gentle-lake-46054.herokuapp.com/tracks'; //Heroku
 
-$("#MainTable").click(function() {
-  updateCurrentItems()
-})
+getAndUpdate()
 
 // Update Current items from Server to chrome.storage
+function getAndUpdate() {
+  chrome.storage.sync.get(['items'], function (result) {
+    let { items } = result
+    console.log('items di getAndUpdate', items)
+    let dataitem = items.map(el => el._id)
+    updateCurrentItems(JSON.stringify(dataitem))
+  })
+}
 
-function updateCurrentItems() {
+function updateCurrentItems(dataitem) {
+  console.log('dataitem di getProducts', dataitem)
   $.ajax({
     method: 'GET',
     url,
     headers: {
-      dataitem: '["5f1fac1565b98821a9960def","5f1fcd0cbb6aa92255b555d8","5f1fb26dbb6aa92255b555d4","5f1fb229bb6aa92255b555d3","5f1fbe8abb6aa92255b555d7"]',
+      dataitem
     }
   })
     .done(data => {
       console.log('GET done', data)
-      data.forEach(el => pushNotification(el))
+      data.forEach(el => checkNotification(el))
       return data
     })
     .done(items => {
@@ -47,39 +54,44 @@ $("#TrackProduct").click(function() {
 //   else return false
 // };
 
-let dataDummy ={
-  "_id": "5f1fac1565b98821a9960def",
-  "url": "https://www.bukalapak.com/p/mobil-part-dan-aksesoris/eksterior-mobil/headlamp-stoplamp/2ktrzz2-jual-osram-lampu-mobil-h9-cool-blue-hyper-plus-12v-55w-62213cbhplus-putih-kebiruan",
-  "name": "Osram  Lampu Mobil H9 Cool Blue Hyper Plus 12V 55W - 62213CBHPLUS- Putih Kebiruan ",
-  "imageUrl": "https://s1.bukalapak.com/img/65011464361/large/data.jpeg",
-  "storeName": "Autolicht Official Store",
-  "email": "markhiro77@gmail.com",
-  "targetPrice": 140000,
-  "emailNotif": false,
-  "pushNotif": true,
-  "priceChangeNotif": false,
-  "initialPrice": 220000,
-  "currentPrice": 220000
-}
-
 function checkNotification(object) {
-  if (!object.pushNotif) {
+  let { _id, pushNotif } = object
+  if (!pushNotif) {
     return null
-  } else {
+  } else if (pushNotif) {
     pushNotification(object)
+    let data = {
+      ...object,
+      pushNotif: false
+    }
+    $.ajax({
+      method: "PUT",
+      url: `${url}/${_id}`,
+        data,
+    })
+    .done((response) => {
+        let { value } = response.data
+        console.log('PUT done value', value)
+        updateItems(value)
+    })
+    .fail((err) => {
+        console.log('PUT err', err)
+    })
   }
-}
+};
 
 function pushNotification(objectData) {
+  const { name, currentPrice } = objectData
+  console.log('pushNotif', name, currentPrice)
   let notifOptions = {
     type: 'basic',
     title: 'Price is set!',
-    message: `${objectData.name} now price is ${objectData.targetPrice}`,
+    message: `${name} now price is ${currentPrice}`,
     iconUrl: '../icons/icon_32.png'
   }
   chrome.notifications.create(notifOptions, callback)
   function callback() {
-    onjectData.pushNotif = false
+    objectData.pushNotif = false
   }
   console.log(objectData)
 }

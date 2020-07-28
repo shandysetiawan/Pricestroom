@@ -1,12 +1,17 @@
 // listener from background.js
-console.log('no event')
+chrome.runtime.onMessage.addListener(notify)
 
-
-// chrome.runtime.onMessage.addListener(notify)
-
-// function notify(message) {
-//   console.log(message)
-// }
+function notify(message) {
+  switch (message.action) {
+    case 'displayTable':
+      console.log('displayTable')
+      displayTable()
+      break;  
+    default:
+      console.log('listened but not message')
+      break;
+  }
+}
 
 // This function will have access to browser DOM
 function searcDOM() {
@@ -223,7 +228,6 @@ function buildSetting(object) {
   return $(`#setting${ _id }`).click(function () {
     prepareSetting(object)
     toOptionsPage()
-    console.log('edit', object)
   })
 };
 
@@ -239,23 +243,20 @@ function buildDelete(object) {
           console.log('DELETE done value', response.data)
           deleteItem(_id)
       })
+      .done(_=> getAndUpdate())
       .fail((err) => {
           console.log('DELETE err', err)
       })
   });
 };
 
-function deleteItem(itemId) {
+async function deleteItem(itemId) {
   chrome.storage.sync.get(['items'], function (result) {
     let { items } = result
     removedItems = items.filter(item => item._id !== itemId)
-    console.log(removedItems)
-
-    chrome.storage.sync.set({ items: removedItems }, function () {
-      displayTable()
-    })
+    console.log('removedItems', removedItems)
+    chrome.storage.sync.set({ items: removedItems })
   })
-
 };
 
 // items Set & Get
@@ -270,6 +271,7 @@ function updateItems(newItem) {
     let { items } = result
     removedItems = items.filter(item => item._id !== newItem._id)
     updated = [newItem, ...removedItems]
+    console.log('background updated', updated)
 
     chrome.storage.sync.set({ items: updated }, function () {
       if (updated.length > 0) displayTable()
@@ -352,10 +354,10 @@ $("#TrackProduct").click(function () {
 
 
 // helpers
-$("#ClearButton").click(function () {
-  chrome.storage.sync.set({ items: [] })
-  displayTable();
-})
+// $("#ClearButton").click(function () {
+//   chrome.storage.sync.set({ items: [] })
+//   displayTable();
+// })
 
 /* ----- chrome.storage SET & GET -----
   chrome.storage.sync.set({ data }, function() {
