@@ -1,6 +1,9 @@
 const app = require('../app.js');
 const request = require('supertest');
 const Item = require('../models/track');
+const axios = require('axios')
+const scrapper = require('../scrapers/scrapper')
+
 
 const newItem = {
   url: "https://www.tokopedia.com/snackneng/chiki-ball-balls-keju-ayam-coklat-free-bubble-wrap-ayam",
@@ -13,6 +16,32 @@ const newItem = {
   email: null
 }
 let currentItemId
+
+let url = "https://www.tokopedia.com/headtotwo/garage-sale-preloved-cocolatte-carseat-omniguard?src=topads"
+
+// jest.mock('axios')
+
+// test('test should get data', () => {
+//   // if (url.search("tokopedia") !== -1) {
+//     // const tokopedia = url.replace(/m.tokopedia/g, "www.tokopedia");
+//     const data = {
+//       name,
+//       price: Number(price.match(/\d+/g).join("")),
+//       store,
+//       stock: stock.split(",")[0],
+//       date: new Date(),
+//     }
+//   // } else {
+
+//   // }
+
+//     axios.get.mockResolvedValue(resp);
+
+//     // or you could use the following depending on your use case:
+//     // axios.get.mockImplementation(() => Promise.resolve(resp))
+
+//     return Users.all().then(data => expect(data).toEqual(users));
+//   });
 
 describe('Track', () => {
   // beforeAll((done) => {
