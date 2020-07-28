@@ -5,9 +5,9 @@ import { Home, Track, About, NotFound } from "../pages"
 export default () => {
     return (
         <Switch>
+            <Route exact path="/" component={Home}/>
             <Route path="/track/:id" component={Track}/>
             <Route path="/about" component={About}/>
-            <Route path="/" component={Home}/>
             <Route component={NotFound}/>
         </Switch>
     )
