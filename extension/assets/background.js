@@ -1,21 +1,24 @@
-let url = 'http://localhost:3001/tracks';
+// let url = 'http://localhost:3001/tracks';
+let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
+// let url = 'http://13.229.109.104:3001/tracks'; //AWS Zul
+// let url = 'https://gentle-lake-46054.herokuapp.com/tracks'; //Heroku
 
 chrome.alarms.create('getCurrentPrices', {
     periodInMinutes: 5
 });
 
 chrome.alarms.onAlarm.addListener((alarmInfo) => {
-  console.log(alarmInfo)
   $.ajax({
     method: 'get',
     url,
+    headers: {
+      dataitem: '["5f1fa5f1dc956c20df19183f","5f1fac1565b98821a9960def"]',
+    }
   }).done(data => console.log('alarm', alarmInfo, data))
     .fail(err => console.log('err', alarmInfo, err))
 });
 
-// chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
-//   console.log(tabs[0].url);
-// });
+/* --- CHECK URL && CHANGE ICON--- */
 
 function checkUrl(stringUrl, action) {
   switch (action) {
@@ -27,7 +30,7 @@ function checkUrl(stringUrl, action) {
         else return false
     case 2:
       if (
-        stringUrl.search("localhost:4000") > 0 ||
+        stringUrl.search("pricestroom.web.app") > 0 ||
         stringUrl.search("localhost:3000") > 0
         ) return true
         else return false
@@ -94,3 +97,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
   }
 });
 
+// chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
+//   console.log(tabs[0].url);
+// });

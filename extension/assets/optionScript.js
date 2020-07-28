@@ -74,6 +74,7 @@ function prepareSetting(object) {
     else $("#emailNotification").hide();
     $("#emailInput").val(email);
     if (targetPrice > 0) {
+        console.log('targetPrice', priceChangeNotif)
         $("#targetPrice").attr("checked", true);
         $("#priceTargetOption").show();
     } else {
@@ -115,7 +116,7 @@ $("#applySetting").click(function () {
 
     $.ajax({
         method: "PUT",
-        url: `http://localhost:3001/tracks/${currentItemId}`,
+        url: `${url}/${currentItemId}`,
         data,
     })
         .done((response) => {

@@ -257,7 +257,7 @@ function updateItems(newItem) {
 };
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
-  console.log(changes.items)
+  console.log(changes.items, namespace)
 });
 
 $("#TrackProduct").click(function () {
