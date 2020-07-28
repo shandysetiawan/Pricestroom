@@ -5,14 +5,13 @@ const emailValidator = require('../emailValidator/emailValidator')
 class TrackController {
 
   static fetchItems(req, res, next) {
+    if (req.headers.dataitem === undefined) {
+      return res.status(400).json({ message: "id not found" })
+    }
     let dataItem
     if (process.env.NODE_ENV === "test") {
       dataItem = [req.headers.dataitem]
-    }
-
-    if (req.headers.dataitem === undefined) {
-      return res.status(400).json({ message: "id not found" })
-    } else if (process.env.NODE_ENV === "development") {
+    } else {
       dataItem = JSON.parse(req.headers.dataitem)
     }
     // console.log('>>>>>>>', dataItem)
@@ -54,7 +53,7 @@ class TrackController {
           email: null,
           targetPrice: null,
           emailNotif: false,
-          pushNotif: true,
+          pushNotif: false,
           priceChangeNotif: true
         };
         if (typeof price === "number") {
