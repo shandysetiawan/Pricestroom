@@ -22,7 +22,7 @@ function mailNotif(data) {
     from: EMAILPS,
     to: data.email, // email tujuan diambil dari data object parameter => data.email
     subject: `Price is set`,
-    text: `The price of ${data.url} is ${data.targetPrice}, check it out!!!`, // di sini juga ada nama dan url dari parameter => data.url, data.targetPrice
+    text: `The price of ${data.url} is ${data.price}, check it out!!!`, // di sini juga ada nama dan url dari parameter => data.url, data.targetPrice
   };
   // console.log("setelah mailopt")
 
