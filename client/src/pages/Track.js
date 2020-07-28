@@ -18,8 +18,8 @@ import backgroundSky from "../assets/background-sky.jpg"
 export default () => {
 
   // const baseUrl = "http://localhost:3001"
-  const baseUrl = "http://13.229.109.104:3001" // AWS Zul
-  // const baseUrl = "http://52.74.0.232:3001" // AWS Shandy
+  // const baseUrl = "http://13.229.109.104:3001" // AWS Zul
+  const baseUrl = "http://52.74.0.232:3001" // AWS Shandy
 
   const { id } = useParams();
   let [data, setData] = useState(null);
