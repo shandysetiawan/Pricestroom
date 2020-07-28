@@ -1,5 +1,5 @@
 {
-  "name": "Hello Extensions",
+  "name": "PriceStroom",
   "description": "Price tracking extension for tokopedia and bukalapak",
   "version": "1.0",
   "manifest_version": 2,
@@ -13,6 +13,7 @@
     "storage",
     "alarms",
     "activeTab",
+    "background",
     "*://*.tokopedia.com/*",
     "*://*.bukalapak.com/*"
   ],
