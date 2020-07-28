@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon app.js",
     "dev1": "set NODE_ENV=development&&nodemon app.js",
-    "test": "jest --detectOpenHandles --runInBand --forceExit --verbose --coverage",
+    "test": "NODE_ENV=test jest --detectOpenHandles --runInBand --forceExit --verbose --coverage",
     "start": "node app.js"
   },
   "keywords": [
@@ -29,5 +29,10 @@
     "mongodb": "^3.5.9",
     "nodemailer": "^6.4.10",
     "supertest": "^4.0.2"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "pricestroom/server/bull-cron/watcher"
+    ]
   }
 }

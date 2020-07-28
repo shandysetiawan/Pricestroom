@@ -1,23 +1,32 @@
 const Item = require("../models/track");
-const { priceWatcher } = require("../bull-cron");
-const emailValidator = require('../emailValidator/emailValidator')
+const { priceWatcher } = require("../bull-cron/watcher");
 
 class TrackController {
-  static fetchItems(req, res, next) {
-    const dataItem = JSON.parse(req.headers.dataitem)
 
+  static fetchItems(req, res, next) {
+    if (req.headers.dataitem === undefined) {
+      return res.status(400).json({ message: "id not found" })
+    }
+    let dataItem
+    if (process.env.NODE_ENV === "test") {
+      dataItem = [req.headers.dataitem]
+    } else {
+      dataItem = JSON.parse(req.headers.dataitem)
+    }
+    // console.log('>>>>>>>', dataItem)
     // Item.find()
     Item.find(dataItem)
       .then((data) => {
         data.map((elem) => {
           elem.history = null
         })
-
         res.status(200).json(data);
       })
       .catch((err) => {
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({ error: err, message: "Internal Server Error" });
       });
+
+
   }
 
   static addItem(req, res, next) {
@@ -43,7 +52,7 @@ class TrackController {
           email: null,
           targetPrice: null,
           emailNotif: false,
-          pushNotif: true,
+          pushNotif: false,
           priceChangeNotif: true
         };
         if (typeof price === "number") {
@@ -111,29 +120,42 @@ class TrackController {
       });
   }
 
-  static async updateItem(req, res, next) {
+  static updateItem(req, res, next) {
     // email validator to check email format and change emailNotif and/or pushNotif
     const { id } = req.params;
-    const { email, pushNotif, priceChangeNotif, targetPrice } = req.body
+    const { email, priceChangeNotif, targetPrice, pushNotif } = req.body
+
+    function ValidateEmail(mail) {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+        return (true)
+      }
+      return (false)
+    }
 
     try {
-      const emailValid = await emailValidator(email)
-
+      const emailValid = ValidateEmail(email)
       let editItem
-      let emailResult = false
-      if (emailValid === "True") {
-        // console.log('masuk sini ga')
-        emailResult = true
+
+      if (emailValid) {
+        editItem = {
+          email,
+          pushNotif: false,
+          priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
+          targetPrice: Number(targetPrice),
+          emailNotif: true
+        };
+      } else {
+        editItem = {
+          email: null,
+          pushNotif: true,
+          priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
+          targetPrice: Number(targetPrice),
+          emailNotif: false
+        };
       }
 
-      // console.log(emailResult)
-      editItem = {
-        email,
-        pushNotif: !!JSON.parse(String(pushNotif)),
-        priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
-        targetPrice: Number(targetPrice),
-        emailNotif: emailResult
-      };
+      if (!!JSON.parse(String(pushNotif))) editItem.pushNotif = true;
+      else editItem.pushNotif = false;
 
       Item.updateById(id, editItem)
         .then((data) => {
@@ -143,9 +165,6 @@ class TrackController {
             .status(200)
             .json({ data, message: "Item has been successfully updated!" });
         })
-        .catch((err) => {
-          res.status(500).json({ message: "Internal Server Error" });
-        });
 
     } catch (error) {
       return res.status(500).json({ message: "Internal Server Error" });
@@ -155,10 +174,6 @@ class TrackController {
 
   static removeItem(req, res, next) {
     const { id } = req.params;
-
-    if (id === null || undefined) {
-      return res.status(400).json({ message: "No input id" });
-    }
 
     Item.deleteById(id)
       .then((data) => {
