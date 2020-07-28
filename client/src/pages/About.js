@@ -1,47 +1,41 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import logo from "../assets/logo.png";
+import members from "../assets/members"
 
 export default () => {
-  const [members, setMember] = useState([]);
 
-  useEffect(() => {
-    setMember([
-      "Cokrosiamdani",
-      "Zulkifli",
-      "Chairul Akmal",
-      "Rudy Harun",
-      "Shandy Setiawan",
-    ]);
-  }, []);
-
-  return (
-    <div className="container border border-dark" style={styles.bodyAbout}>
-      <h1 className="text-center mb-3 mt-3" style={styles.fontH1}>
-        Our Team
-      </h1>
-      <hr></hr>
-      <p style={styles.fontParagraph}>
+    const description = `
         A Chrome Extension where users can watch the price for a specific
         product in Tokopedia and Bukalapak. After users add a product to be
         tracked, our server will scrape the specified website periodically to
         track the changes in price and graphic of price changes will also be
         displayed. Users can also opt to receive notification (push notification
         and/or by email) when the price hit the target price set by the user.
+    `
+
+  return (
+    <div className="container border border-dark mt-3" style={styles.bodyAbout}>
+      <h1 className="text-center mb-3 mt-3" style={styles.fontH1}>
+        Our Team
+      </h1>
+      <hr></hr>
+      <p style={styles.fontParagraph}>
+        {description}
       </p>
 
       <div className="row row-cols-md-5">
-        {members.map((member) => {
+        {members.map((member, idx) => {
           return (
-            <div className="col-4 mb-1">
+            <div key={idx} className="col-4 mb-1">
               <img
-                src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg"
+                src={member.image}
                 style={styles.imageSetting}
                 className="card-img-top rounded-circle mb-3"
                 alt="..."
               />
               <div className="card h-70">
                 <div className="card-body text-center">
-                  <h5 className="card-title slotName">{member}</h5>
+                  <h5 className="card-title slotName">{member.name}</h5>
                   <p className="card-text">FullStack Javascript</p>
                 </div>
               </div>

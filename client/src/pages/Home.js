@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-// import { useDispatch, useSelector } from "react-redux"
 import { Link } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux"
 // import { getProducts } from "../store/actions/productAction"
 
 export default () => {
   // const dispatch = useDispatch()
   // const { products, productLoading, productError } = useSelector(state => state.productReducer)
+  // const backgroundUrl =
+  //   "https://i.pinimg.com/474x/8f/4e/8a/8f4e8a77b57c243fa020207909ef377a.jpg";
+
+  const [items, setItems] = useState([]);
   const currencyFormatter = new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
   });
-  const [items, setItems] = useState([]);
-
-  //   const backgroundUrl =
-  //     "https://i.pinimg.com/474x/8f/4e/8a/8f4e8a77b57c243fa020207909ef377a.jpg";
 
   // useEffect(() => {
   //     dispatch(getProducts())
@@ -24,6 +24,7 @@ export default () => {
       setItems(event.detail);
     });
   }, []);
+  
   return (
     <div className="container border border-dark" style={styles.bodyAbout}>
       <div className="row justify-content-center">
