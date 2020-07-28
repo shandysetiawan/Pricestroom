@@ -87,7 +87,8 @@ $("#applySetting").click(function () {
     let data = {
         targetPrice: Number($("#targetPriceInput").val()),
         email: String($("#emailInput").val()),
-        priceChangeNotif: $('#priceChangeNotif').prop("checked")
+        priceChangeNotif: $('#priceChangeNotif').prop("checked"),
+        pushNotif: false
     }
     if (data.priceChangeNotif) data.targetPrice = null
 
