@@ -77,17 +77,17 @@ function priceWatcher(url, id) {
                         mailNotif(input);
                         queue.empty();
                       }
-                    } else if (data.pushNotif && data.targetPrice) {
-                      console.log("pushNotif && targetPrice");
+                    } else if (!data.email && data.targetPrice) {
+                      console.log("null email && targetPrice");
                       if (result.price <= data.targetPrice) {
-                        data.emailNotif = true;
+                        data.pushNotif = true;
                         console.log("notif sent");
                         queue.empty();
                       }
-                    } else if (data.pushNotif && data.priceChangeNotif) {
+                    } else if (!data.email && data.priceChangeNotif) {
                       console.log("priceChangeNotif");
                       if (data.currentPrice !== result.price) {
-                        data.emailNotif = true;
+                        data.pushNotif = true;
                         console.log("notif sent");
                       }
                     }
