@@ -7,9 +7,7 @@ const { mailNotif, mailWatch } = require("../nodemailer/sendMail");
 function priceWatcher(url, id) {
   // console.log("into priceWatcher");
   const watcher = new Bull(`watcher ${id}`);
-  // watcher.empty();
   watchers = [...watchers, watcher];
-  // console.log(watchers);
   let queue = watchers[watchers.length - 1];
   const jobs = [
     {
@@ -18,7 +16,7 @@ function priceWatcher(url, id) {
   ];
   queue.add(jobs, {
     repeat: {
-      cron: "*/20 * * * * *",
+      cron: "30 * * * * *",
       // every: 20000
     },
   });
@@ -68,8 +66,7 @@ function priceWatcher(url, id) {
                         };
                         mailWatch(input);
                       }
-                    }
-                    if (data.email && data.targetPrice) {
+                    } else if (data.email && data.targetPrice) {
                       console.log("email && targetPrice");
                       if (result.price <= data.targetPrice) {
                         const input = {
@@ -79,6 +76,19 @@ function priceWatcher(url, id) {
                         };
                         mailNotif(input);
                         queue.empty();
+                      }
+                    } else if (data.pushNotif && data.targetPrice) {
+                      console.log("pushNotif && targetPrice");
+                      if (result.price <= data.targetPrice) {
+                        data.emailNotif = true;
+                        console.log("notif sent");
+                        queue.empty();
+                      }
+                    } else if (data.pushNotif && data.priceChangeNotif) {
+                      console.log("priceChangeNotif");
+                      if (data.currentPrice !== result.price) {
+                        data.emailNotif = true;
+                        console.log("notif sent");
                       }
                     }
                   } else {
