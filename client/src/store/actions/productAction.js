@@ -4,7 +4,8 @@ import {
     SET_LOADING_PRODUCT, 
     SET_ERROR_PRODUCTS
 } from "../actionTypes"
-const baseUrl = "http://localhost:3001"
+// const baseUrl = "http://localhost:3001"
+const baseUrl = "http://52.74.0.232:3001"
 
 export function getProducts () {
     return (dispatch) => {
