@@ -121,17 +121,23 @@ class TrackController {
       });
   }
 
-  static async updateItem(req, res, next) {
+  static updateItem(req, res, next) {
     // email validator to check email format and change emailNotif and/or pushNotif
     const { id } = req.params;
-    const { email, priceChangeNotif, targetPrice } = req.body
+    const { email, priceChangeNotif, targetPrice, pushNotif } = req.body
+
+    function ValidateEmail(mail) {
+      if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+        return (true)
+      }
+      return (false)
+    }
 
     try {
-      const emailValid = await emailValidator(email)
-
+      const emailValid = ValidateEmail(email)
       let editItem
 
-      if (emailValid === "True") {
+      if (emailValid) {
         editItem = {
           email,
           pushNotif: false,
@@ -151,7 +157,6 @@ class TrackController {
 
       if (!!JSON.parse(String(pushNotif))) editItem.pushNotif = true;
       else editItem.pushNotif = false;
-
 
       Item.updateById(id, editItem)
         .then((data) => {
