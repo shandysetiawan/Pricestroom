@@ -53,7 +53,11 @@ export default () => {
                     <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
                         <li className="nav-item active"> 
                             <Link 
-                                style={{color: isTop ? "#eeeeee" : "#222831", fontSize: "20px"}}
+                                style={{
+                                    color: isTop ? "#eeeeee" : "#222831", 
+                                    fontSize: "20px", 
+                                    transition: "color 0.5s ease",
+                                }}
                                 className="nav-link" 
                                 to="/">
                                 <span role="img" aria-label="">🏠</span>
@@ -62,7 +66,11 @@ export default () => {
                         </li>
                         <li className="nav-item active">
                             <Link 
-                                style={{color: isTop ? "#eeeeee" : "#222831", fontSize: "20px"}}
+                                style={{
+                                    color: isTop ? "#eeeeee" : "#222831", 
+                                    fontSize: "20px",
+                                    transition: "color 0.5s ease",
+                                }}
                                 className="nav-link" 
                                 to="/about">
                                 <span role="img" aria-label="">🦊</span>
