@@ -84,7 +84,7 @@ function priceWatcher(url, id) {
                         console.log("notif sent");
                         queue.empty();
                       }
-                    } else if (data.priceChangeNotif) {
+                    } else if (data.pushNotif && data.priceChangeNotif) {
                       console.log("priceChangeNotif");
                       if (data.currentPrice !== result.price) {
                         data.emailNotif = true;
