@@ -65,53 +65,33 @@ $("#priceChangeNotif").click(function () {
 
 // prepareSetting(dataDummy)
 function prepareSetting(object) {
-    let { _id, targetPrice, email, emailNotif, pushNotif, priceChangeNotif } = object;
+    let { _id, targetPrice, email, emailNotif, priceChangeNotif } = object;
     $("#currentItemId").text(_id)
-    if (pushNotif) $('#pushNotif').attr("checked", pushNotif);
-    else if (emailNotif) $('#emailNotif').attr("checked", emailNotif);
+    $('#emailNotif').attr("checked", emailNotif);
+    $('#pushNotif').attr("checked", !emailNotif);
     $('#priceChangeNotif').attr("checked", priceChangeNotif);
     if (emailNotif) $("#emailNotification").show();
     else $("#emailNotification").hide();
     $("#emailInput").val(email);
     if (targetPrice > 0) {
-        console.log('targetPrice', priceChangeNotif)
-        $("#targetPrice").attr("checked", true);
+        $("#targetPrice").attr("checked", (targetPrice));
         $("#priceTargetOption").show();
     } else {
-        $("#targetPrice").attr("checked", false);
+        $("#targetPrice").attr("checked", (targetPrice));
         $("#priceTargetOption").hide();
     }
     $("#targetPriceInput").val(targetPrice);
-    turnOffNotifications(object);
 }
-
-function turnOffNotifications(object) {
-    let condition
-    let { emailNotif, pushNotif } = object
-    if (emailNotif || pushNotif) condition = false
-    else condition = true
-    if (condition) {
-        object.targetPrice = null
-        $('#priceChangeNotif').attr("checked", false)
-        $("#priceTargetOption").hide()
-        $("#targetPrice").attr("checked", false)
-    }
-    $("#turnOffNotif").attr("checked", condition)
-};
 
 $("#applySetting").click(function () {
     let data = {
         targetPrice: Number($("#targetPriceInput").val()),
         email: String($("#emailInput").val()),
-        emailNotif: $('#emailNotif').prop("checked"),
-        pushNotif: $('#pushNotif').prop("checked"),
         priceChangeNotif: $('#priceChangeNotif').prop("checked")
     }
-    if (!data.emailNotif) data.email = null
     if (data.priceChangeNotif) data.targetPrice = null
-    prepareSetting(data)
 
-    console.log(data)
+    console.log('applySetting', data)
     let currentItemId = $("#currentItemId").text()
 
     $.ajax({

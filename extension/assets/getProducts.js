@@ -11,10 +11,10 @@ $("#MainTable").click(function() {
 
 function updateCurrentItems() {
   $.ajax({
-    method: 'get',
+    method: 'GET',
     url,
     headers: {
-      dataitem: '["5f1fa5f1dc956c20df19183f","5f1fac1565b98821a9960def","5f1fb26dbb6aa92255b555d4","5f1fb229bb6aa92255b555d3"]',
+      dataitem: '["5f1fac1565b98821a9960def","5f1fcd0cbb6aa92255b555d8","5f1fb26dbb6aa92255b555d4","5f1fb229bb6aa92255b555d3","5f1fbe8abb6aa92255b555d7"]',
     }
   })
     .done(data => {
@@ -22,10 +22,7 @@ function updateCurrentItems() {
       return data
     })
     .done(items => {
-      chrome.storage.sync.set({ items }, function () {
-        if (items.length > 0) displayTable()
-        else console.log('error @ set items')
-      })
+      chrome.storage.sync.set({ items }, _=> displayTable())
     })
     .fail(err => console.log('err', err))
 }

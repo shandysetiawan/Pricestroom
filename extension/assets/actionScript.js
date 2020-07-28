@@ -219,17 +219,43 @@ function displayTable(data = 'items') {
 };
 
 function buildSetting(object) {
-  return $(`#setting${ object._id }`).click(function () {
+  const { _id } = object
+  return $(`#setting${ _id }`).click(function () {
     prepareSetting(object)
     toOptionsPage()
     console.log('edit', object)
-    });
-}
+  })
+};
 
 function buildDelete(object) {
+  let { _id } = object;
   return $(`#delete${ object._id }`).click(function () {
     console.log('delete', object)
-    });
+    $.ajax({
+      method: "DELETE",
+      url: `${url}/${_id}`,
+    })
+      .done((response) => {
+          console.log('DELETE done value', response.data)
+          deleteItem(_id)
+      })
+      .fail((err) => {
+          console.log('DELETE err', err)
+      })
+  });
+};
+
+function deleteItem(itemId) {
+  chrome.storage.sync.get(['items'], function (result) {
+    let { items } = result
+    removedItems = items.filter(item => item._id !== itemId)
+    console.log(removedItems)
+
+    chrome.storage.sync.set({ items: removedItems }, function () {
+      displayTable()
+    })
+  })
+
 };
 
 // items Set & Get
@@ -243,17 +269,13 @@ function updateItems(newItem) {
   chrome.storage.sync.get(['items'], function (result) {
     let { items } = result
     removedItems = items.filter(item => item._id !== newItem._id)
-    console.log(removedItems)
-    console.log('newItem', newItem)
     updated = [newItem, ...removedItems]
-    console.log(updated)
 
     chrome.storage.sync.set({ items: updated }, function () {
       if (updated.length > 0) displayTable()
       else console.log('error @ update items')
     })
   })
-
 };
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -284,7 +306,7 @@ $("#TrackProduct").click(function () {
         } else {
           if (checkExistingItems(data.url, items)) {
             $.ajax({
-              method: 'post',
+              method: 'POST',
               url, // from getProducts.js
               data
             })
