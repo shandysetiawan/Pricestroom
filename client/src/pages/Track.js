@@ -38,7 +38,7 @@ export default () => {
   function fetchData(productId) {
     axios({
       method: "get",
-      url: `http://localhost:3001/tracks/${productId}`,
+      url: `http://52.74.0.232:3001/tracks/${productId}`,
     })
       .then(({ data: data2 }) => {
         setData(data2);
