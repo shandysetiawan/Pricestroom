@@ -26,14 +26,17 @@ function mailNotif(data) {
   };
   // console.log("setelah mailopt")
 
-  transporter.sendMail(mailOption, (err, data) => {
-    console.log("into sendMail");
-    if (err) {
-      throw err;
-    } else {
-      console.log("Email Sent Successfully");
-    }
-  });
+  transporter.sendMail(mailOption, handleSendEmail)
+
+}
+function handleSendEmail(err, data) {
+  console.log("into sendMail");
+  if (err) {
+    throw err;
+  } else {
+    console.log("Email Sent Successfully");
+    return true
+  }
 }
 
 function mailWatch(data) {
@@ -52,17 +55,11 @@ function mailWatch(data) {
   };
   // console.log("setelah mailopt")
 
-  transporter.sendMail(mailOption, (err, data) => {
-    console.log("into sendMail");
-    if (err) {
-      throw err;
-    } else {
-      console.log("Email Sent Successfully");
-    }
-  });
+  transporter.sendMail(mailOption, handleSendEmail)
 }
 
 module.exports = {
   mailNotif,
   mailWatch,
+  handleSendEmail
 };

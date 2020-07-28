@@ -7,9 +7,7 @@ const { mailNotif, mailWatch } = require("../nodemailer/sendMail");
 function priceWatcher(url, id) {
   // console.log("into priceWatcher");
   const watcher = new Bull(`watcher ${id}`);
-  // watcher.empty();
   watchers = [...watchers, watcher];
-  // console.log(watchers);
   let queue = watchers[watchers.length - 1];
   const jobs = [
     {
@@ -18,7 +16,7 @@ function priceWatcher(url, id) {
   ];
   queue.add(jobs, {
     repeat: {
-      cron: "*/20 * * * * *",
+      cron: "30 * * * * *",
       // every: 20000
     },
   });
@@ -68,8 +66,7 @@ function priceWatcher(url, id) {
                         };
                         mailWatch(input);
                       }
-                    }
-                    if (data.email && data.targetPrice) {
+                    } else if (data.email && data.targetPrice) {
                       console.log("email && targetPrice");
                       if (result.price <= data.targetPrice) {
                         const input = {
@@ -80,6 +77,19 @@ function priceWatcher(url, id) {
                         mailNotif(input);
                         queue.empty();
                       }
+                    } else if (!data.email && data.targetPrice) {
+                      console.log("null email && targetPrice");
+                      if (result.price <= data.targetPrice) {
+                        data.pushNotif = true;
+                        console.log("notif sent");
+                        queue.empty();
+                      }
+                    } else if (!data.email && data.priceChangeNotif) {
+                      console.log("priceChangeNotif");
+                      if (data.currentPrice !== result.price) {
+                        data.pushNotif = true;
+                        console.log("notif sent");
+                      }
                     }
                   } else {
                     throw {
@@ -88,22 +98,47 @@ function priceWatcher(url, id) {
                     };
                   }
                 });
+                if (data.email && !data.targetPrice) {
+                  // console.log("email && null targetPrice");
+                  if (data.currentPrice !== result.price) {
+                    const input = {
+                      email: data.email,
+                      url: data.url,
+                      priceBefore: data.currentPrice,
+                      priceAfter: result.price,
+                    };
+                    mailWatch(input);
+                  }
+                }
+                if (data.email && data.targetPrice) {
+                  // console.log("email && targetPrice");
+                  if (result.price == data.targetPrice) {
+                    const input = {
+                      email: data.email,
+                      url: data.url,
+                      targetPrice: data.targetPrice,
+                    };
+                    mailNotif(input);
+                    queue.empty();
+                  }
+                }
               } else {
                 throw {
                   code: 404,
-                  message: "Sorry, result is not found",
+                  message: "Sorry, data is not found",
                 };
               }
-            })
-            .catch(({ response }) =>
-              console.log(`Error(${response.status}): ${response.statusText}`)
-            );
+            });
         } else {
-          queue.empty();
+          throw {
+            code: 404,
+            message: "Sorry, result is not found",
+          };
         }
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(({ response }) => {
+        console.log(response)
+        // console.log(`Error(${response.status}): ${response.statusText}`)
       });
     done(null, `${job.data}`);
   });

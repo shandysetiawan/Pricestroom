@@ -15,6 +15,8 @@ import dateformat from "dateformat";
 // import ExampleData from "../ExampleData"
 
 export default () => {
+
+  const baseUrl = "http://localhost:3001"
   const { id } = useParams();
   let [data, setData] = useState(null);
   const [newData, setNewData] = useState(data);
@@ -38,7 +40,7 @@ export default () => {
   function fetchData(productId) {
     axios({
       method: "get",
-      url: `http://52.74.0.232:3001/tracks/${productId}`,
+      url: `${baseUrl}/tracks/${productId}`,
     })
       .then(({ data: data2 }) => {
         setData(data2);
