@@ -1,17 +1,16 @@
 // listener from background.js
-chrome.runtime.onMessage.addListener(notify)
+chrome.runtime.onMessage.addListener(notify);
 
 function notify(message) {
   switch (message.action) {
     case 'displayTable':
-      console.log('displayTable')
       displayTable()
       break;  
     default:
       console.log('listened but not message')
       break;
   }
-}
+};
 
 // This function will have access to browser DOM
 function searcDOM() {
@@ -25,7 +24,6 @@ function searcDOM() {
   })
   
   // We can play with DOM or validate URL here
-  // and remove queries from URL
   currentUrl = document.URL;
   if (currentUrl.indexOf("?") > 0) currentUrl = currentUrl.substring(0, currentUrl.indexOf("?"));
 
@@ -33,12 +31,6 @@ function searcDOM() {
     // DOM cannot be passed to extension directly
     let imgDOMs = document.getElementsByTagName("img");
     imageUrl = String(imgDOMs[1].src);
-
-    // let nameDOMs = document.getElementsByTagName("h1")
-    // name = nameDOMs[0].textContent;
-
-    // let DOMS = document.getElementsByTagName("h3")
-    // price = DOMS[0].textContent;
 
     /* -----TOKOPEDIA----- */
     let imageElement, storeNameElement, priceElement, stockElement, nameElement;
@@ -51,41 +43,17 @@ function searcDOM() {
       stockElement = "[data-testid='lblPDPDetailProductStock']";
       storeNameElement = "[data-testid='llbPDPFooterShopName']";
 
-    } /* else if (currentUrl.search("m.tokopedia.com") > 0) {
-      
-      imageElement = "[data-testid='pdpImage']";
-      priceElement = "[data-testid='pdpProductPrice']";
-      nameElement = "[data-testid='pdpProductName']"; // data-testid="pdpProductName"
-      stockElement = "[data-testid='pdpStockInfo']";
-      storeNameElement = "[data-testid='pdpShopName']";
-
-    } */
+    } 
 
     price = document.querySelectorAll(priceElement)[0].textContent;
     name = document.querySelectorAll(nameElement)[0].textContent;
     stock = document.querySelectorAll(stockElement)[0].textContent;
     storeName = document.querySelectorAll(storeNameElement)[0].textContent;
 
-    /*
-    price = priceDocument.textContent || priceDocument.innerText;
-    name = nameDocument.textContent || nameDocument.innerText;
-    stock = stockDocument.textContent || stockDocument.innerText;
-    storeName = storeNameDocument.textContent || storeNameDocument.innerText;
-    */
-
-    console.log('currentUrl TP', currentUrl)
-    console.log('imageUrl TP', imageUrl)
-    console.log('name TP', name)
-    console.log('price TP', price)
-    console.log('stock TP', stock)
-    console.log('storeName TP', storeName)
-
     return { url: currentUrl, imageUrl, price, storeName, stock, name };
 
     /* -----BUKALAPAK----- */
   } else if (currentUrl.search("bukalapak.com") > 0) {
-    // imageUrl = String(imgDOMs[4].src);
-    // let scriptString = $(`${scriptElement}`)[1].children[0].data;
 
     let scriptElement = 'script[type="application/ld+json"]';
     let scripts = document.querySelectorAll(scriptElement)
@@ -99,13 +67,6 @@ function searcDOM() {
     price = lowPrice
     storeName = seller.name
     stock = offerCount
-
-    console.log('currentUrl BL', currentUrl)
-    console.log('imageUrl BL', imageUrl)
-    console.log('name BL', name)
-    console.log('price BL', price)
-    console.log('stock BL', stock)
-    console.log('storeName BL', storeName)
 
     return { url: currentUrl, imageUrl, price, storeName, stock, name };
   } else {
@@ -148,7 +109,6 @@ const appendProductExisted = `
 // argument here is a string but function.toString() returns function's code
 chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' },
   (response) => {
-    console.log('Popup onActivated script:');
     $('#previewImage').attr("src", "");
 
     $('#mainMessage').empty();
@@ -187,7 +147,6 @@ function displayTable(data = 'items') {
     if (!items) items = []
     items.map((item, idx) => {
       let { _id, name, imageUrl, currentPrice, targetPrice } = item
-      console.log(name, targetPrice)
       $('#MainTableBody').append(
         `<tr>
             <td class="products"><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
@@ -234,13 +193,11 @@ function buildSetting(object) {
 function buildDelete(object) {
   let { _id } = object;
   return $(`#delete${ object._id }`).click(function () {
-    console.log('delete', object)
     $.ajax({
       method: "DELETE",
       url: `${url}/${_id}`,
     })
       .done((response) => {
-          console.log('DELETE done value', response.data)
           deleteItem(_id)
       })
       .done(_=> getAndUpdate())
@@ -254,7 +211,6 @@ async function deleteItem(itemId) {
   chrome.storage.sync.get(['items'], function (result) {
     let { items } = result
     removedItems = items.filter(item => item._id !== itemId)
-    console.log('removedItems', removedItems)
     chrome.storage.sync.set({ items: removedItems })
   })
 };
@@ -263,7 +219,8 @@ async function deleteItem(itemId) {
 
 function checkExistingItems(stringUrl, array) {
   const isNotExisting = (item) => item.url !== stringUrl
-  return array.every(isNotExisting)
+  if (array) return array.every(isNotExisting)
+  else return false
 };
 
 function updateItems(newItem) {
@@ -271,7 +228,6 @@ function updateItems(newItem) {
     let { items } = result
     removedItems = items.filter(item => item._id !== newItem._id)
     updated = [newItem, ...removedItems]
-    console.log('background updated', updated)
 
     chrome.storage.sync.set({ items: updated }, function () {
       if (updated.length > 0) displayTable()
@@ -279,10 +235,6 @@ function updateItems(newItem) {
     })
   })
 };
-
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-  console.log(changes.items, namespace)
-});
 
 $("#TrackProduct").click(function () {
   chrome.tabs.executeScript({ code: '(' + searcDOM + ')();' }, (response) => {
@@ -296,7 +248,6 @@ $("#TrackProduct").click(function () {
       );
     } else {
       const data = response[0];
-      // check jumlah items
       chrome.storage.sync.get(['items'], function (result) {
         let { items } = result
         console.log('getItems', items)
@@ -314,12 +265,8 @@ $("#TrackProduct").click(function () {
             })
               .done(response => {
                 $('#MainTableBody').empty()
-                console.log('POST done', response)
-                let { data, message } = response
-                console.log('message', message)
-
+                let { data } = response
                 let newItems = [...items, data]
-                console.log('newItems', newItems)
   
                 chrome.storage.sync.set({ items: newItems }, function () {
                   if (newItems.length > 0) displayTable()
@@ -330,9 +277,7 @@ $("#TrackProduct").click(function () {
               .done(_ => {
                 toOptionsPage() // from optionScript.js
               })
-              .fail(err => {
-                console.log('POST err', err)
-              })
+              .fail(err =>                console.error(err))
   
             $('#mainMessage').append(
               appendProductCreated

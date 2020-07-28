@@ -1,6 +1,5 @@
 $("#optionSection").hide();
 $("#currentItemId").hide();
-// toOptionsPage();
 
 // Navigation
 
@@ -50,32 +49,29 @@ $("#priceChangeNotif").click(function () {
     $("#priceTargetOption").hide()
 });
 
-// let dataDummy = {
-//     targetPrice: null, // targetPriceInput
-//     email: null, // emailInput
-//     emailNotif: false, // emailNotif
-//     pushNotif: true, // #pushNotif
-//     priceChangeNotif: true // priceChange
-// }
-
-// prepareSetting(dataDummy)
 function prepareSetting(object) {
     let { _id, targetPrice, email, emailNotif, priceChangeNotif } = object;
-    $("#currentItemId").text(_id)
-    $('#emailNotif').attr("checked", emailNotif);
-    $('#pushNotif').attr("checked", !emailNotif);
-    $('#priceChangeNotif').attr("checked", priceChangeNotif);
-    if (emailNotif) $("#emailNotification").show();
-    else $("#emailNotification").hide();
+    $("#currentItemId").text(_id);
+
     $("#emailInput").val(email);
+    if (emailNotif) {
+        $("#emailNotification").show();
+        $('#emailNotif').attr("checked", true);
+    } else {
+        $('#pushNotif').attr("checked", true);
+        $("#emailNotification").hide();
+    }
+
+    $('#priceChangeNotif').attr("checked", priceChangeNotif);
+
+    $("#targetPriceInput").val(targetPrice);
     if (targetPrice > 0) {
-        $("#targetPrice").attr("checked", (targetPrice));
+        $("#targetPrice").attr("checked", true);
         $("#priceTargetOption").show();
     } else {
-        $("#targetPrice").attr("checked", (targetPrice));
+        $("#targetPrice").attr("checked", false);
         $("#priceTargetOption").hide();
     }
-    $("#targetPriceInput").val(targetPrice);
 }
 
 $("#applySetting").click(function () {

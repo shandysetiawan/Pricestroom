@@ -19,7 +19,7 @@
     "*://*.bukalapak.com/*"
   ],
   "background": {
-    "scripts": ["assets/jquery-3.5.1.dev.js", "assets/background.js"],
+    "scripts": ["assets/jquery-3.5.1.min.js", "assets/background.js"],
     "persistent": false
   },
   "browser_action": {
@@ -32,18 +32,7 @@
         "default": "Ctrl+Shift+F",
         "mac": "MacCtrl+Shift+F"
       },
-      "description": "Opens index.html"
+      "description": "Opens option.html"
     }
-  },
-  "content_scripts": [
-    {
-      "matches": [
-        "*://*.tokopedia.com/*",
-        "*://*.bukalapak.com/*"
-      ],
-      "js": [
-        "assets/content.js"
-      ]
-    }
-  ]
+  }
 }
