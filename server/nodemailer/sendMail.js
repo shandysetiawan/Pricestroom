@@ -4,7 +4,7 @@ const nodemailer = require("nodemailer");
 // data = {email: <string alamat email tujuan>, url: <url product>, targetPrice: <target price>}
 
 let { EMAILPS, EMAILPASSWORD } = process.env;
-console.log(EMAILPASSWORD, EMAILPS)
+
 const auth = {
   user: EMAILPS,
   pass: EMAILPASSWORD

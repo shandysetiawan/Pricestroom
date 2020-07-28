@@ -5,7 +5,7 @@ let watchers = [];
 const { mailNotif, mailWatch } = require("../nodemailer/sendMail");
 
 function priceWatcher(url, id) {
-  console.log("into priceWatcher");
+  // console.log("into priceWatcher");
   const watcher = new Bull(`watcher ${id}`);
   watchers = [...watchers, watcher];
   let queue = watchers[watchers.length - 1];
