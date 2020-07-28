@@ -26,7 +26,7 @@ export default () => {
   }, []);
   
   return (
-    <div className="container border border-dark" style={styles.bodyAbout}>
+    <div className="container border border-dark mt-3" style={styles.bodyAbout}>
       <div className="row justify-content-center">
         <div className="col-10">
           {
