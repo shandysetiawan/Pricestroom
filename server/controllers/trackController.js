@@ -1,11 +1,18 @@
 const Item = require("../models/track");
 const { priceWatcher } = require("../bull-cron");
+const emailValidator = require('../emailValidator/emailValidator')
 
 class TrackController {
   static fetchItems(req, res, next) {
-    Item.find()
-      // Item.find(dataItem)
+    const dataItem = JSON.parse(req.headers.dataitem)
+
+    // Item.find()
+    Item.find(dataItem)
       .then((data) => {
+        data.map((elem) => {
+          elem.history = null
+        })
+
         res.status(200).json(data);
       })
       .catch((err) => {
@@ -18,8 +25,8 @@ class TrackController {
       var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
       return regexp.test(s);
     }
-    const { url, imageUrl, storeName, price, stock, name } = req.body;
-    console.log("line 23", req.body);
+    let { url, imageUrl, storeName, price, stock, name } = req.body;
+    // console.log("line 23", req.body);
 
     if (isUrl(url)) {
       if (
@@ -70,11 +77,14 @@ class TrackController {
             const message = { message: "Item has been successfully tracked!" };
             // console.log('masuk create')
             const { url, _id } = data.ops[0];
+            // console.log("INTO PRICE WATCHER");
             priceWatcher(url, _id);
-            res.status(201).json({ data: data.ops[0], message });
+            data.ops[0].history = null
+            return res.status(201).json({ data: data.ops[0], message });
           })
           .catch((err) => {
-            res.status(500).json({ message: "Internal Server Error" });
+            // console.log(err)
+            res.status(500).json({ error: err, message: "Internal Server Error" });
           });
       } else {
         res
@@ -91,6 +101,9 @@ class TrackController {
 
     Item.findById(id)
       .then((data) => {
+        if (data === null) {
+          return res.status(400).json({ message: "Id not found" });
+        }
         res.status(200).json(data);
       })
       .catch((err) => {
@@ -98,29 +111,46 @@ class TrackController {
       });
   }
 
-  static updateItem(req, res, next) {
+  static async updateItem(req, res, next) {
     // email validator to check email format and change emailNotif and/or pushNotif
-
     const { id } = req.params;
-
     const { email, pushNotif, priceChangeNotif, targetPrice } = req.body
 
-    const editItem = {
-      targetPrice: Number(targetPrice),
-      email,
-      pushNotif: Boolean(pushNotif),
-      priceChangeNotif: Boolean(priceChangeNotif)
-    };
+    try {
+      const emailValid = await emailValidator(email)
 
-    Item.updateById(id, editItem)
-      .then((data) => {
-        res
-          .status(200)
-          .json({ data, message: "Item has been successfully updated!" });
-      })
-      .catch((err) => {
-        res.status(500).json({ message: "Internal Server Error" });
-      });
+      let editItem
+      let emailResult = false
+      if (emailValid === "True") {
+        // console.log('masuk sini ga')
+        emailResult = true
+      }
+
+      // console.log(emailResult)
+      editItem = {
+        email,
+        pushNotif: !!JSON.parse(String(pushNotif)),
+        priceChangeNotif: !!JSON.parse(String(priceChangeNotif)),
+        targetPrice: Number(targetPrice),
+        emailNotif: emailResult
+      };
+
+      Item.updateById(id, editItem)
+        .then((data) => {
+          if (data.lastErrorObject.updatedExisting === false) return res.status(400).json({ message: "Id not found" })
+          data.value.history = null
+          res
+            .status(200)
+            .json({ data, message: "Item has been successfully updated!" });
+        })
+        .catch((err) => {
+          res.status(500).json({ message: "Internal Server Error" });
+        });
+
+    } catch (error) {
+      return res.status(500).json({ message: "Internal Server Error" });
+    }
+
   }
 
   static removeItem(req, res, next) {
@@ -132,7 +162,10 @@ class TrackController {
 
     Item.deleteById(id)
       .then((data) => {
-        res.status(200).json({ message: "Success to delete item!" });
+
+        if (data.deletedCount === 0) return res.status(400).json({ message: "Id not found" })
+
+        res.status(200).json({ data, message: "Success to delete item!" });
       })
       .catch((err) => {
         res.status(500).json({ message: "Internal Server Error" });

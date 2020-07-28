@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon app.js",
     "dev1": "set NODE_ENV=development&&nodemon app.js",
-    "test": "jest --detectOpenHandles --runInBand --forceExit --verbose",
+    "test": "jest --detectOpenHandles --runInBand --forceExit --verbose --coverage",
     "start": "node app.js"
   },
   "keywords": [
