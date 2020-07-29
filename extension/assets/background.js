@@ -1,5 +1,5 @@
-let url = 'http://localhost:3001/tracks';
-// let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
+// let url = 'http://localhost:3001/tracks';
+let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
 // let url = 'http://13.229.109.104:3001/tracks'; //AWS Zul
 // let url = 'https://gentle-lake-46054.herokuapp.com/tracks';
 
