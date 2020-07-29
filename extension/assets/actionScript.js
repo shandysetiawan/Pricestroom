@@ -161,7 +161,13 @@ function displayTable(data = 'items') {
       let { _id, name, imageUrl, currentPrice, targetPrice } = item
       $('#MainTableBody').append(
         `<tr>
-            <td class="products"><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
+            
+            <td class="products">
+              <a href="http://pricestroom.s3-website-ap-southeast-1.amazonaws.com/track/${_id}" target="_blank">
+                <img src="${imageUrl}" class="tableImage" alt="See price history of ${name}">
+              </a>
+            </td>
+            
             <td class="text-right">${ rupiahDisplayer(currentPrice) }</td>
             <td class="text-right">${ targetPrice ? rupiahDisplayer(targetPrice) : '-' }</td>
             <td class="options">
