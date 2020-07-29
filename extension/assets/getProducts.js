@@ -1,5 +1,5 @@
-// let url = 'http://localhost:3001/tracks';
-let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
+let url = 'http://localhost:3001/tracks';
+// let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
 // let url = 'http://13.229.109.104:3001/tracks'; //AWS Zul
 // let url = 'https://gentle-lake-46054.herokuapp.com/tracks'; //Heroku
 
@@ -32,7 +32,7 @@ function updateCurrentItems(dataitem) {
     .done(items => {
       chrome.storage.sync.set({ items }, _=> displayTable())
     })
-    .fail(err => console.error(err))
+    .fail(err => console.log(err))
 }
 
 function checkNotification(object) {
@@ -54,7 +54,7 @@ function checkNotification(object) {
         let { value } = response.data
         updateItems(value);
     })
-    .fail(err => console.error(err))
+    .fail(err => console.log(err))
   }
 };
 

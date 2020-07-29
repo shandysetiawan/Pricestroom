@@ -1,3 +1,5 @@
+const reactClient = 'http://www.pricestroom.store';
+
 // listener from background.js
 chrome.runtime.onMessage.addListener(notify);
 
@@ -163,7 +165,7 @@ function displayTable(data = 'items') {
         `<tr>
             
             <td class="products">
-              <a href="http://pricestroom.s3-website-ap-southeast-1.amazonaws.com/track/${_id}" target="_blank">
+              <a href="${reactClient}/track/${_id}" target="_blank">
                 <img src="${imageUrl}" class="tableImage" alt="See price history of ${name}">
               </a>
             </td>
@@ -229,7 +231,7 @@ function buildDelete(object) {
       })
       .done(_=> getAndUpdate())
       .fail((err) => {
-          console.error(err)
+          console.log(err)
       })
 
 
@@ -306,7 +308,7 @@ $("#TrackProduct").click(function () {
               .done(_ => {
                 toOptionsPage() // from optionScript.js
               })
-              .fail(err =>                console.error(err))
+              .fail(err => console.log(err))
   
             $('#mainMessage').append(
               appendProductCreated
