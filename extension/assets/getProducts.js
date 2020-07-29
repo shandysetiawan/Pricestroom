@@ -9,9 +9,12 @@ getAndUpdate()
 function getAndUpdate() {
   chrome.storage.sync.get(['items'], function (result) {
     let { items } = result
-    if (!items) items = []
-    let dataitem = items.map(el => el._id)
-    updateCurrentItems(JSON.stringify(dataitem))
+    if (!items) chrome.storage.sync.set({ items: [] })
+    else {
+      console.log('getAndUpdate', items)
+      let dataitem = items.map(el => el._id)
+      updateCurrentItems(JSON.stringify(dataitem))
+    }
   })
 }
 

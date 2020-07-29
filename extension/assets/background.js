@@ -5,8 +5,10 @@ let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
 
 chrome.storage.sync.get(['items'], function(result) {
   let {items} = result
-  if (!items) items = []
-  items.forEach(el => checkNotification(el))
+  if (!items) chrome.storage.sync.set({ items: [] })
+  else {
+    items.forEach(el => checkNotification(el))
+  }
 });
 
 chrome.alarms.create('getCurrentPrices', {
@@ -19,8 +21,12 @@ chrome.alarms.onAlarm.addListener(_ => getAndUpdate());
 function getAndUpdate() {
   chrome.storage.sync.get(['items'], function (result) {
     let { items } = result
-    let dataitem = items.map(el => el._id)
-    updateCurrentItems(JSON.stringify(dataitem))
+    if (!items) chrome.storage.sync.set({ items: [] })
+    else {
+      console.log('getAndUpdate background', items)
+      let dataitem = items.map(el => el._id)
+      updateCurrentItems(JSON.stringify(dataitem))
+    }
   })
 }
 
@@ -34,6 +40,7 @@ function updateCurrentItems(dataitem) {
   })
     .done(data => {
       data.forEach(el => checkNotification(el))
+      console.log('backgorund data', data)
       return data
     })
     .done(items => {
@@ -42,25 +49,6 @@ function updateCurrentItems(dataitem) {
     .fail(err => console.error(err))
     .always(chrome.runtime.sendMessage({ action: 'displayTable' }))
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* --- CHECK URL && CHANGE ICON--- */
 
@@ -95,10 +83,12 @@ chrome.tabs.onActivated.addListener(function({ tabId }) {
     } else if(checkUrl(url, 1)) {
       chrome.browserAction.setPopup({ popup: '../option.html', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
+      getAndUpdate();
       console.log('onActivated matched');
     } else if(checkUrl(url, 2)) {
       chrome.browserAction.setPopup({ popup: '../option.html', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
+      getAndUpdate();
       console.log('onActivated website');
     } else {
       chrome.browserAction.setPopup({ popup: '', tabId });
@@ -173,11 +163,17 @@ function checkNotification(object) {
 };
 
 function pushNotification(objectData) {
-  const { name, currentPrice } = objectData
+  const { name, currentPrice, targetPrice } = objectData
+  let title = 'The price has changed!'
+  let messsage = `The price of ${name} has changed to ${currentPrice}`
+  if (targetPrice) {
+    title = 'The price has reached your target'
+    messsage = `The current price of ${name} is ${currentPrice}`
+  }
   let notifOptions = {
     type: 'basic',
-    title: 'The price is !',
-    message: `${name} now price is ${currentPrice}`,
+    title,
+    message,
     iconUrl: '../icons/icon_32.png'
   }
   chrome.notifications.create(notifOptions)
