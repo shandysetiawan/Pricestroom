@@ -1,5 +1,5 @@
-// let url = 'http://localhost:3001/tracks';
-let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
+let url = 'http://localhost:3001/tracks';
+// let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
 // let url = 'http://13.229.109.104:3001/tracks'; //AWS Zul
 // let url = 'https://gentle-lake-46054.herokuapp.com/tracks';
 
@@ -23,7 +23,6 @@ function getAndUpdate() {
     let { items } = result
     if (!items) chrome.storage.sync.set({ items: [] })
     else {
-      console.log('getAndUpdate background', items)
       let dataitem = items.map(el => el._id)
       updateCurrentItems(JSON.stringify(dataitem))
     }
@@ -40,7 +39,6 @@ function updateCurrentItems(dataitem) {
   })
     .done(data => {
       data.forEach(el => checkNotification(el))
-      console.log('backgorund data', data)
       return data
     })
     .done(items => {
@@ -163,12 +161,12 @@ function checkNotification(object) {
 };
 
 function pushNotification(objectData) {
-  const { name, currentPrice, targetPrice } = objectData
+  const { url, name, currentPrice, targetPrice } = objectData
   let title = 'The price has changed!'
-  let messsage = `The price of ${name} has changed to ${currentPrice}`
+  let message = `The price of ${name} has changed to ${currentPrice}`
   if (targetPrice) {
     title = 'The price has reached your target'
-    messsage = `The current price of ${name} is ${currentPrice}`
+    message = `The current price of ${name} is ${currentPrice}`
   }
   let notifOptions = {
     type: 'basic',
@@ -176,7 +174,10 @@ function pushNotification(objectData) {
     message,
     iconUrl: '../icons/icon_32.png'
   }
-  chrome.notifications.create(notifOptions)
+  chrome.notifications.create(url, notifOptions);
+  chrome.notifications.onClicked.addListener(function(url) {
+    chrome.tabs.create({ url })
+  })
 }
 
 

@@ -34,12 +34,12 @@ $("#pushNotif").click(function () {
     $("#emailNotification").hide()
 });
 
-$("#turnOffNotif").click(function () {
-    $("#emailNotification").hide()
-    $('#priceChangeNotif').attr("checked", false)
-    $("#priceTargetOption").hide()
-    $("#targetPrice").attr("checked", false)
-});
+// $("#turnOffNotif").click(function () {
+//     $("#emailNotification").hide()
+//     $('#priceChangeNotif').attr("checked", false)
+//     $("#priceTargetOption").hide()
+//     $("#targetPrice").attr("checked", false)
+// });
 
 $("#targetPrice").click(function () {
     $("#priceTargetOption").show()
@@ -50,8 +50,12 @@ $("#priceChangeNotif").click(function () {
 });
 
 function prepareSetting(object) {
-    let { _id, targetPrice, email, emailNotif, priceChangeNotif } = object;
+    $('#optionImage').attr("src", "");
+
+    let { _id, imageUrl, targetPrice, email, emailNotif, priceChangeNotif } = object;
     $("#currentItemId").text(_id);
+
+    $('#optionImage').attr("src", imageUrl);
 
     $("#emailInput").val(email);
     if (emailNotif) {

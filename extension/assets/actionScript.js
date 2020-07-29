@@ -104,6 +104,18 @@ const appendProductExisted = `
   the same product at the same time
 </p>`;
 
+const appendDeletingProduct = `
+<p>Deleting product</p>
+<p class='small'>
+  ...
+</p>`;
+
+const appendProductDeleted = `
+<p>Product deleted</p>
+<p class='small'>
+  The product has been successfully deleted
+</p>`;
+
 // The following function will have access to extension
 // We have permission to access the activeTab, so we can call chrome.tabs.executeScript:
 // argument here is a string but function.toString() returns function's code
@@ -193,17 +205,28 @@ function buildSetting(object) {
 function buildDelete(object) {
   let { _id } = object;
   return $(`#delete${ object._id }`).click(function () {
+    $('#previewImage').attr("src", "");
+    $('#mainMessage').empty();
+    $('#mainMessage').append(
+      appendDeletingProduct
+    );
     $.ajax({
       method: "DELETE",
       url: `${url}/${_id}`,
     })
-      .done((response) => {
-          deleteItem(_id)
+      .done(_=> {
+        $('#mainMessage').empty();
+        $('#mainMessage').append(
+          appendProductDeleted
+        );
+        deleteItem(_id)
       })
       .done(_=> getAndUpdate())
       .fail((err) => {
-          console.log('DELETE err', err)
+          console.error(err)
       })
+
+
   });
 };
 

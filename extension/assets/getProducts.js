@@ -1,5 +1,5 @@
-// let url = 'http://localhost:3001/tracks';
-let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
+let url = 'http://localhost:3001/tracks';
+// let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
 // let url = 'http://13.229.109.104:3001/tracks'; //AWS Zul
 // let url = 'https://gentle-lake-46054.herokuapp.com/tracks'; //Heroku
 
@@ -11,7 +11,6 @@ function getAndUpdate() {
     let { items } = result
     if (!items) chrome.storage.sync.set({ items: [] })
     else {
-      console.log('getAndUpdate', items)
       let dataitem = items.map(el => el._id)
       updateCurrentItems(JSON.stringify(dataitem))
     }
@@ -47,25 +46,34 @@ function checkNotification(object) {
       pushNotif: false
     }
     $.ajax({
-      method: "PUT",
+      method: 'PUT',
       url: `${url}/${_id}`,
-        data,
+      data,
     })
     .done((response) => {
         let { value } = response.data
-        updateItems(value)
+        updateItems(value);
     })
     .fail(err => console.error(err))
   }
 };
 
 function pushNotification(objectData) {
-  const { name, currentPrice } = objectData
+  const { url, name, currentPrice, targetPrice } = objectData
+  let title = 'The price has changed!'
+  let message = `The price of ${name} has changed to ${currentPrice}`
+  if (targetPrice) {
+    title = 'The price has reached your target'
+    message = `The current price of ${name} is ${currentPrice}`
+  }
   let notifOptions = {
     type: 'basic',
-    title: 'Price is set!',
-    message: `${name} now price is ${currentPrice}`,
+    title,
+    message,
     iconUrl: '../icons/icon_32.png'
   }
-  chrome.notifications.create(notifOptions)
+  chrome.notifications.create(url, notifOptions);
+  chrome.notifications.onClicked.addListener(function(url) {
+    chrome.tabs.create({ url })
+  })
 }
