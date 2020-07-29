@@ -9,12 +9,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
+    <>
     <Provider store={store}>
       <Router>
         <Navbar/>
         <Routes/>
       </Router>
     </Provider>
+    </>
   );
 }
 
