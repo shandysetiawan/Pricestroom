@@ -3,20 +3,50 @@ let url = 'http://52.74.0.232:3001/tracks'; //AWS Shandy
 // let url = 'http://13.229.109.104:3001/tracks'; //AWS Zul
 // let url = 'https://gentle-lake-46054.herokuapp.com/tracks';
 
+chrome.storage.sync.get(['items'], function(result) {
+  let {items} = result
+  if (!items) chrome.storage.sync.set({ items: [] })
+  else {
+    items.forEach(el => checkNotification(el))
+  }
+});
+
 chrome.alarms.create('getCurrentPrices', {
     periodInMinutes: 5
 });
 
-chrome.alarms.onAlarm.addListener((alarmInfo) => {
+chrome.alarms.onAlarm.addListener(_ => getAndUpdate());
+
+// Update Current items from Server to chrome.storage
+function getAndUpdate() {
+  chrome.storage.sync.get(['items'], function (result) {
+    let { items } = result
+    if (!items) chrome.storage.sync.set({ items: [] })
+    else {
+      let dataitem = items.map(el => el._id)
+      updateCurrentItems(JSON.stringify(dataitem))
+    }
+  })
+}
+
+function updateCurrentItems(dataitem) {
   $.ajax({
-    method: 'get',
+    method: 'GET',
     url,
     headers: {
-      dataitem: '["5f1fa5f1dc956c20df19183f","5f1fac1565b98821a9960def"]',
+      dataitem
     }
-  }).done(data => console.log('alarm', alarmInfo, data))
-    .fail(err => console.log('err', alarmInfo, err))
-});
+  })
+    .done(data => {
+      data.forEach(el => checkNotification(el))
+      return data
+    })
+    .done(items => {
+      chrome.storage.sync.set({ items })
+    })
+    .fail(err => console.log(err))
+    .always(chrome.runtime.sendMessage({ action: 'displayTable' }))
+}
 
 /* --- CHECK URL && CHANGE ICON--- */
 
@@ -30,7 +60,7 @@ function checkUrl(stringUrl, action) {
         else return false
     case 2:
       if (
-        stringUrl.search("pricestroom.web.app") > 0 ||
+        stringUrl.search("pricestroom") > 0 ||
         stringUrl.search("localhost:3000") > 0
         ) return true
         else return false
@@ -51,10 +81,12 @@ chrome.tabs.onActivated.addListener(function({ tabId }) {
     } else if(checkUrl(url, 1)) {
       chrome.browserAction.setPopup({ popup: '../option.html', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
+      getAndUpdate();
       console.log('onActivated matched');
     } else if(checkUrl(url, 2)) {
       chrome.browserAction.setPopup({ popup: '../option.html', tabId });
       chrome.browserAction.setIcon({ path: '../icons/icon_32.png', tabId });
+      getAndUpdate();
       console.log('onActivated website');
     } else {
       chrome.browserAction.setPopup({ popup: '', tabId });
@@ -87,16 +119,14 @@ chrome.tabs.onUpdated.addListener(function (tabId, change, tab) {
   }
 });
 
-// chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
-//   console.log(tabs[0].url);
-// });
+// -----UPDATE STORAGE-----
 
 function updateItems(newItem) {
   chrome.storage.sync.get(['items'], function (result) {
     let { items } = result
+    if (!items) items = []
     removedItems = items.filter(item => item._id !== newItem._id)
     updated = [newItem, ...removedItems]
-    console.log('background updated', updated)
 
     chrome.storage.sync.set({ items: updated }, function () {
       if (updated.length > 0) chrome.runtime.sendMessage({ action: 'displayTable' });
@@ -119,10 +149,9 @@ function checkNotification(object) {
       method: "PUT",
       url: `${url}/${_id}`,
       data,
-  })
+    })
     .done((response) => {
         let { value } = response.data
-        console.log('PUT done value', value)
         updateItems(value)
     })
     .fail((err) => {
@@ -132,22 +161,23 @@ function checkNotification(object) {
 };
 
 function pushNotification(objectData) {
-  const { name, currentPrice } = objectData
-  console.log('pushNotif', name, currentPrice)
+  const { url, name, currentPrice, targetPrice } = objectData
+  let title = 'The price has changed!'
+  let message = `The price of ${name} has changed to ${currentPrice}`
+  if (targetPrice) {
+    title = 'The price has reached your target'
+    message = `The current price of ${name} is ${currentPrice}`
+  }
   let notifOptions = {
     type: 'basic',
-    title: 'Price is set!',
-    message: `${name} now price is ${currentPrice}`,
+    title,
+    message,
     iconUrl: '../icons/icon_32.png'
   }
-  chrome.notifications.create(notifOptions, callback)
-  function callback() {
-    objectData.pushNotif = false
-  }
-  console.log(objectData)
+  chrome.notifications.create(url, notifOptions);
+  chrome.notifications.onClicked.addListener(function(url) {
+    chrome.tabs.create({ url })
+  })
 }
 
-chrome.storage.sync.get(['items'], function(result) {
-  let {items} = result
-  items.forEach(el => checkNotification(el))
-});
+

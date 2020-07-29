@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="./assets/public/bootstrap.min.css">
     <link rel="stylesheet" href="./assets/public/css/fontello.css">
     <link rel="stylesheet" href="./assets/public/css/fontello-codes.css">
-    <!-- <script src="assets/jquery-3.5.1.min.js"></script> -->
-    <script src="./assets/jquery-3.5.1.dev.js"></script>
+    <script src="assets/jquery-3.5.1.min.js"></script>
+    <!-- <script src="./assets/jquery-3.5.1.dev.js"></script> -->
     <style>
         body {
             height: 40rem;
@@ -37,6 +37,11 @@
 
         #previewImage {
             height: 12rem;
+        }
+
+        #optionImage {
+            height: 12rem;
+            margin-bottom: 1rem;
         }
 
         .tableImage {
@@ -69,7 +74,7 @@
         }
 
         #notifSection {
-            height: 14.5rem;
+            height: 11rem;
         }
 
         #emailInputDiv {
@@ -94,7 +99,6 @@
                     <p id="mainMessage"></p>
                 </div>
             </div>
-            <!-- Will be run with jQuery function from trackProduct.js -->
             <button id="TrackProduct" class="btn btn-success">Track Product</button>
             <!-- <button id="ClearButton" class="btn btn-sm btn-link">Clear Storage</button> -->
         </div>
@@ -117,8 +121,12 @@
     <section class="container" id="optionSection">
         <div>
 
-            <button id="settingTitle" type="button" class="btn btn-lg btn-light disabled">Settings</button>
-            <p id="currentItemId"></p>
+            <!-- <button id="settingTitle" type="button" class="btn btn-lg btn-light disabled">Settings</button> -->
+            <div class="justify-content-center text-center">
+                <p id="currentItemId"></p>
+                <img src="" alt="" id="optionImage">
+            </div>
+
 
             <form>
                 <div class="container">
@@ -150,9 +158,8 @@
                                     <input type="email" id="emailInput" placeholder="notification@mail.com" required>
                                 </section>
                             </div><br>
-
-                            <input type="radio" id="turnOffNotif" name="notif">
-                            <label class="">Turn Off All Notification</label><br>
+                        <!--<input type="radio" id="turnOffNotif" name="notif">
+                            <label class="">Turn Off All Notification</label><br> -->
                         </div>
                     </div>
                     <div>
@@ -164,16 +171,13 @@
         </div>
     </section>
 
-
-    <!-- <script type="text/javascript" src="./assets/zOldData.json"></script> -->
-    <!-- getProduct to GET fill the table -->
+    <!-- getProduct to GET & fill the table -->
     <script src="./assets/getProducts.js"></script>
     <!-- actionScript to POST -->
     <script src="./assets/actionScript.js"></script>
     <!-- actionScript to PUT & DELETE -->
     <script src="./assets/optionScript.js"></script>
-    <!-- contentScript to send data to PS website -->
-    <!-- <script src="./assets/content.js"></script> -->
+    <script src="./assets/rupiahDisplayer.js"></script>
 </body>
 
 </html>
