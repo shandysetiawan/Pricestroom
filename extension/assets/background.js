@@ -44,7 +44,7 @@ function updateCurrentItems(dataitem) {
     .done(items => {
       chrome.storage.sync.set({ items })
     })
-    .fail(err => console.error(err))
+    .fail(err => console.log(err))
     .always(chrome.runtime.sendMessage({ action: 'displayTable' }))
 }
 
@@ -60,7 +60,7 @@ function checkUrl(stringUrl, action) {
         else return false
     case 2:
       if (
-        stringUrl.search("pricestroom.web.app") > 0 ||
+        stringUrl.search("pricestroom") > 0 ||
         stringUrl.search("localhost:3000") > 0
         ) return true
         else return false

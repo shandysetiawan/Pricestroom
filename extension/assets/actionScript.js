@@ -162,8 +162,8 @@ function displayTable(data = 'items') {
       $('#MainTableBody').append(
         `<tr>
             <td class="products"><img src="${imageUrl}" class="tableImage" alt="${name}"></td>
-            <td class="text-right">${ currentPrice }</td>
-            <td class="text-right">${ targetPrice || '-' }</td>
+            <td class="text-right">${ rupiahDisplayer(currentPrice) }</td>
+            <td class="text-right">${ targetPrice ? rupiahDisplayer(targetPrice) : '-' }</td>
             <td class="options">
               <i id="setting${ _id }" class="icon icon-cog-circled">
                 <span class="tooltiptext">Modify setting</span>
