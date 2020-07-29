@@ -174,6 +174,19 @@ describe('GET /tracks', function () {
         done()
       });
   });
+  it('responds 400 headers undefined', function (done) {
+    request(app)
+      .get('/tracks')
+      .then(response => {
+        // console.log(response)
+        const { body, status } = response
+
+        expect(status).toBe(400)
+        expect(body).toHaveProperty('message', "id not found")
+
+        done()
+      });
+  });
 });
 
 describe('GET /tracks/:id', function () {
@@ -243,6 +256,17 @@ describe('PUT /tracks/:id', function () {
         done()
       })
   });
+  it('input invalid email', function (done) {
+    request(app)
+      .put(`/tracks/${currentItemId}`)
+      .send({ email: "shiiorisekigmail.com", targetPrice: null, pushNotif: "true", priceChangeNotif: "false" })
+      .then(response => {
+        const { body, status } = response
+        expect(status).toBe(200)
+        expect(body).toHaveProperty('message', 'Item has been successfully updated!')
+        done()
+      })
+  })
   it('responds 400 id not found', function (done) {
     let idNotFound = "5f1ab124d6e5ce33c52ea563"
     request(app)
@@ -254,40 +278,38 @@ describe('PUT /tracks/:id', function () {
         expect(body).toHaveProperty('message', "Id not found")
         done()
       })
-
   })
+})
 
+describe('DELETE /tracks/:id', function () {
+  it('responds 200 and receive message successfuly delete', function (done) {
+    request(app)
+      .delete(`/tracks/${currentItemId}`)
+      .then(response => {
+        const { body, status, error } = response
 
-  describe('DELETE /tracks/:id', function () {
-    it('responds 200 and receive message successfuly delete', function (done) {
-      request(app)
-        .delete(`/tracks/${currentItemId}`)
-        .then(response => {
-          const { body, status, error } = response
+        expect(status).toBe(200)
+        expect(body).toHaveProperty('message', "Success to delete item!")
 
-          expect(status).toBe(200)
-          expect(body).toHaveProperty('message', "Success to delete item!")
+        done()
+      })
+  });
+  it('responds 400,id not found', function (done) {
+    let noId = "dmancan42423"
+    request(app)
+      .delete(`/tracks/${noId}`)
+      .then(response => {
+        const { body, status, error } = response
+        // console.log(body)
+        expect(status).toBe(400)
+        expect(body).toHaveProperty('message', "Id not found")
 
-          done()
-        })
-    });
-    it('responds 400,id not found', function (done) {
-      let noId = "dmancan42423"
-      request(app)
-        .delete(`/tracks/${noId}`)
-        .then(response => {
-          const { body, status, error } = response
-          // console.log(body)
-          expect(status).toBe(400)
-          expect(body).toHaveProperty('message', "Id not found")
-
-          done()
-        })
-    });
-
+        done()
+      })
   });
 
+});
 
 
-})
+
 

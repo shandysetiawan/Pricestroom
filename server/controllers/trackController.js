@@ -1,6 +1,5 @@
 const Item = require("../models/track");
 const { priceWatcher } = require("../bull-cron/watcher");
-const emailValidator = require('../emailValidator/emailValidator')
 
 class TrackController {
 
@@ -135,7 +134,7 @@ class TrackController {
 
     try {
       const emailValid = ValidateEmail(email)
-      console.log(emailValid)
+      // console.log(emailValid)
       let editItem
 
       if (emailValid === true) {

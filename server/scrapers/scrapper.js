@@ -2,19 +2,21 @@ const axios = require("axios");
 const cheerio = require("cheerio");
 
 function scrapper(url) {
-  console.log("into scrapper");
+  // console.log("into scrapper");
   if (url.search("tokopedia") !== -1) {
     const tokopedia = url.replace(/m.tokopedia/g, "www.tokopedia");
+    // console.log('line 8', axios)
     return axios
       .get(tokopedia)
       .then((resp) => {
         const html = resp.data;
+
         const $ = cheerio.load(html);
         const priceClassElement = "DetailProductPrice";
         const nameClassElement = "DetailProductName";
         const stockClassElement = "DetailProductStock";
         const storeClassElement = "FooterShopName";
-
+        // console.log('line 17', html)
         const price = $(`h3[data-testid*="${priceClassElement}"]`).text();
         const name = $(`h1[data-testid*="${nameClassElement}"]`).text();
         const stock = $(`p[data-testid*="${stockClassElement}"]`).text();
@@ -29,7 +31,8 @@ function scrapper(url) {
         return data;
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
+        return err
       });
   } else if (url.search("bukalapak") !== -1) {
     const bukalapak = url.replace(/www.bukalapak/g, "m.bukalapak");
@@ -38,6 +41,7 @@ function scrapper(url) {
         headers: { "User-Agent": "Mozilla/5.0" },
       })
       .then((resp) => {
+        // console.log('>>>>', resp)
         const html = resp.data;
         const $ = cheerio.load(html);
 
@@ -63,7 +67,7 @@ function scrapper(url) {
       })
       .catch(console.log); //Catch dihandle saat penggunaan bukalapakScraper
   } else {
-    throw {
+    return {
       code: "404",
       message: "url not found",
     };
