@@ -1,0 +1,38 @@
+{
+  "name": "PriceStroom",
+  "description": "Price tracking extension for tokopedia and bukalapak",
+  "version": "1.0",
+  "manifest_version": 2,
+  "icons": {
+    "16": "icons/icon_16.png",
+    "32": "icons/icon_32.png",
+    "128": "icons/icon_128.png"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "alarms",
+    "activeTab",
+    "background",
+    "notifications",
+    "*://*.tokopedia.com/*",
+    "*://*.bukalapak.com/*"
+  ],
+  "background": {
+    "scripts": ["assets/jquery-3.5.1.min.js", "assets/background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "option.html",
+    "default_title": "PriceStroom"
+  },
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "MacCtrl+Shift+F"
+      },
+      "description": "Opens option.html"
+    }
+  }
+}

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./assets/public/styles.css">
+    <link rel="stylesheet" href="./assets/public/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/public/css/fontello.css">
+    <link rel="stylesheet" href="./assets/public/css/fontello-codes.css">
+    <script src="assets/jquery-3.5.1.min.js"></script>
+    <!-- <script src="./assets/jquery-3.5.1.dev.js"></script> -->
+    <style>
+        body {
+            height: 40rem;
+            width: 30rem;
+            margin: 1rem;
+        }
+
+        table {
+            width: 100%;
+            margin: auto;
+        }
+
+        #TrackProduct {
+            margin-left: 7.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        #applySetting {
+            margin-left: 1rem;
+        }
+
+        #ProductPreview {
+            height: 13rem;
+        }
+
+        #previewImage {
+            height: 12rem;
+        }
+
+        #optionImage {
+            height: 12rem;
+            margin-bottom: 1rem;
+        }
+
+        .tableImage {
+            height: 3rem;
+            width: auto;
+        }
+
+        .icon:hover {
+            cursor: pointer;
+        }
+
+        .products {
+            width: 4rem;
+        }
+
+        .options {
+            width: 6rem;
+        }
+
+        #optionSection {
+            margin-left: 3rem;
+        }
+
+        #settingTitle {
+            margin-left: 7rem;
+        }
+
+        #watcherSection {
+            height: 11rem;
+        }
+
+        #notifSection {
+            height: 11rem;
+        }
+
+        #emailInputDiv {
+            height: 2rem;
+        }
+
+        #bottomButton {
+            margin-left: 1.5rem;
+        }
+    </style>
+    <title>hello</title>
+</head>
+
+<body>
+    <section id="mainPage" class="container">
+        <p class="lead text-center">PriceStroom</p>
+        <div class="newProduct">
+            <div class="row">
+                <div id="ProductPreview" class="justify-content-center text-center">
+                    <!-- Will be filled with product name when the right page is detected -->
+                    <img src="" alt="" id="previewImage">
+                    <p id="mainMessage"></p>
+                </div>
+            </div>
+            <button id="TrackProduct" class="btn btn-success">Track Product</button>
+            <!-- <button id="ClearButton" class="btn btn-sm btn-link">Clear Storage</button> -->
+        </div>
+
+        <table id="MainTable" class="table">
+            <thead class="small">
+                <tr>
+                    <th>Product</th>
+                    <th class="text-right">Current</th>
+                    <th class="text-right">Target</th>
+                    <th class="text-right"> </th>
+                </tr>
+            </thead>
+            <tbody id="MainTableBody">
+                <!-- append data here -->
+            </tbody>
+        </table>
+    </section>
+
+    <section class="container" id="optionSection">
+        <div>
+
+            <!-- <button id="settingTitle" type="button" class="btn btn-lg btn-light disabled">Settings</button> -->
+            <div class="justify-content-center text-center">
+                <p id="currentItemId"></p>
+                <img src="" alt="" id="optionImage">
+            </div>
+
+
+            <form>
+                <div class="container">
+                    <div id="watcherSection">
+                        <div class="small text-center">Watcher Setting</div>
+                        <div class="watcherSetting">
+                            <input type="radio" id="priceChangeNotif" name="watcher">
+                            <label>Price Change</label>
+                            <br>
+                            <input type="radio" id="targetPrice" name="watcher">
+                            <label>Target Price</label>
+                            <section class="container" id="priceTargetOption">
+                                <div>
+                                    <input type="number" min="1" id="targetPriceInput" required><br>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+
+                    <div id="notifSection">
+                        <div class="small text-center">Notification Setting</div>
+                        <div class="notifSetting">
+                            <input type="radio" id="pushNotif" name="notif">
+                            <label class="">Push Notification</label><br>
+                            <input type="radio" id="emailNotif" name="notif">
+                            <label class="">Email Notification</label>
+                            <div id="emailInputDiv">
+                                <section class="container" id="emailNotification">
+                                    <input type="email" id="emailInput" placeholder="notification@mail.com" required>
+                                </section>
+                            </div><br>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="button" id="cancelButton" class="btn btn-warning">Cancel</button>
+                        <button type="button" id="applySetting" class="btn btn-primary">Apply Setting</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script src="./assets/rupiahDisplayer.js"></script>
+    <!-- getProduct to GET & fill the table -->
+    <script src="./assets/getProducts.js"></script>
+    <!-- actionScript to POST -->
+    <script src="./assets/actionScript.js"></script>
+    <!-- actionScript to PUT & DELETE -->
+    <script src="./assets/optionScript.js"></script>
+</body>
+
+</html>

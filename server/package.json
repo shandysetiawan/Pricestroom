@@ -1,0 +1,38 @@
+{
+  "name": "pricestroom",
+  "version": "1.0.0",
+  "description": "price tracker for bukalapak n tokopedia",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon app.js",
+    "dev1": "set NODE_ENV=development&&nodemon app.js",
+    "test": "NODE_ENV=test jest --detectOpenHandles --runInBand --forceExit --verbose --coverage",
+    "start": "node app.js"
+  },
+  "keywords": [
+    "tokopedia",
+    "bukalapak"
+  ],
+  "author": "pricestroom",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "bull": "^3.16.0",
+    "cheerio": "^1.0.0-rc.3",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jest": "^26.1.0",
+    "mongodb": "^3.5.9",
+    "nodemailer": "^6.4.10",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "pricestroom/server/bull-cron/watcher"
+    ]
+  }
+}
