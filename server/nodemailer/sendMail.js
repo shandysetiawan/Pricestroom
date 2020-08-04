@@ -11,7 +11,7 @@ const auth = {
 };
 
 function mailNotif(data) {
-  console.log("into mailNotif");
+  // console.log("into mailNotif");
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth,
@@ -30,17 +30,17 @@ function mailNotif(data) {
 
 }
 function handleSendEmail(err, data) {
-  console.log("into sendMail");
+  // console.log("into sendMail");
   if (err) {
     throw err;
   } else {
-    console.log("Email Sent Successfully");
+    // console.log("Email Sent Successfully");
     return true
   }
 }
 
 function mailWatch(data) {
-  console.log("into mailWatch");
+  // console.log("into mailWatch");
   const transporter = nodemailer.createTransport({
     service: "gmail",
     auth
