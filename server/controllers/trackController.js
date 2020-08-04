@@ -123,7 +123,7 @@ class TrackController {
   static updateItem(req, res, next) {
     // email validator to check email format and change emailNotif and/or pushNotif
     const { id } = req.params;
-    const { email, pushNotif, priceChangeNotif, targetPrice } = req.body
+    const { email, priceChangeNotif, targetPrice, pushNotif } = req.body
 
     function ValidateEmail(mail) {
       if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
@@ -134,10 +134,9 @@ class TrackController {
 
     try {
       const emailValid = ValidateEmail(email)
-      // console.log(emailValid)
       let editItem
 
-      if (emailValid === true) {
+      if (emailValid) {
         editItem = {
           email,
           pushNotif: false,

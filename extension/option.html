@@ -3,7 +3,12 @@
 
 <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="./assets/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/public/styles.css">
+    <link rel="stylesheet" href="./assets/public/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/public/css/fontello.css">
+    <link rel="stylesheet" href="./assets/public/css/fontello-codes.css">
+    <script src="assets/jquery-3.5.1.min.js"></script>
+    <!-- <script src="./assets/jquery-3.5.1.dev.js"></script> -->
     <style>
         body {
             height: 40rem;
@@ -17,13 +22,13 @@
         }
 
         #TrackProduct {
-            margin-left: 5rem;
+            margin-left: 7.5rem;
             margin-bottom: 1rem;
             font-weight: bold;
         }
 
         #applySetting {
-            margin-left: 3.5rem;
+            margin-left: 1rem;
         }
 
         #ProductPreview {
@@ -34,16 +39,34 @@
             height: 12rem;
         }
 
+        #optionImage {
+            height: 12rem;
+            margin-bottom: 1rem;
+        }
+
         .tableImage {
             height: 3rem;
+            width: auto;
+        }
+
+        .icon:hover {
+            cursor: pointer;
+        }
+
+        .products {
+            width: 4rem;
+        }
+
+        .options {
+            width: 6rem;
         }
 
         #optionSection {
-            margin-left: 4rem;
+            margin-left: 3rem;
         }
 
         #settingTitle {
-            margin-left: 1.8rem;
+            margin-left: 7rem;
         }
 
         #watcherSection {
@@ -51,7 +74,7 @@
         }
 
         #notifSection {
-            height: 14.5rem;
+            height: 11rem;
         }
 
         #emailInputDiv {
@@ -67,18 +90,17 @@
 
 <body>
     <section id="mainPage" class="container">
-        <p class="lead text-center">Hello Extensions</p>
+        <p class="lead text-center">PriceStroom</p>
         <div class="newProduct">
             <div class="row">
                 <div id="ProductPreview" class="justify-content-center text-center">
                     <!-- Will be filled with product name when the right page is detected -->
                     <img src="" alt="" id="previewImage">
-                    <p id="notFound"></p>
+                    <p id="mainMessage"></p>
                 </div>
             </div>
-            <!-- Will be run with jQuery function from trackProduct.js -->
             <button id="TrackProduct" class="btn btn-success">Track Product</button>
-            <button id="ClearButton" class="btn btn-sm btn-link">Clear Storage</button>
+            <!-- <button id="ClearButton" class="btn btn-sm btn-link">Clear Storage</button> -->
         </div>
 
         <table id="MainTable" class="table">
@@ -87,7 +109,7 @@
                     <th>Product</th>
                     <th class="text-right">Current</th>
                     <th class="text-right">Target</th>
-                    <th class="text-right">X</th>
+                    <th class="text-right"> </th>
                 </tr>
             </thead>
             <tbody id="MainTableBody">
@@ -99,7 +121,12 @@
     <section class="container" id="optionSection">
         <div>
 
-            <button id="settingTitle" type="button" class="btn btn-lg btn-light disabled">Settings</button>
+            <!-- <button id="settingTitle" type="button" class="btn btn-lg btn-light disabled">Settings</button> -->
+            <div class="justify-content-center text-center">
+                <p id="currentItemId"></p>
+                <img src="" alt="" id="optionImage">
+            </div>
+
 
             <form>
                 <div class="container">
@@ -131,37 +158,24 @@
                                     <input type="email" id="emailInput" placeholder="notification@mail.com" required>
                                 </section>
                             </div><br>
-
-                            <input type="radio" id="turnOffNotif" name="notif">
-                            <label class="">Turn Off All Notification</label><br>
                         </div>
                     </div>
                     <div>
+                        <button type="button" id="cancelButton" class="btn btn-warning">Cancel</button>
                         <button type="button" id="applySetting" class="btn btn-primary">Apply Setting</button>
-                    </div><br>
-                    <div id="bottomButton">
-                        <button type="button" id="cancelButton" class="btn btn-sm btn-warning">Cancel</button>
-                        <button type="button" id="deleteButton" class="btn btn-sm btn-danger">Delete Item</button>
                     </div>
                 </div>
             </form>
         </div>
     </section>
 
-
-
-
-    <!-- <script src="assets/jquery-3.5.1.min.js"></script> -->
-    <script src="./assets/jquery-3.5.1.dev.js"></script>
-    <!-- <script type="text/javascript" src="./assets/zOldData.json"></script> -->
-    <!-- getProduct to GET fill the table -->
+    <script src="./assets/rupiahDisplayer.js"></script>
+    <!-- getProduct to GET & fill the table -->
     <script src="./assets/getProducts.js"></script>
     <!-- actionScript to POST -->
     <script src="./assets/actionScript.js"></script>
     <!-- actionScript to PUT & DELETE -->
     <script src="./assets/optionScript.js"></script>
-    <!-- contentScript to send data to PS website -->
-    <!-- <script src="./assets/content.js"></script> -->
 </body>
 
 </html>

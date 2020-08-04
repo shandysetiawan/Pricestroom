@@ -4,7 +4,7 @@ const Item = require("../models/track");
 let watchers = [];
 const { mailNotif, mailWatch } = require("../nodemailer/sendMail");
 
-function priceWatcher(url, id) {
+function priceWatcher(url, id, cron = "*/10 * * * * *") {
   // console.log("into priceWatcher");
   const watcher = new Bull(`watcher ${id}`);
   watchers = [...watchers, watcher];
@@ -16,7 +16,7 @@ function priceWatcher(url, id) {
   ];
   queue.add(jobs, {
     repeat: {
-      cron: "*/10 * * * * *",
+      cron,
       // every: 20000
     },
   });
